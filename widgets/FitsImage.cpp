@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <QImage>
 
 #include "math.h"
@@ -10,8 +11,9 @@ FitsImage::FitsImage(QString &fileName)
 	
 	// Initialize some attributes
 	fptr = NULL;
-	status = 0;
 	thedata = NULL;
+	lowerPercentile = 0.0025;
+	upperPercentile = 0.9975;
 	
 	// Open FITS file
 	fits_open_file(&fptr, fileName.toStdString().c_str(), READONLY, &status);
@@ -36,10 +38,13 @@ FitsImage::FitsImage(QString &fileName)
 	for (int kk=1; kk <= numhdus; kk++)
 	{
 		int x;
+		status = 0;
 		
 		// Change to another HDU and check type
 		fits_movabs_hdu(fptr, kk, &hdutype, &status);
 		fits_get_hdu_type(fptr, &hdutype, &status);
+		
+		std::cout << "Header: " << kk << "\n";
 		
 		if (hdutype != IMAGE_HDU)
 			continue;
@@ -48,6 +53,7 @@ FitsImage::FitsImage(QString &fileName)
 		fits_get_img_dim(fptr, &naxis, &status);
 		if (status)
 		{
+			std::cout << "fits_get_img_dim\n";
 			fits_report_error(stderr, status);
 			continue;
 		}
@@ -55,6 +61,7 @@ FitsImage::FitsImage(QString &fileName)
 		fits_get_img_size(fptr, 2, naxisn, &status);
 		if (status)
 		{
+			std::cout << "fits_get_img_size\n";
 			fits_report_error(stderr, status);
 			continue;
 		}
@@ -90,6 +97,9 @@ FitsImage::FitsImage(QString &fileName)
 		
 		if (status)
 		{
+			// Free the allocated memory
+			free(thedata);
+			std::cout << "fits_read_pix\n";
 			fits_report_error(stderr, status);
 			continue;
 		}
@@ -109,13 +119,26 @@ FitsImage::FitsImage(QString &fileName)
 		
 		diff = maxpix - minpix;
 		
+		// Calcuate percentiles
+		calculatePercentile(lowerPercentile, upperPercentile);
+		
+		// Scale the image using the percentiles
+		float* theScaledData;
+		theScaledData = (float *) malloc(naxisn[0] * naxisn[1] * sizeof(float));
+		for (x=0; x < naxisn[0]*naxisn[1]; x++)
+		{
+			theScaledData[x] = (thedata[x] - this->vmin) / (this->vmax - this->vmin);
+//			std::cout << theScaledData[x] << "\n";
+		}
+		float scaledMaxPix = (maxpix - this->vmin) / (this->vmax - this->vmin);
+		std::cout << scaledMaxPix << "\n";
+		
 		// Loop over the pixel values to normalize them
 		// then add it to a QImage
 		this->image = new QImage(naxisn[0], naxisn[1], QImage::Format_RGB32);
 //		std::cout << "NAXIS1: " << this->image->size().width() << "\n";
 //		std::cout << "NAXIS2: " << this->image->size().height() << "\n";
 		
-//		QRgb pixval;
 		int index;
 		float prepixel;
 		int pixel;
@@ -125,18 +148,19 @@ FitsImage::FitsImage(QString &fileName)
 			for (y=0; y<naxisn[1]; y++)
 			{	
 				index = y+naxisn[0]*x;
-				prepixel = ((thedata[index] - minpix) / diff)*255;
+				prepixel = (255.0/scaledMaxPix)*theScaledData[index];
+//				if (prepixel < 0)
+//					prepixel = 0;
+//				prepixel = ((thedata[index] - minpix) / diff)*255;
 				pixel = floor(prepixel + 0.5);
-//				pixval = qRgb(pixel, pixel, pixel);
-//				std::cout << pixval << "\n";
+//				std::cout << pixel << "\n";
 				uint *p = (uint *) this->image->scanLine(x) + y;
 				*p = qRgb(pixel, pixel, pixel);
-//				this->image->setPixel(b, a, pixval);
 			}
 		}
 		
 		// Free the allocated memory
-		free(thedata);
+		free(theScaledData);
 		
 		// Found a good HDU
 		break;
@@ -147,6 +171,36 @@ FitsImage::FitsImage(QString &fileName)
 }
 
 FitsImage::~FitsImage() {}
+
+bool FitsImage::calculatePercentile(float lp, float up)
+{
+	// Create a sparse copy of the data
+	float* dataForSorting;
+	long numelements = naxisn[0]*naxisn[1];
+	int ii;
+	dataForSorting = (float *) malloc(numelements * sizeof(float));
+	
+	for (ii=0; ii < numelements; ii++)
+		dataForSorting[ii] = thedata[ii];
+	
+	// Sort using standard library
+	std::sort(&(dataForSorting)[0], &(dataForSorting)[numelements]);
+	
+	std::cout << "Smallest Value: " << dataForSorting[0] << "\n";
+	std::cout << "Largest Value: " << dataForSorting[numelements-1] << "\n";
+	
+	// Determine percentiles
+	int vminIndex = floor(lp*(numelements-1)+1);
+	int vmaxIndex= floor(up*(numelements-1)+1);
+	this->vmin = dataForSorting[vminIndex];
+	this->vmax = dataForSorting[vmaxIndex];
+	
+	std::cout << "VMIN: " << this->vmin << "\n";
+	std::cout << "VMAX: " << this->vmax << "\n";
+	
+	free(dataForSorting);
+	return true;
+}
 
 // BORROWED FROM FABIEN'S CODE
 

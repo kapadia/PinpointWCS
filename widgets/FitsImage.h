@@ -16,7 +16,7 @@ class FitsImage
 		
 	private:
 		// Methods
-		void calculatePercentile(float lp, float up);
+		bool calculatePercentile(float lp, float up);
 		
 		// Attributes
 		fitsfile *fptr;
@@ -27,7 +27,11 @@ class FitsImage
 		int bitpix;
 		float* thedata;
 		float minpix, maxpix, diff;
-		float lowerPercentile, upperPercentile;
+		float lowerPercentile;
+		float upperPercentile;
+		float vmin, vmax;
+		
+		
 	};
 
 #endif
