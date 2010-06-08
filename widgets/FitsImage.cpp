@@ -11,7 +11,8 @@ FitsImage::FitsImage(QString &fileName)
 	
 	// Initialize some attributes
 	fptr = NULL;
-	thedata = NULL;
+	imagedata = NULL;
+	renderdata = NULL;
 	lowerPercentile = 0.0025;
 	upperPercentile = 0.9975;
 	
@@ -65,6 +66,8 @@ FitsImage::FitsImage(QString &fileName)
 			fits_report_error(stderr, status);
 			continue;
 		}
+		// Compute the total number of pixels in image array
+		numelements = naxisn[0]*naxisn[1];
 		
 		// The HDU is a valid image, increment
 		numimgs++;
@@ -85,56 +88,42 @@ FitsImage::FitsImage(QString &fileName)
 			fpixel[x] = 1;
 		
 		// Allocate memory for the image pixels
-		thedata = (float *) malloc(naxisn[0] * naxisn[1] * sizeof(float));
-		if (!thedata)
+		imagedata = (float *) malloc(numelements * sizeof(float));
+		if (!imagedata)
 		{
 			std::cout << "Failed to allocate memory for the image array ...\n";
 			continue;
 		}
 		
-		fits_read_pix(fptr, TFLOAT, fpixel, naxisn[0]*naxisn[1], NULL, thedata, NULL, &status);
+		fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
 		free(fpixel);
 		
 		if (status)
 		{
 			// Free the allocated memory
-			free(thedata);
+			free(imagedata);
 			std::cout << "fits_read_pix\n";
 			fits_report_error(stderr, status);
 			continue;
 		}
 		
-		// Now we have the data from the FITS image
-		// need to determine the min and max pixel values
-		// to normalize to a value between [0, 255]
-		minpix = thedata[0];
-		maxpix = thedata[0];
-		for (x=0; x<naxisn[0]*naxisn[1]; x++)
-		{
-			if (thedata[x] < minpix)
-				minpix = thedata[x];
-			if (thedata[x] > maxpix)
-				maxpix = thedata[x];
-		}
+		// FITS data retrieved!!!
 		
-		diff = maxpix - minpix;
+		// Calculate the minimum and maximum pixel values
+		calculateExtremals();
+		std::cout << "MIN: " << minpix << "\n";
+		std::cout << "MAX: " << maxpix << "\n";
 		
 		// Calcuate percentiles
 		calculatePercentile(lowerPercentile, upperPercentile);
 		
-		// Scale the image using the percentiles
-		float* theScaledData;
-		theScaledData = (float *) malloc(naxisn[0] * naxisn[1] * sizeof(float));
-		for (x=0; x < naxisn[0]*naxisn[1]; x++)
-		{
-			theScaledData[x] = (thedata[x] - this->vmin) / (this->vmax - this->vmin);
-//			std::cout << theScaledData[x] << "\n";
-		}
-		float scaledMaxPix = (maxpix - this->vmin) / (this->vmax - this->vmin);
-		std::cout << scaledMaxPix << "\n";
+		// Initialize a working array
+		renderdata = (float *) malloc(numelements * sizeof(float));
 		
-		// Loop over the pixel values to normalize them
-		// then add it to a QImage
+		// Calibrate Image
+		calibrateImage(LINEAR_STRETCH);
+		
+		// Initialize QImage with correct dimensions and data type
 		this->image = new QImage(naxisn[0], naxisn[1], QImage::Format_RGB32);
 //		std::cout << "NAXIS1: " << this->image->size().width() << "\n";
 //		std::cout << "NAXIS2: " << this->image->size().height() << "\n";
@@ -148,20 +137,19 @@ FitsImage::FitsImage(QString &fileName)
 			for (y=0; y<naxisn[1]; y++)
 			{	
 				index = y+naxisn[0]*x;
-				prepixel = (255.0/scaledMaxPix)*theScaledData[index];
+//				prepixel = (255.0/scaledMaxPix)*theScaledData[index];
 //				if (prepixel < 0)
 //					prepixel = 0;
 //				prepixel = ((thedata[index] - minpix) / diff)*255;
-				pixel = floor(prepixel + 0.5);
+//				pixel = floor(prepixel + 0.5);
 //				std::cout << pixel << "\n";
 				uint *p = (uint *) this->image->scanLine(x) + y;
-				*p = qRgb(pixel, pixel, pixel);
+				*p = qRgb(renderdata[index], renderdata[index], renderdata[index]);
 			}
 		}
 		
 		// Free the allocated memory
-		free(theScaledData);
-		
+		free(renderdata);
 		// Found a good HDU
 		break;
 	}
@@ -172,34 +160,115 @@ FitsImage::FitsImage(QString &fileName)
 
 FitsImage::~FitsImage() {}
 
+void FitsImage::calculateExtremals()
+{
+	minpix = imagedata[0];
+	maxpix = imagedata[0];
+	int i;
+	for (i=0; i<numelements; i++)
+	{
+		if (imagedata[i] < minpix)
+			minpix = imagedata[i];
+		if (imagedata[i] > maxpix)
+			maxpix = imagedata[i];
+	}
+	difference = minpix - maxpix;
+}
+
+void FitsImage::convolve()
+{
+	std::cout << "Convolving data ... \n";
+}
+
 bool FitsImage::calculatePercentile(float lp, float up)
 {
 	// Create a sparse copy of the data
 	float* dataForSorting;
-	long numelements = naxisn[0]*naxisn[1];
 	int ii;
 	dataForSorting = (float *) malloc(numelements * sizeof(float));
 	
 	for (ii=0; ii < numelements; ii++)
-		dataForSorting[ii] = thedata[ii];
+		dataForSorting[ii] = imagedata[ii];
 	
 	// Sort using standard library
 	std::sort(&(dataForSorting)[0], &(dataForSorting)[numelements]);
 	
-	std::cout << "Smallest Value: " << dataForSorting[0] << "\n";
-	std::cout << "Largest Value: " << dataForSorting[numelements-1] << "\n";
-	
 	// Determine percentiles
 	int vminIndex = floor(lp*(numelements-1)+1);
 	int vmaxIndex= floor(up*(numelements-1)+1);
-	this->vmin = dataForSorting[vminIndex];
-	this->vmax = dataForSorting[vmaxIndex];
+	vmin = dataForSorting[vminIndex];
+	vmax = dataForSorting[vmaxIndex];
 	
-	std::cout << "VMIN: " << this->vmin << "\n";
-	std::cout << "VMAX: " << this->vmax << "\n";
+	std::cout << "VMIN: " << vmin << "\n";
+	std::cout << "VMAX: " << vmax << "\n";
 	
 	free(dataForSorting);
 	return true;
+}
+
+void FitsImage::calibrateImage(int stretch)
+{
+	std::cout << "Calibrating image for display ...\n";
+
+	int i;	
+	for (i = 0; i < numelements; i++)
+	{
+		// Copy the array value
+		renderdata[i] = imagedata[i];
+		
+		// First clip values outside of the interval [min, max]
+		if (renderdata[i] < minpix)
+			renderdata[i] = minpix;
+		if (renderdata[i] > maxpix)
+			renderdata[i] = maxpix;
+		
+		// Scale the array
+		renderdata[i] = (imagedata[i] - minpix)/difference;
+		
+		std::cout << renderdata[i] << "\n";
+		
+		// Stretch the array
+		switch (stretch) {
+			case LINEAR_STRETCH:
+//				std::cout << "Linear Stretch ...\n";
+				break;
+			case LOG_STRETCH:
+//				std::cout << "Logarithm Stretch ...\n";
+				renderdata[i] = log10(renderdata[i]/0.05 + 1.0) / log10(1.0/0.05 +1.0);
+				break;
+			case SQRT_STRETCH:
+//				std::cout << "Square Root Stretch ...\n";
+				renderdata[i] = sqrt(renderdata[i]);
+				break;
+			case ARCSINH_STRETCH:
+//				std::cout << "Inverse Hyperbolic Sine Stretch ...\n";
+				renderdata[i] = asinh(renderdata[i]/-0.033) / asinh(1.0/-0.033);
+				break;
+			case POWER_STRETCH:
+//				std::cout << "Power Stretch ...\n";
+				renderdata[i] = pow(renderdata[i], 2);
+				break;
+			default:
+				break;
+		}
+	}
+	
+	// Normalize the array
+	normalize();
+}
+
+void FitsImage::normalize()
+{
+	// First need to determine the current maximum value
+	int i;
+	float max = renderdata[0];
+	for (i=0; i<numelements; i++)
+		if (renderdata[i] > max)
+			max = renderdata[i];
+	
+	// Normalize
+	for (i=0; i<numelements; i++)
+		renderdata[i] = floor((255.0/max)*renderdata[i] + 0.5);
 }
 
 // BORROWED FROM FABIEN'S CODE
