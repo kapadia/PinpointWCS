@@ -11,6 +11,7 @@ FitsImage::FitsImage(QString &fileName)
 	
 	// Initialize some attributes
 	fptr = NULL;
+	status = 0;
 	imagedata = NULL;
 	renderdata = NULL;
 	lowerPercentile = 0.0025;
@@ -45,7 +46,7 @@ FitsImage::FitsImage(QString &fileName)
 		fits_movabs_hdu(fptr, kk, &hdutype, &status);
 		fits_get_hdu_type(fptr, &hdutype, &status);
 		
-		std::cout << "Header: " << kk << "\n";
+		std::cout << "Header Number: " << kk << "\n";
 		
 		if (hdutype != IMAGE_HDU)
 			continue;
@@ -56,6 +57,12 @@ FitsImage::FitsImage(QString &fileName)
 		{
 			std::cout << "fits_get_img_dim\n";
 			fits_report_error(stderr, status);
+			continue;
+		}
+		
+		if (naxis != 2)
+		{
+			std::cout << "Image does not have the correct dimensions ...\n";
 			continue;
 		}
 		
@@ -92,6 +99,7 @@ FitsImage::FitsImage(QString &fileName)
 		if (!imagedata)
 		{
 			std::cout << "Failed to allocate memory for the image array ...\n";
+			free(fpixel);
 			continue;
 		}
 		
@@ -124,27 +132,21 @@ FitsImage::FitsImage(QString &fileName)
 		calibrateImage(LINEAR_STRETCH);
 		
 		// Initialize QImage with correct dimensions and data type
-		this->image = new QImage(naxisn[0], naxisn[1], QImage::Format_RGB32);
+		image = new QImage(naxisn[0], naxisn[1], QImage::Format_RGB32);
 //		std::cout << "NAXIS1: " << this->image->size().width() << "\n";
 //		std::cout << "NAXIS2: " << this->image->size().height() << "\n";
 		
-		int index;
-		float prepixel;
-		int pixel;
 		int y;
 		for (x=0; x<naxisn[0]; x++)
 		{
 			for (y=0; y<naxisn[1]; y++)
 			{	
-				index = y+naxisn[0]*x;
-//				prepixel = (255.0/scaledMaxPix)*theScaledData[index];
-//				if (prepixel < 0)
-//					prepixel = 0;
-//				prepixel = ((thedata[index] - minpix) / diff)*255;
-//				pixel = floor(prepixel + 0.5);
+				long index = y+naxisn[0]*x;
+//				std::cout << index << "\n";
+				int pixel = floor(renderdata[index] + 0.5);
 //				std::cout << pixel << "\n";
-				uint *p = (uint *) this->image->scanLine(x) + y;
-				*p = qRgb(renderdata[index], renderdata[index], renderdata[index]);
+				uint *p = (uint *) image->scanLine(x) + y;
+				*p = qRgb(pixel, pixel, pixel);
 			}
 		}
 		
@@ -172,7 +174,6 @@ void FitsImage::calculateExtremals()
 		if (imagedata[i] > maxpix)
 			maxpix = imagedata[i];
 	}
-	difference = minpix - maxpix;
 }
 
 void FitsImage::convolve()
@@ -198,6 +199,7 @@ bool FitsImage::calculatePercentile(float lp, float up)
 	int vmaxIndex= floor(up*(numelements-1)+1);
 	vmin = dataForSorting[vminIndex];
 	vmax = dataForSorting[vmaxIndex];
+	difference = vmax - vmin;
 	
 	std::cout << "VMIN: " << vmin << "\n";
 	std::cout << "VMAX: " << vmax << "\n";
@@ -217,15 +219,14 @@ void FitsImage::calibrateImage(int stretch)
 		renderdata[i] = imagedata[i];
 		
 		// First clip values outside of the interval [min, max]
-		if (renderdata[i] < minpix)
-			renderdata[i] = minpix;
-		if (renderdata[i] > maxpix)
-			renderdata[i] = maxpix;
+		if (renderdata[i] < vmin)
+			renderdata[i] = vmin;
+		if (renderdata[i] > vmax)
+			renderdata[i] = vmax;
 		
 		// Scale the array
-		renderdata[i] = (imagedata[i] - minpix)/difference;
-		
-		std::cout << renderdata[i] << "\n";
+		renderdata[i] = (renderdata[i] - vmin)/difference;		
+//		std::cout << renderdata[i] << "\n";
 		
 		// Stretch the array
 		switch (stretch) {
@@ -259,16 +260,12 @@ void FitsImage::calibrateImage(int stretch)
 
 void FitsImage::normalize()
 {
-	// First need to determine the current maximum value
 	int i;
-	float max = renderdata[0];
 	for (i=0; i<numelements; i++)
-		if (renderdata[i] > max)
-			max = renderdata[i];
-	
-	// Normalize
-	for (i=0; i<numelements; i++)
-		renderdata[i] = floor((255.0/max)*renderdata[i] + 0.5);
+	{
+		renderdata[i] = 255.0*renderdata[i];
+//		std::cout << renderdata[i] << "\n";
+	}
 }
 
 // BORROWED FROM FABIEN'S CODE
