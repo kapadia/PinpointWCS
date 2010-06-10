@@ -23,7 +23,7 @@ class FitsImage
 	private:
 		// Methods
 		void calculateExtremals();
-		void convolve();
+		void downsample(float** imagedata, int W, int H, int S, int* newW, int* newH);
 		bool calculatePercentile(float lp, float up);
 		void calibrateImage(int stretch);
 		void normalize();

@@ -117,6 +117,11 @@ FitsImage::FitsImage(QString &fileName)
 		
 		// FITS data retrieved!!!
 		
+		// Downsample the image
+		int newW, newH;
+		downsample(&imagedata, naxisn[0], naxisn[1], 2, &newW, &newH);
+
+
 		// Calculate the minimum and maximum pixel values
 		calculateExtremals();
 		std::cout << "MIN: " << minpix << "\n";
@@ -132,11 +137,13 @@ FitsImage::FitsImage(QString &fileName)
 		calibrateImage(LINEAR_STRETCH);
 		
 		// Initialize QImage with correct dimensions and data type
-		image = new QImage(naxisn[0], naxisn[1], QImage::Format_RGB32);
+//		image = new QImage(naxisn[0], naxisn[1], QImage::Format_RGB32);
+		image = new QImage(newW, newH, QImage::Format_RGB32);
 //		std::cout << "NAXIS1: " << this->image->size().width() << "\n";
 //		std::cout << "NAXIS2: " << this->image->size().height() << "\n";
 		
 		int y;
+		/*
 		for (x=0; x<naxisn[0]; x++)
 		{
 			for (y=0; y<naxisn[1]; y++)
@@ -149,10 +156,26 @@ FitsImage::FitsImage(QString &fileName)
 				*p = qRgb(pixel, pixel, pixel);
 			}
 		}
+		 */
+
+		for (x=0; x<newW; x++)
+		{
+			for (y=0; y<newH; y++)
+			{	
+				long index = y+newW*x;
+//				std::cout << index << "\n";
+				int pixel = floor(renderdata[index] + 0.5);
+//				std::cout << pixel << "\n";
+				uint *p = (uint *) image->scanLine(x) + y;
+				*p = qRgb(pixel, pixel, pixel);
+			}
+		}
 		
 		// Free the allocated memory
 		free(renderdata);
+		 
 		// Found a good HDU
+		std::cout << "BAM!\n";
 		break;
 	}
 	
@@ -176,9 +199,35 @@ void FitsImage::calculateExtremals()
 	}
 }
 
-void FitsImage::convolve()
+void FitsImage::downsample(float** imagedata, int W, int H, int S, int* newW, int* newH)
 {
-	std::cout << "Convolving data ... \n";
+	std::cout << "Downsampling data ... \n";
+	
+	int i, j, I, J;
+	
+	*newW = (W + S-1) / S;
+	*newH = (H + S-1) / S;
+	
+	// Average SxS blocks, placing the result in the bottom (newW * newH) first pixels.
+	for (j=0; j<*newH; j++) {
+        for (i=0; i<*newW; i++) {
+            float sum = 0.0;
+            int N = 0;
+            for (J=0; J<S; J++) {
+                if (j*S + J >= H)
+                    break;
+                for (I=0; I<S; I++) {
+                    if (i*S + I >= W)
+                        break;
+                    sum += (*imagedata)[(j*S + J)*W + (i*S + I)];
+                    N++;
+                }
+            }
+            (*imagedata)[j * (*newW) + i] = sum / (float)N;
+//			std::cout << (*imagedata)[j * (*newW) + i] << "\n";
+        }
+    }
+	*imagedata = (float *) realloc(*imagedata, (*newW) * (*newH) * sizeof(float));
 }
 
 bool FitsImage::calculatePercentile(float lp, float up)
