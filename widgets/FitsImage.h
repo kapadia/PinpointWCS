@@ -4,6 +4,8 @@
 #include <QImage>
 #include "fitsio.h"
 
+#define DOWNSAMPLE_SIZE 2048
+
 #define LINEAR_STRETCH 0
 #define LOG_STRETCH 1
 #define SQRT_STRETCH 2
@@ -33,6 +35,7 @@ class FitsImage
 		int status;
 		int numhdus, numimgs, naxis, hdutype;
 		long naxisn[2];
+		long width, height;
 		long numelements;
 		long* fpixel;
 		int bitpix;
@@ -42,6 +45,9 @@ class FitsImage
 		float lowerPercentile;
 		float upperPercentile;
 		float vmin, vmax;
+		bool downsampled;
+		int M;
+		
 	};
 
 #endif

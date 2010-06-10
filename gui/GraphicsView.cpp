@@ -20,7 +20,7 @@ GraphicsView::GraphicsView(QWidget *parent)
 	setScene(new QGraphicsScene());
 	
 	// Adjust the background color
-//	setBackgroundBrush(QBrush(QColor(30, 30, 30)));
+	setBackgroundBrush(QBrush(QColor(30, 30, 30)));
 }
 
 GraphicsView::~GraphicsView() {}

@@ -16,6 +16,7 @@ FitsImage::FitsImage(QString &fileName)
 	renderdata = NULL;
 	lowerPercentile = 0.0025;
 	upperPercentile = 0.9975;
+	downsampled = false;
 	
 	// Open FITS file
 	fits_open_file(&fptr, fileName.toStdString().c_str(), READONLY, &status);
@@ -73,8 +74,11 @@ FitsImage::FitsImage(QString &fileName)
 			fits_report_error(stderr, status);
 			continue;
 		}
+		width = naxisn[0];
+		height = naxisn[1];
+		
 		// Compute the total number of pixels in image array
-		numelements = naxisn[0]*naxisn[1];
+		numelements = width*height;
 		
 		// The HDU is a valid image, increment
 		numimgs++;
@@ -86,6 +90,7 @@ FitsImage::FitsImage(QString &fileName)
 			fits_report_error(stderr, status);
 			continue;
 		}
+		std::cout << "BITPIX: " << bitpix << "\n";
 		
 		// Allocate memory for the first pixel
 		fpixel = (long *) malloc(naxis * sizeof(long));
@@ -103,9 +108,41 @@ FitsImage::FitsImage(QString &fileName)
 			continue;
 		}
 		
-		fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
-		free(fpixel);
+		/**
+		// Use the BITPIX to read the data using the correct type
+		if (bitpix == 8)
+		{
+			fits_read_pix(fptr, TBYTE, fpixel, numelements, NULL, imagedata, NULL, &status);
+		}
+		else if(bitpix == 16)
+		{
+			int tmp;
+			fits_get_img_equivtype(fptr, &tmp, &status);
+			if (tmp == USHORT_IMG)
+			{
+				fits_read_pix(fptr, TUSHORT, fpixel, numelements, NULL, imagedata, NULL, &status);
+			}
+			else if(tmp == SHORT_IMG)
+			{
+				fits_read_pix(fptr, TSHORT, fpixel, numelements, NULL, imagedata, NULL, &status);
+			}
+			else
+			{
+				fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
+			}
+		}
+		else if(bitpix==32)
+		{
+			fits_read_pix(fptr, TINT, fpixel, numelements, NULL, imagedata, NULL, &status);
+		}
+		else
+		{
+			fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
+		}
+		**/
 		
+		fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
+		free(fpixel);		
 		if (status)
 		{
 			// Free the allocated memory
@@ -117,15 +154,22 @@ FitsImage::FitsImage(QString &fileName)
 		
 		// FITS data retrieved!!!
 		
-		// Downsample the image
-		int newW, newH;
-		downsample(&imagedata, naxisn[0], naxisn[1], 2, &newW, &newH);
-
+		// Downsample the image if either axis is too large
+		if (width > DOWNSAMPLE_SIZE or height > DOWNSAMPLE_SIZE){
+			if (width > height)
+				M = width / DOWNSAMPLE_SIZE;
+			else
+				M = height / DOWNSAMPLE_SIZE;
+			
+			// Begin downsampling
+			int newW, newH;
+			downsample(&imagedata, width, height, M, &newW, &newH);
+			width = newW;
+			height = newH;
+		}
 
 		// Calculate the minimum and maximum pixel values
 		calculateExtremals();
-		std::cout << "MIN: " << minpix << "\n";
-		std::cout << "MAX: " << maxpix << "\n";
 		
 		// Calcuate percentiles
 		calculatePercentile(lowerPercentile, upperPercentile);
@@ -137,32 +181,14 @@ FitsImage::FitsImage(QString &fileName)
 		calibrateImage(LINEAR_STRETCH);
 		
 		// Initialize QImage with correct dimensions and data type
-//		image = new QImage(naxisn[0], naxisn[1], QImage::Format_RGB32);
-		image = new QImage(newW, newH, QImage::Format_RGB32);
-//		std::cout << "NAXIS1: " << this->image->size().width() << "\n";
-//		std::cout << "NAXIS2: " << this->image->size().height() << "\n";
+		image = new QImage(width, height, QImage::Format_RGB32);
 		
 		int y;
-		/*
-		for (x=0; x<naxisn[0]; x++)
+		for (x=0; x<width; x++)
 		{
-			for (y=0; y<naxisn[1]; y++)
+			for (y=0; y<height; y++)
 			{	
-				long index = y+naxisn[0]*x;
-//				std::cout << index << "\n";
-				int pixel = floor(renderdata[index] + 0.5);
-//				std::cout << pixel << "\n";
-				uint *p = (uint *) image->scanLine(x) + y;
-				*p = qRgb(pixel, pixel, pixel);
-			}
-		}
-		 */
-
-		for (x=0; x<newW; x++)
-		{
-			for (y=0; y<newH; y++)
-			{	
-				long index = y+newW*x;
+				long index = y+width*x;
 //				std::cout << index << "\n";
 				int pixel = floor(renderdata[index] + 0.5);
 //				std::cout << pixel << "\n";
@@ -224,21 +250,21 @@ void FitsImage::downsample(float** imagedata, int W, int H, int S, int* newW, in
                 }
             }
             (*imagedata)[j * (*newW) + i] = sum / (float)N;
-//			std::cout << (*imagedata)[j * (*newW) + i] << "\n";
         }
     }
 	*imagedata = (float *) realloc(*imagedata, (*newW) * (*newH) * sizeof(float));
+	downsampled = true;
 }
 
 bool FitsImage::calculatePercentile(float lp, float up)
 {
 	// Create a sparse copy of the data
 	float* dataForSorting;
-	int ii;
-	dataForSorting = (float *) malloc(numelements * sizeof(float));
 	
-	for (ii=0; ii < numelements; ii++)
-		dataForSorting[ii] = imagedata[ii];
+	dataForSorting = (float *) malloc(numelements * sizeof(float));
+	for (int i=0; i<numelements; i++)
+		dataForSorting[i] = imagedata[i];
+//	memcpy(dataForSorting, imagedata, numelements);
 	
 	// Sort using standard library
 	std::sort(&(dataForSorting)[0], &(dataForSorting)[numelements]);
@@ -275,27 +301,21 @@ void FitsImage::calibrateImage(int stretch)
 		
 		// Scale the array
 		renderdata[i] = (renderdata[i] - vmin)/difference;		
-//		std::cout << renderdata[i] << "\n";
 		
 		// Stretch the array
 		switch (stretch) {
 			case LINEAR_STRETCH:
-//				std::cout << "Linear Stretch ...\n";
 				break;
 			case LOG_STRETCH:
-//				std::cout << "Logarithm Stretch ...\n";
 				renderdata[i] = log10(renderdata[i]/0.05 + 1.0) / log10(1.0/0.05 +1.0);
 				break;
 			case SQRT_STRETCH:
-//				std::cout << "Square Root Stretch ...\n";
 				renderdata[i] = sqrt(renderdata[i]);
 				break;
 			case ARCSINH_STRETCH:
-//				std::cout << "Inverse Hyperbolic Sine Stretch ...\n";
 				renderdata[i] = asinh(renderdata[i]/-0.033) / asinh(1.0/-0.033);
 				break;
 			case POWER_STRETCH:
-//				std::cout << "Power Stretch ...\n";
 				renderdata[i] = pow(renderdata[i], 2);
 				break;
 			default:
@@ -309,12 +329,8 @@ void FitsImage::calibrateImage(int stretch)
 
 void FitsImage::normalize()
 {
-	int i;
-	for (i=0; i<numelements; i++)
-	{
+	for (int i=0; i<numelements; i++)
 		renderdata[i] = 255.0*renderdata[i];
-//		std::cout << renderdata[i] << "\n";
-	}
 }
 
 // BORROWED FROM FABIEN'S CODE
