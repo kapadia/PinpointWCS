@@ -14,10 +14,13 @@ LIBS += -L/usr/local/lib -lcfitsio
 HEADERS += gui/DropArea.h \
            gui/GraphicsView.h \
            gui/mainwindow.h \
-           widgets/FitsImage.h
+           backend/FitsImage.h \
+           backend/ComputeWCS.h
 FORMS += gui/dockwidget.ui gui/PinpointWCS.ui gui/PinpointWCS__.ui
 SOURCES += main.cpp \
            gui/DropArea.cpp \
            gui/GraphicsView.cpp \
            gui/mainwindow.cpp \
-           widgets/FitsImage.cpp
+           backend/FitsImage.cpp \
+           backend/ComputeWCS.cpp
+           
