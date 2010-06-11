@@ -1,5 +1,25 @@
+/*
+ *  PinpointWCS is developed by the Chandra X-ray Center
+ *  Education and Public Outreach Group
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include <iostream>
 #include <algorithm>
+#include <exception>
 #include <QImage>
 
 #include "math.h"
@@ -142,6 +162,7 @@ FitsImage::FitsImage(QString &fileName)
 		**/
 		
 		fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
+//		fits_read_pix(fptr, TDOUBLE, fpixel, numelements, NULL, imagedata, NULL, &status);
 		free(fpixel);		
 		if (status)
 		{
@@ -183,6 +204,9 @@ FitsImage::FitsImage(QString &fileName)
 		// Initialize QImage with correct dimensions and data type
 		image = new QImage(width, height, QImage::Format_RGB32);
 		
+		std::cout << "Width: " << width << "\n";
+		std::cout << "Height: " << height << "\n";
+
 		int y;
 		for (x=0; x<width; x++)
 		{
@@ -192,10 +216,24 @@ FitsImage::FitsImage(QString &fileName)
 //				std::cout << index << "\n";
 				int pixel = floor(renderdata[index] + 0.5);
 //				std::cout << pixel << "\n";
-				uint *p = (uint *) image->scanLine(x) + y;
+				image->setPixel(x, y, qRgb(pixel, pixel, pixel));
+//				QRgb *p = (QRgb *) image->scanLine(x) + y;
+//				*p = qRgb(pixel, pixel, pixel);
+			}
+		}
+		
+		/***
+		int y;
+		for (y=0; y<height; y++)
+		{
+			for (x=0; x<width; x++)
+			{
+				int pixel = floor(renderdata[x + height*y] + 0.5);
+				QRgb *p = (QRgb *) image->scanLine(y) + x;
 				*p = qRgb(pixel, pixel, pixel);
 			}
 		}
+		***/		
 		
 		// Free the allocated memory
 		free(renderdata);
@@ -330,7 +368,11 @@ void FitsImage::calibrateImage(int stretch)
 void FitsImage::normalize()
 {
 	for (int i=0; i<numelements; i++)
+	{
 		renderdata[i] = 255.0*renderdata[i];
+//		std::cout << renderdata[i] << "\n";
+	}
+	std::cout << "Done normalizing\n";
 }
 
 // BORROWED FROM FABIEN'S CODE
