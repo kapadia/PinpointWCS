@@ -22,6 +22,7 @@
 
 #include <QImage>
 #include "fitsio.h"
+#include "wcshdr.h"
 
 #define DOWNSAMPLE_SIZE 2048
 
@@ -43,15 +44,15 @@ class FitsImage
 		
 	private:
 		// Methods
+		bool checkWorldCoordinateSystem();
 		void calculateExtremals();
-		void downsample(float** imagedata, int W, int H, int S, int* newW, int* newH);
+		void downsample(float** arr, int W, int H, int S, int* newW, int* newH);
 		bool calculatePercentile(float lp, float up);
 		void calibrateImage(int stretch);
-		void normalize();
 		
 		// Attributes
 		fitsfile *fptr;
-		int status;
+		int status, wcsstatus;
 		int numhdus, numimgs, naxis, hdutype;
 		long naxisn[2];
 		long width, height;
@@ -66,7 +67,6 @@ class FitsImage
 		float vmin, vmax;
 		bool downsampled;
 		int M;
-		
 	};
 
 #endif

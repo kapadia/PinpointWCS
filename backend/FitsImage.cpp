@@ -24,6 +24,7 @@
 
 #include "math.h"
 #include "FitsImage.h"
+#include "PinpointWCSUtils.h"
 
 FitsImage::FitsImage(QString &fileName)
 {	
@@ -97,6 +98,10 @@ FitsImage::FitsImage(QString &fileName)
 		width = naxisn[0];
 		height = naxisn[1];
 		
+		// Check that the image contains sufficient WCS
+		if (!checkWorldCoordinateSystem())
+			continue;
+		
 		// Compute the total number of pixels in image array
 		numelements = width*height;
 		
@@ -162,7 +167,6 @@ FitsImage::FitsImage(QString &fileName)
 		**/
 		
 		fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
-//		fits_read_pix(fptr, TDOUBLE, fpixel, numelements, NULL, imagedata, NULL, &status);
 		free(fpixel);		
 		if (status)
 		{
@@ -203,40 +207,38 @@ FitsImage::FitsImage(QString &fileName)
 		
 		// Initialize QImage with correct dimensions and data type
 		image = new QImage(width, height, QImage::Format_RGB32);
-		
-		std::cout << "Width: " << width << "\n";
-		std::cout << "Height: " << height << "\n";
 
 		int y;
-		for (x=0; x<width; x++)
-		{
-			for (y=0; y<height; y++)
-			{	
-				long index = y+width*x;
-//				std::cout << index << "\n";
-				int pixel = floor(renderdata[index] + 0.5);
-//				std::cout << pixel << "\n";
-				image->setPixel(x, y, qRgb(pixel, pixel, pixel));
-//				QRgb *p = (QRgb *) image->scanLine(x) + y;
-//				*p = qRgb(pixel, pixel, pixel);
-			}
-		}
-		
-		/***
-		int y;
-		for (y=0; y<height; y++)
+		if (bitpix < 0) // Not sure why this is a problem, but without memory errors arise ...
 		{
 			for (x=0; x<width; x++)
 			{
-				int pixel = floor(renderdata[x + height*y] + 0.5);
-				QRgb *p = (QRgb *) image->scanLine(y) + x;
-				*p = qRgb(pixel, pixel, pixel);
+				for (y=0; y<height; y++)
+				{	
+					long index = y+width*x;
+					int pixel = floor(255.0 * renderdata[index] + 0.5);
+					image->setPixel(x, y, qRgb(pixel, pixel, pixel));
+				}
 			}
 		}
-		***/		
+		else
+		{
+			for (x=0; x<width; x++)
+			{
+				for (y=0; y<height; y++)
+				{	
+					long index = y+width*x;
+					int pixel = floor(255.0 * renderdata[index] + 0.5);
+					QRgb *p = (QRgb *) image->scanLine(x) + y;
+					*p = qRgb(pixel, pixel, pixel);
+				}
+			}
+		}
 		
-		// Free the allocated memory
+		// Free some allocated memory
 		free(renderdata);
+		
+		// Flip the image
 		 
 		// Found a good HDU
 		std::cout << "BAM!\n";
@@ -248,6 +250,46 @@ FitsImage::FitsImage(QString &fileName)
 }
 
 FitsImage::~FitsImage() {}
+
+bool FitsImage::checkWorldCoordinateSystem()
+{
+	std::cout << "Checking World Coordinate System ...\n";
+	// Define all the variables needed for complete WCS
+	char *header;
+	int ncards;
+	
+	// Call cfitsio routines to get the header
+	fits_hdr2str(fptr, 1, NULL, 0, &header, &ncards, &status);
+	if (status)
+	{
+		// Free the allocated memory
+		free(header);
+		std::cout << "fits_hdr2str\n";
+		fits_report_error(stderr, status);
+		return false;
+	}
+	
+	// Pass header to WCSLIB
+	int nreject, nwcs;
+	struct wcsprm *wcs;
+	wcsstatus = wcspih(header, ncards, WCSHDR_all, -3, &nreject, &nwcs, &wcs);
+	free(header);
+	
+	if (wcs == 0x0) {
+		std::cout << "No world coordinate systems found ...\n";
+		return false;
+	}
+	
+	// Check the status
+	if (wcsstatus == 0)
+	{
+		std::cout << "World coordinate systems found!\n";
+		return true;
+	}
+	
+	return false;
+}
+
 
 void FitsImage::calculateExtremals()
 {
@@ -263,7 +305,7 @@ void FitsImage::calculateExtremals()
 	}
 }
 
-void FitsImage::downsample(float** imagedata, int W, int H, int S, int* newW, int* newH)
+void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* newH)
 {
 	std::cout << "Downsampling data ... \n";
 	
@@ -283,33 +325,71 @@ void FitsImage::downsample(float** imagedata, int W, int H, int S, int* newW, in
                 for (I=0; I<S; I++) {
                     if (i*S + I >= W)
                         break;
-                    sum += (*imagedata)[(j*S + J)*W + (i*S + I)];
+                    sum += (*arr)[(j*S + J)*W + (i*S + I)];
                     N++;
                 }
             }
-            (*imagedata)[j * (*newW) + i] = sum / (float)N;
+            (*arr)[j * (*newW) + i] = sum / (float)N;
         }
     }
-	*imagedata = (float *) realloc(*imagedata, (*newW) * (*newH) * sizeof(float));
+	*arr = (float *) realloc(*arr, (*newW) * (*newH) * sizeof(float));
 	downsampled = true;
 }
 
 bool FitsImage::calculatePercentile(float lp, float up)
 {
-	// Create a sparse copy of the data
-	float* dataForSorting;
+	// Test function that is being designed
+//	vmin = PinpointWCSUtils::determineQuantile(imagedata, numelements, 0.0025);
+//	vmax = PinpointWCSUtils::determineQuantile(imagedata, numelements, 0.9975);
+//	std::cout << "VMIN: " << vmin << "\n";
+//	std::cout << "VMAX: " << vmax << "\n";
+//	return true;
 	
-	dataForSorting = (float *) malloc(numelements * sizeof(float));
-	for (int i=0; i<numelements; i++)
-		dataForSorting[i] = imagedata[i];
-//	memcpy(dataForSorting, imagedata, numelements);
+	// Calculate image statistics
+	/*
+	double sum = 0.;
+	double meanval = 0.;
+	double std = 0.;
+	int i;
+	
+	for (i=0; i<numelements; i++)
+		sum += imagedata[i];
+	
+	meanval = sum/numelements;
+	sum = 0;
+	for (i=0; i<numelements; i++)
+		sum += pow((imagedata[i] - meanval), 2);
+	
+	std = sqrt(sum/numelements);
+	
+	std::cout << "Mean: " << meanval << "\n" << "STD: " << std << "\n";
+	vmin = meanval - 1.5*std;
+	vmax = meanval + 5.5*std;
+	std::cout << "VMIN: " << vmin << "\n";
+	std::cout << "VMAX: " << vmax << "\n";
+	return true;
+	 */
+	
+	// Create a copy of the data
+	long numelem = numelements;
+	float* dataForSorting = (float *) malloc(numelem * sizeof(float));
+	memcpy(dataForSorting, imagedata, numelem * sizeof(float));
+	
+	// First downsample to reduce the number of operations in sort
+	if (downsampled)
+	{
+		int newW, newH;
+		downsample(&dataForSorting, width, height, 6*M, &newW, &newH);
+		numelem = newW*newH;
+	}
+	
 	
 	// Sort using standard library
-	std::sort(&(dataForSorting)[0], &(dataForSorting)[numelements]);
+	std::sort(&(dataForSorting)[0], &(dataForSorting)[numelem]);
 	
 	// Determine percentiles
-	int vminIndex = floor(lp*(numelements-1)+1);
-	int vmaxIndex= floor(up*(numelements-1)+1);
+	int vminIndex = floor(lp*(numelem-1)+1);
+	int vmaxIndex= floor(up*(numelem-1)+1);
 	vmin = dataForSorting[vminIndex];
 	vmax = dataForSorting[vmaxIndex];
 	difference = vmax - vmin;
@@ -324,55 +404,94 @@ bool FitsImage::calculatePercentile(float lp, float up)
 void FitsImage::calibrateImage(int stretch)
 {
 	std::cout << "Calibrating image for display ...\n";
-
-	int i;	
-	for (i = 0; i < numelements; i++)
-	{
-		// Copy the array value
-		renderdata[i] = imagedata[i];
-		
-		// First clip values outside of the interval [min, max]
-		if (renderdata[i] < vmin)
-			renderdata[i] = vmin;
-		if (renderdata[i] > vmax)
-			renderdata[i] = vmax;
-		
-		// Scale the array
-		renderdata[i] = (renderdata[i] - vmin)/difference;		
-		
-		// Stretch the array
-		switch (stretch) {
-			case LINEAR_STRETCH:
-				break;
-			case LOG_STRETCH:
-				renderdata[i] = log10(renderdata[i]/0.05 + 1.0) / log10(1.0/0.05 +1.0);
-				break;
-			case SQRT_STRETCH:
-				renderdata[i] = sqrt(renderdata[i]);
-				break;
-			case ARCSINH_STRETCH:
-				renderdata[i] = asinh(renderdata[i]/-0.033) / asinh(1.0/-0.033);
-				break;
-			case POWER_STRETCH:
-				renderdata[i] = pow(renderdata[i], 2);
-				break;
-			default:
-				break;
-		}
-	}
 	
-	// Normalize the array
-	normalize();
-}
-
-void FitsImage::normalize()
-{
-	for (int i=0; i<numelements; i++)
-	{
-		renderdata[i] = 255.0*renderdata[i];
-//		std::cout << renderdata[i] << "\n";
+	int i;
+	switch (stretch) {
+		case LOG_STRETCH:
+			for (i = 0; i < numelements; i++)
+			{
+				// Copy the array value
+				renderdata[i] = imagedata[i];
+				
+				// First clip values outside of the interval [min, max]
+				if (renderdata[i] < vmin)
+					renderdata[i] = vmin;
+				if (renderdata[i] > vmax)
+					renderdata[i] = vmax;
+				
+				// Scale the array
+				renderdata[i] = (renderdata[i] - vmin)/difference;
+				renderdata[i] = log10(renderdata[i]/0.05 + 1.0) / log10(1.0/0.05 +1.0);
+			}
+			break;
+		case SQRT_STRETCH:
+			for (i = 0; i < numelements; i++)
+			{
+				// Copy the array value
+				renderdata[i] = imagedata[i];
+				
+				// First clip values outside of the interval [min, max]
+				if (renderdata[i] < vmin)
+					renderdata[i] = vmin;
+				if (renderdata[i] > vmax)
+					renderdata[i] = vmax;
+				
+				// Scale the array
+				renderdata[i] = (renderdata[i] - vmin)/difference;
+				renderdata[i] = sqrt(renderdata[i]);
+			}
+			break;
+		case ARCSINH_STRETCH:
+			for (i = 0; i < numelements; i++)
+			{
+				// Copy the array value
+				renderdata[i] = imagedata[i];
+				
+				// First clip values outside of the interval [min, max]
+				if (renderdata[i] < vmin)
+					renderdata[i] = vmin;
+				if (renderdata[i] > vmax)
+					renderdata[i] = vmax;
+				
+				// Scale the array
+				renderdata[i] = (renderdata[i] - vmin)/difference;
+				renderdata[i] = asinh(renderdata[i]/-0.033) / asinh(1.0/-0.033);
+			}
+			break;
+		case POWER_STRETCH:
+			for (i = 0; i < numelements; i++)
+			{
+				// Copy the array value
+				renderdata[i] = imagedata[i];
+				
+				// First clip values outside of the interval [min, max]
+				if (renderdata[i] < vmin)
+					renderdata[i] = vmin;
+				if (renderdata[i] > vmax)
+					renderdata[i] = vmax;
+				
+				// Scale the array
+				renderdata[i] = (renderdata[i] - vmin)/difference;
+				renderdata[i] = pow(renderdata[i], 2);
+			}
+			break;
+		default:
+			for (i = 0; i < numelements; i++)
+			{
+				// Copy the array value
+				renderdata[i] = imagedata[i];
+				
+				// First clip values outside of the interval [min, max]
+				if (renderdata[i] < vmin)
+					renderdata[i] = vmin;
+				if (renderdata[i] > vmax)
+					renderdata[i] = vmax;
+				
+				// Scale the array
+				renderdata[i] = (renderdata[i] - vmin)/difference;
+			}
+			break;
 	}
-	std::cout << "Done normalizing\n";
 }
 
 // BORROWED FROM FABIEN'S CODE

@@ -16,43 +16,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "ComputeWCS.h"
 
-ComputeWCS::ComputeWCS()
-{}
+#ifndef PINPOINTWCS_UTILS_H
+#define PINPOINTWCS_UTILS_H
 
-ComputeWCS::~ComputeWCS()
-{}
 
-void ComputeWCS::getReferenceWCS()
-{}
+namespace PinpointWCSUtils
+{
+	float determineQuantile(float *arr, long arraysize, double q);
+};
 
-void ComputeWCS::addPoint()
-{}
+#endif
 
-void ComputeWCS::deletePoint()
-{}
-
-void ComputeWCS::updatePoint()
-{}
-
-void ComputeWCS::computeTargetWCS()
-{}
-
-void ComputeWCS::xi_eta()
-{}
-
-void ComputeWCS::computeSums()
-{}
-
-void ComputeWCS::computeResiduals()
-{}
-
-void ComputeWCS::plateSolutions()
-{}
-
-void ComputeWCS::referenceToTarget()
-{}
-
-void ComputeWCS::targetToReference()
-{}
