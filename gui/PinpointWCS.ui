@@ -17,7 +17,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
     <item row="0" column="0">
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="verticalSplitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -46,7 +46,7 @@
           <number>1</number>
          </property>
          <item row="0" column="0">
-          <widget class="DropArea" name="label">
+          <widget class="DropArea" name="dropLabel_1">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -75,7 +75,7 @@
           <number>1</number>
          </property>
          <item row="0" column="0">
-          <widget class="GraphicsView" name="graphicsView"/>
+          <widget class="GraphicsView" name="graphicsView_1"/>
          </item>
         </layout>
        </widget>
@@ -96,7 +96,7 @@
           <number>1</number>
          </property>
          <item row="0" column="0">
-          <widget class="DropArea" name="label_2">
+          <widget class="DropArea" name="dropLabel_2">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -140,8 +140,23 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionCoordinates"/>
+   </widget>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionCoordinates">
+   <property name="text">
+    <string>Coordinates</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="4" margin="4"/>
  <customwidgets>

@@ -17,50 +17,29 @@
  *
  */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef COORDINATE_PANEL_H
+#define COORDINATE_PANEL_H
 
 #include <QtGui>
+#include "ui_CoordinatePanel.h"
 
-#include "CoordinatePanel.h"
-#include "ui_PinpointWCS.h"
-#include "ui_dockwidget.h"
-
- 
-class MainWindow : public QMainWindow
-{
-	Q_OBJECT
-
-public:
-	// Methods
-	MainWindow();
-	~MainWindow();
-	
-	// Attributes
-	QDockWidget *dockwidget;
-
-private slots:
-	bool loadImages();
-	bool loadEpoImage(QString& filename);
-	bool loadFitsImage(QString& filename);
-
-private:
-	// Attributes
-	Ui::MainWindow ui;
-	CoordinatePanel *fitsCoordinatePanel;
-	CoordinatePanel *epoCoordinatePanel;
-	
-	QStateMachine *coordinatePanelMachine;
-	QState *coordinatePanelOn;
-	QState *coordinatePanelOff;
-	
-	//Methods
-	void buildCoordinatePanelMachine();
-	void updateCoordinatePanelStates();
-	
-	// to be deprecated ...
-	Ui::DockWidget ui_dockwidget;
-};
-
+class CoordinatePanel : public QFrame
+	{
+		Q_OBJECT
+		
+	public:
+		CoordinatePanel(QWidget *parent = 0);
+		~CoordinatePanel();
+		
+	public slots:
+		void parentResized(QSize sz);
+		
+	private:
+		// Attributes
+		Ui::layout ui;
+		
+		// Methods
+		void updateFontSize(QFont font);
+	};
 
 #endif

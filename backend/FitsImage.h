@@ -52,6 +52,7 @@ class FitsImage
 		
 		// Attributes
 		fitsfile *fptr;
+		struct wcsprm *wcs;
 		int status, wcsstatus;
 		int numhdus, numimgs, naxis, hdutype;
 		long naxisn[2];

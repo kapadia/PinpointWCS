@@ -27,8 +27,8 @@ GraphicsView::GraphicsView(QWidget *parent)
 : QGraphicsView(parent)
 {	
 	// Set up view port to use OpenGL
-	setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
-	setViewportUpdateMode(FullViewportUpdate);
+//	setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+//	setViewportUpdateMode(FullViewportUpdate);
 	
 	// Set attributes from QGraphicsView
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

@@ -32,6 +32,7 @@ FitsImage::FitsImage(QString &fileName)
 	
 	// Initialize some attributes
 	fptr = NULL;
+	wcs = NULL;
 	status = 0;
 	imagedata = NULL;
 	renderdata = NULL;
@@ -132,39 +133,6 @@ FitsImage::FitsImage(QString &fileName)
 			free(fpixel);
 			continue;
 		}
-		
-		/**
-		// Use the BITPIX to read the data using the correct type
-		if (bitpix == 8)
-		{
-			fits_read_pix(fptr, TBYTE, fpixel, numelements, NULL, imagedata, NULL, &status);
-		}
-		else if(bitpix == 16)
-		{
-			int tmp;
-			fits_get_img_equivtype(fptr, &tmp, &status);
-			if (tmp == USHORT_IMG)
-			{
-				fits_read_pix(fptr, TUSHORT, fpixel, numelements, NULL, imagedata, NULL, &status);
-			}
-			else if(tmp == SHORT_IMG)
-			{
-				fits_read_pix(fptr, TSHORT, fpixel, numelements, NULL, imagedata, NULL, &status);
-			}
-			else
-			{
-				fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
-			}
-		}
-		else if(bitpix==32)
-		{
-			fits_read_pix(fptr, TINT, fpixel, numelements, NULL, imagedata, NULL, &status);
-		}
-		else
-		{
-			fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
-		}
-		**/
 		
 		fits_read_pix(fptr, TFLOAT, fpixel, numelements, NULL, imagedata, NULL, &status);
 		free(fpixel);		
@@ -271,7 +239,6 @@ bool FitsImage::checkWorldCoordinateSystem()
 	
 	// Pass header to WCSLIB
 	int nreject, nwcs;
-	struct wcsprm *wcs;
 	wcsstatus = wcspih(header, ncards, WCSHDR_all, -3, &nreject, &nwcs, &wcs);
 	free(header);
 	
@@ -337,39 +304,7 @@ void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* new
 }
 
 bool FitsImage::calculatePercentile(float lp, float up)
-{
-	// Test function that is being designed
-//	vmin = PinpointWCSUtils::determineQuantile(imagedata, numelements, 0.0025);
-//	vmax = PinpointWCSUtils::determineQuantile(imagedata, numelements, 0.9975);
-//	std::cout << "VMIN: " << vmin << "\n";
-//	std::cout << "VMAX: " << vmax << "\n";
-//	return true;
-	
-	// Calculate image statistics
-	/*
-	double sum = 0.;
-	double meanval = 0.;
-	double std = 0.;
-	int i;
-	
-	for (i=0; i<numelements; i++)
-		sum += imagedata[i];
-	
-	meanval = sum/numelements;
-	sum = 0;
-	for (i=0; i<numelements; i++)
-		sum += pow((imagedata[i] - meanval), 2);
-	
-	std = sqrt(sum/numelements);
-	
-	std::cout << "Mean: " << meanval << "\n" << "STD: " << std << "\n";
-	vmin = meanval - 1.5*std;
-	vmax = meanval + 5.5*std;
-	std::cout << "VMIN: " << vmin << "\n";
-	std::cout << "VMAX: " << vmax << "\n";
-	return true;
-	 */
-	
+{	
 	// Create a copy of the data
 	long numelem = numelements;
 	float* dataForSorting = (float *) malloc(numelem * sizeof(float));
@@ -379,7 +314,7 @@ bool FitsImage::calculatePercentile(float lp, float up)
 	if (downsampled)
 	{
 		int newW, newH;
-		downsample(&dataForSorting, width, height, 6*M, &newW, &newH);
+		downsample(&dataForSorting, width, height, 8*M, &newW, &newH);
 		numelem = newW*newH;
 	}
 	
@@ -493,132 +428,3 @@ void FitsImage::calibrateImage(int stretch)
 			break;
 	}
 }
-
-// BORROWED FROM FABIEN'S CODE
-
-// May need to use his method when dealing with FITS image
-// of various BITPIX.
-/*
- bool MainWindow::loadFitsImage(QString& filename)
- {
- std::cout << "Loading FITS image ...\n";
- 
- // Some necessary variables when loading a FITS image.
- fitsfile *fptr;
- int status = 0;
- int bitpix, naxis;
- long naxes[2] = {1, 1}, numpix=0, firstpix[2] = {1,1};
- 
- // Open FITS image
- fits_open_file(&fptr, filename.toStdString().c_str(), READONLY, &status);
- 
- // Check status
- if (status)
- {
- fits_report_error(stderr, status);
- return false;
- }
- 
- fits_get_img_param(fptr, 3, &bitpix, &naxis, naxes, &status);
- if (status)
- {
- fits_report_error(stderr, status);
- return false;
- }
- 
- if (naxis==2)
- numpix = naxes[0]*naxes[1];
- else if (naxis > 2)
- {
- std::cout << "Cannot load higher dimensional FITS image ...\n";
- fits_close_file(fptr, &status);
- return false;
- }
- 
- double *pixels;
- pixels = (double *) malloc(numpix * sizeof(double));
- if (pixels == NULL)
- {
- std::cout << "Memory allocation error ...\n";
- return(1);
- }
- 
- 
- fits_read_pix(fptr, TDOUBLE, firstpix, numpix, NULL, pixels, NULL, &status);
- if (status)
- {
- fits_report_error(stderr, status);
- return false;
- }
- 
- std::cout << pixels << "\n";
- 
- 
- 
- int bytePix = (bitpix>0) ? bitpix/8 : -bitpix/8;
- GLubyte* data = (GLubyte*)calloc(bytePix, numpix);
- if (!data)
- {
- std::cout << "Insufficient memory for FITS image data allocation ...\n";
- fits_close_file(fptr, &status);
- return false;
- }
- 
- if (bitpix==8)
- {
- fits_read_pix(fptr, TBYTE, firstpix, numpix, NULL, data, NULL, &status);
- }
- else if (bitpix==16)
- {
- int tmp;
- fits_get_img_equivtype(fptr, &tmp, &status);
- if (tmp==USHORT_IMG)
- {
- fits_read_pix(fptr, TUSHORT, firstpix, numpix, NULL, data, NULL, &status);
- }
- else if (tmp==SHORT_IMG)
- {
- fits_read_pix(fptr, TSHORT, firstpix, numpix, NULL, data, NULL, &status);
- }
- else
- {
- std::cout << "Unable to load the FITS image ...\n";
- }
- }
- else if (bitpix==32)
- {
- fits_read_pix(fptr, TINT, firstpix, numpix, NULL, data, NULL, &status);
- }
- else if (bitpix==-32)
- {
- fits_read_pix(fptr, TFLOAT, firstpix, numpix, NULL, data, NULL, &status);
- }
- else
- {
- std::cout << "Can not read FITS files with bitpix = " << bitpix;
- fits_close_file(fptr, &status);
- free(data);
- return false;
- }
- 
- if (status)
- {
- fits_report_error(stderr, status);
- fits_close_file(fptr, &status);
- free(data);
- return false;
- }
- 
- 
- // We now have our image loaded in row major format in data
- std::cout << "Got here with out false returns!!";
- fits_close_file(fptr, &status);
- 
- // Load to a QPixmap ?!?!?!
- //std::cout << data;
- //	ui.graphicsView->setup(QPixmap().loadFromData(pixels), true);
- 
- return true;
- }
- */
-
