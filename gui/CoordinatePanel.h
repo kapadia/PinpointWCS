@@ -30,14 +30,14 @@ class CoordinatePanel : public QFrame
 	public:
 		CoordinatePanel(QWidget *parent = 0);
 		~CoordinatePanel();
+		Ui::layout ui;
 		
 	public slots:
 		void parentResized(QSize sz);
 		
 	private:
 		// Attributes
-		Ui::layout ui;
-		
+
 		// Methods
 		void updateFontSize(QFont font);
 	};

@@ -41,6 +41,7 @@ class FitsImage
 		
 		// Attributes
 		QImage* image;
+		struct wcsprm *wcs;
 		
 	private:
 		// Methods
@@ -52,7 +53,6 @@ class FitsImage
 		
 		// Attributes
 		fitsfile *fptr;
-		struct wcsprm *wcs;
 		int status, wcsstatus;
 		int numhdus, numimgs, naxis, hdutype;
 		long naxisn[2];

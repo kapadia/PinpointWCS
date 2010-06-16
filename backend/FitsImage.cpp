@@ -251,6 +251,7 @@ bool FitsImage::checkWorldCoordinateSystem()
 	if (wcsstatus == 0)
 	{
 		std::cout << "World coordinate systems found!\n";
+		std::cout << wcs->crpix[0] << "\n";
 		return true;
 	}
 	

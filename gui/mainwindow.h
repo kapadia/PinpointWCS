@@ -25,6 +25,7 @@
 #include "CoordinatePanel.h"
 #include "ui_PinpointWCS.h"
 #include "ui_dockwidget.h"
+#include "FitsImage.h"
 
  
 class MainWindow : public QMainWindow
@@ -39,13 +40,10 @@ public:
 	// Attributes
 	QDockWidget *dockwidget;
 
-//protected:
-	// Methods
-//	void resizeEvent(QResizeEvent *event);
-
 private:
 	// Attributes
 	Ui::MainWindow ui;
+	FitsImage *fits;
 	CoordinatePanel *fitsCoordinatePanel;
 	CoordinatePanel *epoCoordinatePanel;
 	
@@ -63,7 +61,7 @@ private slots:
 	bool loadImages();
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
-	void updateCoordinatePanelStates();
+	void setCoordinatePanelSize();
 };
 
 
