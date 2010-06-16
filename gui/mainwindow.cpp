@@ -61,12 +61,10 @@ MainWindow::MainWindow()
 	// Connect signals and slots
 	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
-	
 }
 
 
 MainWindow::~MainWindow() {}
-
 
 bool MainWindow::loadImages()
 {
@@ -96,6 +94,10 @@ bool MainWindow::loadImages()
 		fitsCoordinatePanel->show();
 		epoCoordinatePanel->show();
 		buildCoordinatePanelMachine();
+		i
+		// Connect some signals
+		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordinatePanelStates()));
+		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordinatePanelStates()));
 		return true;
 	}
 	return false;
@@ -132,8 +134,17 @@ void MainWindow::buildCoordinatePanelMachine()
 	// Set the initial state of the machine
 	coordinatePanelMachine->setInitialState(coordinatePanelOn);
 	
-	// Set up the states using another function
-	updateCoordinatePanelStates();
+	// Get the position of the QStackedWidgets
+	QRect r1 = ui.graphicsView_1->geometry();
+	QRect r2 = ui.graphicsView_2->geometry();
+	
+	// Properties for the on state
+	coordinatePanelOn->assignProperty(fitsCoordinatePanel, "geometry", QRectF(r1.x()+1, r1.y()+1, r1.width(), 100));
+	coordinatePanelOn->assignProperty(epoCoordinatePanel, "geometry", QRectF(r2.x()+1, r2.y()+1, r2.width(), 100));
+	
+	// Properties for the off state
+	coordinatePanelOff->assignProperty(fitsCoordinatePanel, "geometry", QRectF(r1.x()+1, r1.y()-100, r1.width(), 100));
+	coordinatePanelOff->assignProperty(epoCoordinatePanel, "geometry", QRectF(r2.x()+1, r2.y()-100, r1.height(), 100));
 	
 	// Set transition from on state to off state
 	QAbstractTransition *t1 = coordinatePanelOn->addTransition(ui.actionCoordinates, SIGNAL(triggered()), coordinatePanelOff);
@@ -153,14 +164,14 @@ void MainWindow::buildCoordinatePanelMachine()
 void MainWindow::updateCoordinatePanelStates()
 {
 	// Get the position of the QStackedWidgets
-	QPoint p1 = ui.graphicsView_1->pos();
-	QPoint p2 = ui.graphicsView_2->pos();
+	QRect r1 = ui.graphicsView_1->geometry();
+	QRect r2 = ui.graphicsView_2->geometry();
 	
 	// Properties for the on state
-	coordinatePanelOn->assignProperty(fitsCoordinatePanel, "geometry", QRectF(p1.x()+1, p1.y()+1, 300, 200));
-	coordinatePanelOn->assignProperty(epoCoordinatePanel, "geometry", QRectF(p2.x()+1, p2.y()+1, 300, 200));
+	coordinatePanelOn->assignProperty(fitsCoordinatePanel, "geometry", QRectF(r1.x()+1, r1.y()+1, r1.width(), 100));
+	coordinatePanelOn->assignProperty(epoCoordinatePanel, "geometry", QRectF(r2.x()+1, r2.y()+1, r2.width(), 100));
 	
 	// Properties for the off state
-	coordinatePanelOff->assignProperty(fitsCoordinatePanel, "geometry", QRectF(p1.x()+1, p1.y()-200, 300, 200));
-	coordinatePanelOff->assignProperty(epoCoordinatePanel, "geometry", QRectF(p2.x()+1, p2.y()-200, 300, 200));	
+	coordinatePanelOff->assignProperty(fitsCoordinatePanel, "geometry", QRectF(r1.x()+1, r1.y()-100, r1.width(), 100));
+	coordinatePanelOff->assignProperty(epoCoordinatePanel, "geometry", QRectF(r2.x()+1, r2.y()-100, r2.width(), 100));
 }

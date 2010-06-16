@@ -36,11 +36,18 @@ public:
 	void keyReleaseEvent(QKeyEvent *event);
 //	void wheelEvent(QWheelEvent *event);
 //	void enterEvent(QEvent *event);
+
+protected:
+	// Methods
+	void resizeEvent(QResizeEvent *event);
 	
 private:
 	bool reference;
 	bool clickable;
 	QGraphicsPixmapItem *pixmap;
+	
+signals:
+	void objectResized(QSize s);
 };
 
 #endif

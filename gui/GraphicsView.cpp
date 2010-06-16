@@ -44,11 +44,20 @@ GraphicsView::GraphicsView(QWidget *parent)
 
 GraphicsView::~GraphicsView() {}
 
+void GraphicsView::resizeEvent(QResizeEvent *event)
+{
+	// Emit signal with size information
+	QSize s = size();
+	emit objectResized(s);
+	
+	// Call parent function
+	QWidget::resizeEvent(event);
+}
+
 void GraphicsView::setup(QPixmap pix, bool ref)
 {
 	reference = ref;
 	pixmap = scene()->addPixmap(pix);
-	pixmap->setZValue(1);
 	
 	if (reference)
 		clickable = true;

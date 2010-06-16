@@ -39,10 +39,9 @@ public:
 	// Attributes
 	QDockWidget *dockwidget;
 
-private slots:
-	bool loadImages();
-	bool loadEpoImage(QString& filename);
-	bool loadFitsImage(QString& filename);
+//protected:
+	// Methods
+//	void resizeEvent(QResizeEvent *event);
 
 private:
 	// Attributes
@@ -56,10 +55,15 @@ private:
 	
 	//Methods
 	void buildCoordinatePanelMachine();
-	void updateCoordinatePanelStates();
 	
 	// to be deprecated ...
 	Ui::DockWidget ui_dockwidget;
+	
+private slots:
+	bool loadImages();
+	bool loadEpoImage(QString& filename);
+	bool loadFitsImage(QString& filename);
+	void updateCoordinatePanelStates();
 };
 
 
