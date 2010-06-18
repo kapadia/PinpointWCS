@@ -22,6 +22,7 @@
 
 #include <QtGui>
 
+#include "WcsInfoPanel.h"
 #include "CoordinatePanel.h"
 #include "ui_PinpointWCS.h"
 #include "ui_dockwidget.h"
@@ -44,15 +45,23 @@ private:
 	// Attributes
 	Ui::MainWindow ui;
 	FitsImage *fits;
-	CoordinatePanel *fitsCoordinatePanel;
-	CoordinatePanel *epoCoordinatePanel;
+	WcsInfoPanel *fitsWcsInfoPanel;
+	WcsInfoPanel *epoWcsInfoPanel;
+	CoordinatePanel *fitsCoordPanel;
+	CoordinatePanel *epoCoordPanel;
 	
-	QStateMachine *coordinatePanelMachine;
-	QState *coordinatePanelOn;
-	QState *coordinatePanelOff;
+	// State Machine
+	QStateMachine *WcsInfoPanelMachine;
+	QState *WcsInfoPanelOn;
+	QState *WcsInfoPanelOff;
 	
-	//Methods
-	void buildCoordinatePanelMachine();
+	QStateMachine *CoordPanelMachine;
+	QState *CoordPanelOn;
+	QState *CoordPanelOff;
+	
+	// Methods
+	void buildWcsInfoPanelMachine();
+	void buildCoordPanelMachine();
 	
 	// to be deprecated ...
 	Ui::DockWidget ui_dockwidget;
@@ -61,7 +70,8 @@ private slots:
 	bool loadImages();
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
-	void setCoordinatePanelSize();
+	void setWcsInfoPanelSize();
+	void setCoordPanelSize();
 };
 
 

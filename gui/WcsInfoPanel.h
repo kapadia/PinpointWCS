@@ -17,27 +17,27 @@
  *
  */
 
-#ifndef COORDINATE_PANEL_H
-#define COORDINATE_PANEL_H
+#ifndef WCS_INFO_PANEL_H
+#define WCS_INFO_PANEL_H
 
 #include <QtGui>
-#include "ui_CoordinatePanel.h"
+#include "Ui_WcsInfoPanel.h"
 
-class CoordinatePanel : public QFrame
+class WcsInfoPanel : public QFrame
 	{
 		Q_OBJECT
 		
 	public:
-		CoordinatePanel(QWidget *parent = 0);
-		~CoordinatePanel();
-		Ui::CoordinatePanel ui;
+		WcsInfoPanel(QWidget *parent = 0);
+		~WcsInfoPanel();
+		Ui::WcsInfoPanel ui;
 		
 	public slots:
 		void parentResized(QSize sz);
 		
 	private:
 		// Attributes
-		
+
 		// Methods
 		void updateFontSize(QFont font);
 	};

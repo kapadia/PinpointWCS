@@ -19,13 +19,13 @@
 
 #include <iostream>
 #include <QPalette>
-#include "CoordinatePanel.h"
+#include "WcsInfoPanel.h"
 
-CoordinatePanel::CoordinatePanel(QWidget *parent)
+WcsInfoPanel::WcsInfoPanel(QWidget *parent)
 : QFrame(parent)
 {
 	// Set up user interface from the Designer file
-	std::cout << "Initializing CoordinatePanel ...\n";
+	std::cout << "Initializing WcsInfoPanel ...\n";
     ui.setupUi(this);
 	
 	// Set up frame style
@@ -47,15 +47,34 @@ CoordinatePanel::CoordinatePanel(QWidget *parent)
 	updateFontSize(font);
 }
 
-CoordinatePanel::~CoordinatePanel() {}
+WcsInfoPanel::~WcsInfoPanel() {}
 
-void CoordinatePanel::updateFontSize(QFont font)
+void WcsInfoPanel::updateFontSize(QFont font)
 {
-//	ui.radesys->setFont(font);
-
+	ui.radesys->setFont(font);
+    ui.radesys_input->setFont(font);
+    ui.equinox->setFont(font);
+    ui.equinox_input->setFont(font);
+    ui.naxis->setFont(font);
+    ui.naxis1_input->setFont(font);
+    ui.crval->setFont(font);
+    ui.crval1_input->setFont(font);
+    ui.crpix->setFont(font);
+    ui.crpix1_input->setFont(font);
+    ui.cd->setFont(font);
+    ui.cd_11_input->setFont(font);
+    ui.cd_21_input->setFont(font);
+    ui.naxis2_input->setFont(font);
+    ui.crval2_input->setFont(font);
+    ui.crpix2_input->setFont(font);
+    ui.cd_12_input->setFont(font);
+    ui.cd_22_input->setFont(font);
+    ui.ctype->setFont(font);
+    ui.ctype1_input->setFont(font);
+    ui.ctype2_input->setFont(font);
 }
 
-void CoordinatePanel::parentResized(QSize sz)
+void WcsInfoPanel::parentResized(QSize sz)
 {
 	setGeometry(0, 0.75*sz.height(), sz.width(), sz.height()-0.75*sz.height());
 }

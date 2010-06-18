@@ -169,13 +169,20 @@ FitsImage::FitsImage(QString &fileName)
 		
 		// Initialize a working array
 		renderdata = (float *) malloc(numelements * sizeof(float));
+		if (!renderdata)
+		{
+			std::cout << "Failed to allocate memory for the render array ...\n";
+			free(imagedata);
+			continue;
+		}
+		
 		
 		// Calibrate Image
 		calibrateImage(LINEAR_STRETCH);
 		
 		// Initialize QImage with correct dimensions and data type
 		image = new QImage(width, height, QImage::Format_RGB32);
-
+				
 		int y;
 		if (bitpix < 0) // Not sure why this is a problem, but without memory errors arise ...
 		{
@@ -308,7 +315,13 @@ bool FitsImage::calculatePercentile(float lp, float up)
 {	
 	// Create a copy of the data
 	long numelem = numelements;
-	float* dataForSorting = (float *) malloc(numelem * sizeof(float));
+	float* dataForSorting = NULL;
+	dataForSorting = (float *) malloc(numelem * sizeof(float));
+	if (!dataForSorting)
+	{
+		std::cout << "Failed to allocate memory for the sorting array ...\n";
+		return false;
+	}
 	memcpy(dataForSorting, imagedata, numelem * sizeof(float));
 	
 	// First downsample to reduce the number of operations in sort
