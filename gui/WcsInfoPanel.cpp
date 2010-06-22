@@ -76,5 +76,5 @@ void WcsInfoPanel::updateFontSize(QFont font)
 
 void WcsInfoPanel::parentResized(QSize sz)
 {
-	setGeometry(0, 0.75*sz.height(), sz.width(), sz.height()-0.75*sz.height());
+	resize(sz.width(), 55);
 }

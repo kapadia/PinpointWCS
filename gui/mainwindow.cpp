@@ -37,7 +37,7 @@ MainWindow::MainWindow()
 	
 	// Set null to the CoordinatePanels
 	fitsCoordPanel = new CoordinatePanel(ui.graphicsView_1);
-	epoCoordPanel = new CoordinatePanel(ui.graphicsView_1);
+	epoCoordPanel = new CoordinatePanel(ui.graphicsView_2);
 	fitsCoordPanel->hide();
 	epoCoordPanel->hide();
 	
@@ -95,15 +95,16 @@ bool MainWindow::loadImages()
 		ui.stackedWidget_2->setCurrentIndex(1);
 		
 		// Set up the WcsInfoPanel for each image
-		setWcsInfoPanelSize();
 		fitsWcsInfoPanel->show();
 		epoWcsInfoPanel->show();
+		fitsWcsInfoPanel->parentResized(ui.graphicsView_1->size());
+		epoWcsInfoPanel->parentResized(ui.graphicsView_2->size());
 		buildWcsInfoPanelMachine();
 		
-		// Set up the CoordPanel for each image
-		setCoordPanelSize();
 		fitsCoordPanel->show();
 		epoCoordPanel->show();
+		fitsCoordPanel->parentResized(ui.graphicsView_1->size());
+		epoCoordPanel->parentResized(ui.graphicsView_2->size());
 		buildCoordPanelMachine();
 		
 		// Write some data to the WcsInfoPanels
@@ -147,10 +148,12 @@ bool MainWindow::loadImages()
 		fitsWcsInfoPanel->ui.cd_22_input->setText(cd22);
 		
 		// Connect some signals
-		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(setWcsInfoPanelSize()));
-		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(setWcsInfoPanelSize()));
-		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(setCoordPanelSize()));
-		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(setCoordPanelSize()));
+		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
+		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoWcsInfoPanel, SLOT(parentResized(QSize)));		
+		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsCoordPanel, SLOT(parentResized(QSize)));
+		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoCoordPanel, SLOT(parentResized(QSize)));
+		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
+		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
 		
 		return true;
 	}
@@ -200,27 +203,18 @@ void MainWindow::buildWcsInfoPanelMachine()
 	WcsInfoPanelOff->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -55));
 	
 	// Set transition from on state to off state
-	QAbstractTransition *t1 = WcsInfoPanelOn->addTransition(ui.actionCoordinates, SIGNAL(triggered()), WcsInfoPanelOff);
+	QAbstractTransition *t1 = WcsInfoPanelOn->addTransition(ui.actionInfo, SIGNAL(triggered()), WcsInfoPanelOff);
 	t1->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
 	t1->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
 	
 	// Set transition from off state to on state
-	QAbstractTransition *t2 = WcsInfoPanelOff->addTransition(ui.actionCoordinates, SIGNAL(triggered()), WcsInfoPanelOn);
+	QAbstractTransition *t2 = WcsInfoPanelOff->addTransition(ui.actionInfo, SIGNAL(triggered()), WcsInfoPanelOn);
 	t2->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
 	t2->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
 	
 	// Start the machine
 	WcsInfoPanelMachine->start();
 }
-
-void MainWindow::setWcsInfoPanelSize()
-{
-	// This function sets the size of the coordinate panels
-	// relative to the parent (i.e. GraphicsViews)
-	fitsWcsInfoPanel->resize(QSize(ui.graphicsView_1->width(), 55));
-	epoWcsInfoPanel->resize(QSize(ui.graphicsView_2->width(), 55));
-}
-
 
 void MainWindow::buildCoordPanelMachine()
 {
@@ -232,13 +226,28 @@ void MainWindow::buildCoordPanelMachine()
 	// Set initial state of the machine
 	CoordPanelMachine->setInitialState(CoordPanelOn);
 	
+	// Set properties
+	updateCoordPanelProperties();
+	
+	// Start the machine
+	CoordPanelMachine->start();
+}
+
+
+void MainWindow::updateCoordPanelProperties()
+{
+	
 	// Get the position of the GraphicsViews
 	int h1 = ui.graphicsView_1->height();
 	int h2 = ui.graphicsView_2->height();
+
+	// Move panels
+	fitsCoordPanel->move(0, h1-30);
+	epoCoordPanel->move(0, h2-30);
 	
 	// Properties for the on state
-	CoordPanelOn->assignProperty(fitsCoordPanel, "pos", QPointF(0, h1-40));
-	CoordPanelOn->assignProperty(epoCoordPanel, "pos", QPointF(0, h2-40));
+	CoordPanelOn->assignProperty(fitsCoordPanel, "pos", QPointF(0, h1-30));
+	CoordPanelOn->assignProperty(epoCoordPanel, "pos", QPointF(0, h2-30));
 	
 	// Properties for the off state
 	CoordPanelOff->assignProperty(fitsCoordPanel, "pos", QPointF(0, h1));
@@ -253,19 +262,4 @@ void MainWindow::buildCoordPanelMachine()
 	QAbstractTransition *t2 = CoordPanelOff->addTransition(ui.actionCoordinates, SIGNAL(triggered()), CoordPanelOn);
 	t2->addAnimation(new QPropertyAnimation(fitsCoordPanel, "pos"));
 	t2->addAnimation(new QPropertyAnimation(epoCoordPanel, "pos"));
-	
-	// Start the machine
-	CoordPanelMachine->start();
-}
-
-void MainWindow::setCoordPanelSize()
-{
-	fitsCoordPanel->resize(QSize(ui.graphicsView_1->width(), 40));
-	epoCoordPanel->resize(QSize(ui.graphicsView_2->width(), 40));
-	
-	int h1 = ui.graphicsView_1->height();
-	int h2 = ui.graphicsView_2->height();
-	
-	fitsCoordPanel->move(0, h1-40);
-	epoCoordPanel->move(0, h2-40);
 }

@@ -70,8 +70,7 @@ private slots:
 	bool loadImages();
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
-	void setWcsInfoPanelSize();
-	void setCoordPanelSize();
+	void updateCoordPanelProperties();
 };
 
 

@@ -17,41 +17,19 @@
  *
  */
 
-#ifndef GRAPHICSVIEW_H
-#define GRAPHICSVIEW_H
+#include <iostream>
+#include <QtGui>
+#include "GraphicsScene.h"
 
-#include <QGraphicsView>
-#include <QPixmap>
-#include <QGraphicsPixmapItem>
-
-class GraphicsView : public QGraphicsView
+GraphicsScene::GraphicsScene(QObject *parent)
+: QGraphicsScene(parent)
 {
-	Q_OBJECT
-	
-public:
-	GraphicsView(QWidget *parent = 0);
-	~GraphicsView();
-	void setup(QPixmap pix, bool ref);
-//	void mouseDoubleClickEvent(QMouseEvent *event);
-	void keyPressEvent(QKeyEvent *event);
-	void keyReleaseEvent(QKeyEvent *event);
-//	void mouseMoveEvent(QMouseEvent* event);
-	void enterEvent(QEvent *event);
-	void leaveEvent(QEvent *event);
-	
-//	void wheelEvent(QWheelEvent *event);
+	std::cout << "Initializing GraphicsScene\n";
+}
 
-protected:
-	// Methods
-	void resizeEvent(QResizeEvent *event);
-	
-private:
-	bool reference;
-	bool clickable;
-	QGraphicsPixmapItem *pixmap;
-	
-signals:
-	void objectResized(QSize s);
-};
+GraphicsScene::~GraphicsScene() {}
 
-#endif
+void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+	std::cout << event->scenePos().x() << "\t" << event->scenePos().y() << "\n";
+}

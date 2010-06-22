@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include "GraphicsView.h"
+#include "GraphicsScene.h"
 #include <QtGui>
 #include <QGLWidget>
 
@@ -36,7 +37,8 @@ GraphicsView::GraphicsView(QWidget *parent)
 	setRenderHint(QPainter::Antialiasing);
 	setDragMode(NoDrag);
 	setTransformationAnchor(AnchorViewCenter);
-	setScene(new QGraphicsScene());
+	setScene(new GraphicsScene());
+	viewport()->setMouseTracking(true);
 	
 	// Adjust the background color
 	setBackgroundBrush(QBrush(QColor(30, 30, 30)));
@@ -80,3 +82,21 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 	if (event->key() == Qt::Key_Space)
 		setDragMode(NoDrag);
 }
+
+void GraphicsView::enterEvent(QEvent *event)
+{
+	setDragMode(QGraphicsView::NoDrag);
+	setFocus();
+}
+
+void GraphicsView::leaveEvent(QEvent *event)
+{
+	setDragMode(QGraphicsView::NoDrag);
+}
+
+/*
+void GraphicsView::mouseMoveEvent(QMouseEvent* event)
+{
+	std::cout << event->pos().x() << "\t" << event->pos().y() << "\n";
+}
+*/

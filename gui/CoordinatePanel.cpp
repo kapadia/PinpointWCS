@@ -37,6 +37,7 @@ CoordinatePanel::CoordinatePanel(QWidget *parent)
 	QPalette palette;
 	QColor bgcolor = QColor(0, 0, 0, 100);
 	QColor textcolor = QColor(230, 230, 230);
+//	QColor textcolor = QColor(237, 28, 36);
 	palette.setColor(QPalette::Background, bgcolor);
 	palette.setColor(QPalette::WindowText, textcolor);
 	setPalette(palette);
@@ -51,11 +52,17 @@ CoordinatePanel::~CoordinatePanel() {}
 
 void CoordinatePanel::updateFontSize(QFont font)
 {
-//	ui.radesys->setFont(font);
-
+	ui.x->setFont(font);
+	ui.x_value->setFont(font);
+	ui.y->setFont(font);
+	ui.y_value->setFont(font);
+	ui.ra->setFont(font);
+	ui.ra_value->setFont(font);
+	ui.dec->setFont(font);
+	ui.dec_value->setFont(font);
 }
 
 void CoordinatePanel::parentResized(QSize sz)
 {
-	setGeometry(0, 0.75*sz.height(), sz.width(), sz.height()-0.75*sz.height());
+	resize(sz.width(), 30);
 }

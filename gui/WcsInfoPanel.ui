@@ -29,7 +29,7 @@
       </font>
      </property>
      <property name="text">
-      <string>RADESYS</string>
+      <string>RADESYS:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -58,7 +58,7 @@
       </font>
      </property>
      <property name="text">
-      <string>EQUINOX</string>
+      <string>EQUINOX:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -86,7 +86,7 @@
       </font>
      </property>
      <property name="text">
-      <string>CTYPE</string>
+      <string>CTYPE:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -116,7 +116,7 @@
       </font>
      </property>
      <property name="text">
-      <string>NAXIS</string>
+      <string>NAXIS:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -146,7 +146,7 @@
       </font>
      </property>
      <property name="text">
-      <string>CRVAL</string>
+      <string>CRVAL:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -176,7 +176,7 @@
       </font>
      </property>
      <property name="text">
-      <string>CRPIX</string>
+      <string>CRPIX:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -206,7 +206,7 @@
       </font>
      </property>
      <property name="text">
-      <string>CD</string>
+      <string>CD:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

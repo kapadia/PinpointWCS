@@ -23,7 +23,7 @@
 
 namespace PinpointWCSUtils
 {
-	float determineQuantile(float *arr, long arraysize, double q);
+	float computeQuantile(float *arr, long arraysize, double q);
 };
 
 #endif

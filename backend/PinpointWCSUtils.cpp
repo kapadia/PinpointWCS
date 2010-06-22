@@ -26,17 +26,19 @@
 
 namespace PinpointWCSUtils {
 	
-	float determineQuantile(float *arr, long arraysize, double q)
+	float computeQuantile(float *arr, long arraysize, double q)
 	{
 		std::cout << "Determining Quantile ...\n";
 		long length = arraysize;
 		float dd;
 		double dq;
 		int i, s1len, s2len, randIndex;
+		int num_below = 0;
 		int iter = 0;
 		float* D;
 		float* s1;
 		float* s2;
+		float eps = 1. / length;
 		
 		// Initialize a random number
 		srand(time(NULL));
@@ -46,13 +48,6 @@ namespace PinpointWCSUtils {
 		memcpy(D, arr, length * sizeof(float));
 		
 		while (true) {
-			// Check the length of the array
-			if (length < 3)
-			{
-				dd = D[0];
-				free(D);
-				return dd;
-			}
 			
 			// Choose element from array
 			randIndex = rand() % length;
@@ -83,16 +78,23 @@ namespace PinpointWCSUtils {
 			s1 = (float *) realloc(s1, s1len * sizeof(float));
 			s2 = (float *) realloc(s2, s2len * sizeof(float));
 			
+			// Check length of s1
+			if (s1len == 0)
+				return dd;
+			
 			// Determine the quantile of d
-			dq = (double) s1len / length;
+			dq = (double) (s1len + num_below) / arraysize;
 			
 			// Choose the appropriate array
-			if (dq < q)
+			if (dq > q - eps and dq < q + eps)
+				return dd;
+			else if (dq < q)
 			{
 				// Choose s2
 				D = (float *) realloc(D, s2len * sizeof(float));
 				memcpy(D, s2, s2len * sizeof(float));
 				length = s2len;
+				num_below = num_below + s1len;
 			}
 			else
 			{

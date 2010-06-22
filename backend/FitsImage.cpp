@@ -313,6 +313,16 @@ void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* new
 
 bool FitsImage::calculatePercentile(float lp, float up)
 {	
+	
+	/*
+	vmin = PinpointWCSUtils::computeQuantile(imagedata, numelements, lp);
+	vmax = PinpointWCSUtils::computeQuantile(imagedata, numelements, up);
+	difference = vmax - vmin;
+	std::cout << "VMIN: " << vmin << "\n";
+	std::cout << "VMAX: " << vmax << "\n";
+	return true;
+	*/
+
 	// Create a copy of the data
 	long numelem = numelements;
 	float* dataForSorting = NULL;
@@ -328,7 +338,7 @@ bool FitsImage::calculatePercentile(float lp, float up)
 	if (downsampled)
 	{
 		int newW, newH;
-		downsample(&dataForSorting, width, height, 8*M, &newW, &newH);
+		downsample(&dataForSorting, width, height, 10*M, &newW, &newH);
 		numelem = newW*newH;
 	}
 	
