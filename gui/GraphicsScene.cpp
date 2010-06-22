@@ -22,14 +22,17 @@
 #include "GraphicsScene.h"
 
 GraphicsScene::GraphicsScene(QObject *parent)
-: QGraphicsScene(parent)
-{
-	std::cout << "Initializing GraphicsScene\n";
-}
+: QGraphicsScene(parent) {}
 
 GraphicsScene::~GraphicsScene() {}
 
 void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-	std::cout << event->scenePos().x() << "\t" << event->scenePos().y() << "\n";
+	mousePositionChanged(event->scenePos());
+}
+
+void mousePositionChanged(QPointF pos)
+{
+	std::cout << "Emitting mousePosition signal ...\n";
+	emit mousePositionChanged(pos);
 }

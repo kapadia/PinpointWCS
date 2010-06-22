@@ -21,7 +21,6 @@
 #define GRAPHICSSCENE_H
 
 #include <QGraphicsScene>
-
 #include <QGraphicsSceneMouseEvent>
 
 
@@ -32,9 +31,12 @@ class GraphicsScene : public QGraphicsScene
 public:
 	GraphicsScene(QObject *parent = 0);
 	~GraphicsScene();
-	
+		
 protected:
-	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);		
+	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+	
+signals:
+	void mousePositionChanged(QPointF pos);
 };
 
 #endif

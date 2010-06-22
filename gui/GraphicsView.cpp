@@ -93,10 +93,3 @@ void GraphicsView::leaveEvent(QEvent *event)
 {
 	setDragMode(QGraphicsView::NoDrag);
 }
-
-/*
-void GraphicsView::mouseMoveEvent(QMouseEvent* event)
-{
-	std::cout << event->pos().x() << "\t" << event->pos().y() << "\n";
-}
-*/

@@ -35,7 +35,6 @@ public:
 //	void mouseDoubleClickEvent(QMouseEvent *event);
 	void keyPressEvent(QKeyEvent *event);
 	void keyReleaseEvent(QKeyEvent *event);
-//	void mouseMoveEvent(QMouseEvent* event);
 	void enterEvent(QEvent *event);
 	void leaveEvent(QEvent *event);
 	
