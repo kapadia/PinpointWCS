@@ -67,13 +67,19 @@ void CoordinatePanel::parentResized(QSize sz)
 	resize(sz.width(), 30);
 }
 
-void CoordinatePanel::updateCoordinates(QPointF pos)
+void CoordinatePanel::updateCoordinates(QPointF pos, double *world)
 {
 	QString x;
 	QString y;
+	QString ra;
+	QString dec;
 	
 	x.sprintf("%.2f", pos.x());
 	y.sprintf("%.2f", pos.y());
+	ra.sprintf("%.4f", world[0]);
+	dec.sprintf("%.4f", world[1]);
 	ui.x_value->setText(x);
 	ui.y_value->setText(y);
+	ui.ra_value->setText(ra);
+	ui.dec_value->setText(dec);
 }

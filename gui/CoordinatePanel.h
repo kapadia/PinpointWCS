@@ -31,12 +31,10 @@ class CoordinatePanel : public QFrame
 		CoordinatePanel(QWidget *parent = 0);
 		~CoordinatePanel();
 		Ui::CoordinatePanel ui;
-		QState *onState;
-		QState *offState;
 		
 	public slots:
 		void parentResized(QSize sz);
-		void updateCoordinates(QPointF pos);
+		void updateCoordinates(QPointF pos, double *world);
 		
 	private:
 		// Attributes

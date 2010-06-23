@@ -106,46 +106,7 @@ bool MainWindow::loadImages()
 		fitsCoordPanel->parentResized(ui.graphicsView_1->size());
 		epoCoordPanel->parentResized(ui.graphicsView_2->size());
 		buildCoordPanelMachine();
-		
-		// Write some data to the WcsInfoPanels
-		QString equinox;
-		QString naxis1;
-		QString naxis2;
-		QString crval1;
-		QString crval2;
-		QString crpix1;
-		QString crpix2;
-		QString cd11;
-		QString cd12;
-		QString cd21;
-		QString cd22;
-		
-		equinox.sprintf("%.1f", fits->wcs->equinox);
-		naxis1.sprintf("%d", fits->image->width());
-		naxis2.sprintf("%d", fits->image->height());
-		crval1.sprintf("%.2f", fits->wcs->crval[0]);
-		crval2.sprintf("%.2f", fits->wcs->crval[1]);
-		crpix1.sprintf("%.2f", fits->wcs->crpix[0]);
-		crpix2.sprintf("%.2f", fits->wcs->crpix[1]);
-		cd11.sprintf("%.6f", fits->wcs->cd[0]);
-		cd12.sprintf("%.6f", fits->wcs->cd[1]);
-		cd21.sprintf("%.6f", fits->wcs->cd[2]);
-		cd22.sprintf("%.6f", fits->wcs->cd[3]);
-		
-		fitsWcsInfoPanel->ui.radesys_input->setText(fits->wcs->radesys);
-		fitsWcsInfoPanel->ui.equinox_input->setText(equinox);
-		fitsWcsInfoPanel->ui.ctype1_input->setText(fits->wcs->ctype[0]);
-		fitsWcsInfoPanel->ui.ctype2_input->setText(fits->wcs->ctype[1]);
-		fitsWcsInfoPanel->ui.naxis1_input->setText(naxis1);
-		fitsWcsInfoPanel->ui.naxis2_input->setText(naxis2);
-		fitsWcsInfoPanel->ui.crval1_input->setText(crval1);
-		fitsWcsInfoPanel->ui.crval2_input->setText(crval2);
-		fitsWcsInfoPanel->ui.crpix1_input->setText(crpix1);
-		fitsWcsInfoPanel->ui.crpix2_input->setText(crpix2);
-		fitsWcsInfoPanel->ui.cd_11_input->setText(cd11);
-		fitsWcsInfoPanel->ui.cd_12_input->setText(cd12);
-		fitsWcsInfoPanel->ui.cd_21_input->setText(cd21);
-		fitsWcsInfoPanel->ui.cd_22_input->setText(cd22);
+		fitsWcsInfoPanel->loadWCS(*(fits->wcs), fits->image->width(), fits->image->height());
 		
 		// Connect some signals
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
@@ -154,8 +115,11 @@ bool MainWindow::loadImages()
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoCoordPanel, SLOT(parentResized(QSize)));
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
-		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), fitsCoordPanel, SLOT(updateCoordinates(QPointF)));
-		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), epoCoordPanel, SLOT(updateCoordinates(QPointF)));
+//		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), fitsCoordPanel, SLOT(updateCoordinates(QPointF)));
+//		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), epoCoordPanel, SLOT(updateCoordinates(QPointF)));
+		
+		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(computeCoordinates(QPointF)));
+//		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(computeCoordinates(QPointF)));
 		
 		
 		return true;
@@ -232,6 +196,16 @@ void MainWindow::buildCoordPanelMachine()
 	// Set properties
 	updateCoordPanelProperties();
 	
+	// Set transition from the on state to the off state
+	QAbstractTransition *t1 = CoordPanelOn->addTransition(ui.actionCoordinates, SIGNAL(triggered()), CoordPanelOff);
+	t1->addAnimation(new QPropertyAnimation(fitsCoordPanel, "pos"));
+	t1->addAnimation(new QPropertyAnimation(epoCoordPanel, "pos"));
+	
+	// Set transition from the off state to the on state
+	QAbstractTransition *t2 = CoordPanelOff->addTransition(ui.actionCoordinates, SIGNAL(triggered()), CoordPanelOn);
+	t2->addAnimation(new QPropertyAnimation(fitsCoordPanel, "pos"));
+	t2->addAnimation(new QPropertyAnimation(epoCoordPanel, "pos"));
+	
 	// Start the machine
 	CoordPanelMachine->start();
 }
@@ -255,14 +229,11 @@ void MainWindow::updateCoordPanelProperties()
 	// Properties for the off state
 	CoordPanelOff->assignProperty(fitsCoordPanel, "pos", QPointF(0, h1));
 	CoordPanelOff->assignProperty(epoCoordPanel, "pos", QPointF(0, h2));
-	
-	// Set transition from the on state to the off state
-	QAbstractTransition *t1 = CoordPanelOn->addTransition(ui.actionCoordinates, SIGNAL(triggered()), CoordPanelOff);
-	t1->addAnimation(new QPropertyAnimation(fitsCoordPanel, "pos"));
-	t1->addAnimation(new QPropertyAnimation(epoCoordPanel, "pos"));
-	
-	// Set transition from the off state to the on state
-	QAbstractTransition *t2 = CoordPanelOff->addTransition(ui.actionCoordinates, SIGNAL(triggered()), CoordPanelOn);
-	t2->addAnimation(new QPropertyAnimation(fitsCoordPanel, "pos"));
-	t2->addAnimation(new QPropertyAnimation(epoCoordPanel, "pos"));
+}
+
+void MainWindow::computeCoordinates(QPointF pos)
+{
+	double *world;
+	world = fits->pixelToCelestialCoordinates(pos);
+	fitsCoordPanel->updateCoordinates(pos, world);
 }

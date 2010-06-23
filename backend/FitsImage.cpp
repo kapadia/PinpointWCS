@@ -452,3 +452,25 @@ void FitsImage::calibrateImage(int stretch)
 			break;
 	}
 }
+
+
+double* FitsImage::pixelToCelestialCoordinates(QPointF pos)
+{
+	double *pixcrd = NULL;
+	double *imgcrd = NULL;
+	double phi, theta;
+	double *world = NULL;
+	int *stat = NULL;
+	int nelem = wcs->naxis;
+	pixcrd = (double *) malloc(nelem * sizeof(double));
+	imgcrd = (double *) malloc(nelem * sizeof(double));
+	world  = (double *) malloc(nelem * sizeof(double));
+	stat   = (int *) malloc(nelem * sizeof(int));
+	
+	pixcrd[0] = pos.x();
+	pixcrd[1] = pos.y();
+	
+	wcsp2s(wcs, 1, nelem, pixcrd, imgcrd, &phi, &theta, world, stat);
+	
+	return world;
+}

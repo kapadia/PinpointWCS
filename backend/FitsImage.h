@@ -38,6 +38,7 @@ class FitsImage
 		// Methods
 		FitsImage(QString & fileName);
 		~FitsImage();
+		double* pixelToCelestialCoordinates(QPointF pos);
 		
 		// Attributes
 		QImage* image;

@@ -71,6 +71,7 @@ private slots:
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
 	void updateCoordPanelProperties();
+	void computeCoordinates(QPointF pos);
 };
 
 
