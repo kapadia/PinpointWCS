@@ -76,8 +76,8 @@ void CoordinatePanel::updateCoordinates(QPointF pos, double *world)
 	
 	x.sprintf("%.2f", pos.x());
 	y.sprintf("%.2f", pos.y());
-	ra.sprintf("%.4f", world[0]);
-	dec.sprintf("%.4f", world[1]);
+	ra.sprintf("%.8f", world[0]);
+	dec.sprintf("%.8f", world[1]);
 	ui.x_value->setText(x);
 	ui.y_value->setText(y);
 	ui.ra_value->setText(ra);

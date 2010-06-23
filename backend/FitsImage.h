@@ -21,8 +21,11 @@
 #define FITSIMAGE_H
 
 #include <QImage>
+#include <QPixmap>
+
 #include "fitsio.h"
 #include "wcshdr.h"
+#include "PPWcsImage.h"
 
 #define DOWNSAMPLE_SIZE 2048
 
@@ -32,17 +35,15 @@
 #define ARCSINH_STRETCH 3
 #define POWER_STRETCH 4
 
-class FitsImage
-	{
+class FitsImage : public PPWcsImage {
+
 	public:
 		// Methods
 		FitsImage(QString & fileName);
 		~FitsImage();
-		double* pixelToCelestialCoordinates(QPointF pos);
 		
 		// Attributes
-		QImage* image;
-		struct wcsprm *wcs;
+		QImage *image;
 		
 	private:
 		// Methods

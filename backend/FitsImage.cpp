@@ -20,15 +20,15 @@
 #include <iostream>
 #include <algorithm>
 #include <exception>
-#include <QImage>
+#include <QDebug>
 
 #include "math.h"
 #include "FitsImage.h"
 #include "PinpointWCSUtils.h"
 
-FitsImage::FitsImage(QString &fileName)
+FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 {	
-	std::cout << "Initializing FitsImage object ...\n";
+	qDebug() << "Initializing FitsImage object ...\n";
 	
 	// Initialize some attributes
 	fptr = NULL;
@@ -214,7 +214,10 @@ FitsImage::FitsImage(QString &fileName)
 		free(renderdata);
 		
 		// Flip the image
-		 
+		
+		// Create QPixmap
+		pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
+		
 		// Found a good HDU
 		std::cout << "BAM!\n";
 		break;
@@ -222,6 +225,9 @@ FitsImage::FitsImage(QString &fileName)
 	
 	// Seems that no HDU was appropriate ...
 	fits_close_file(fptr, &status);
+	
+	// Call finishInit from base class
+	finishInit();
 }
 
 FitsImage::~FitsImage() {}
@@ -451,26 +457,4 @@ void FitsImage::calibrateImage(int stretch)
 			}
 			break;
 	}
-}
-
-
-double* FitsImage::pixelToCelestialCoordinates(QPointF pos)
-{
-	double *pixcrd = NULL;
-	double *imgcrd = NULL;
-	double phi, theta;
-	double *world = NULL;
-	int *stat = NULL;
-	int nelem = wcs->naxis;
-	pixcrd = (double *) malloc(nelem * sizeof(double));
-	imgcrd = (double *) malloc(nelem * sizeof(double));
-	world  = (double *) malloc(nelem * sizeof(double));
-	stat   = (int *) malloc(nelem * sizeof(int));
-	
-	pixcrd[0] = pos.x();
-	pixcrd[1] = pos.y();
-	
-	wcsp2s(wcs, 1, nelem, pixcrd, imgcrd, &phi, &theta, world, stat);
-	
-	return world;
 }

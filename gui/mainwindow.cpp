@@ -19,7 +19,7 @@
 
 #include <iostream>
 #include <string>
-#include <QtOpenGL>
+#include <QDebug>
 
 #include "mainwindow.h"
 #include "FitsImage.h"
@@ -106,7 +106,7 @@ bool MainWindow::loadImages()
 		fitsCoordPanel->parentResized(ui.graphicsView_1->size());
 		epoCoordPanel->parentResized(ui.graphicsView_2->size());
 		buildCoordPanelMachine();
-		fitsWcsInfoPanel->loadWCS(*(fits->wcs), fits->image->width(), fits->image->height());
+		fitsWcsInfoPanel->loadWCS(*(fitsImage->wcs), fitsImage->image->width(), fitsImage->image->height());
 		
 		// Connect some signals
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
@@ -118,9 +118,8 @@ bool MainWindow::loadImages()
 //		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), fitsCoordPanel, SLOT(updateCoordinates(QPointF)));
 //		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), epoCoordPanel, SLOT(updateCoordinates(QPointF)));
 		
-		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(computeCoordinates(QPointF)));
-//		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(computeCoordinates(QPointF)));
-		
+		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateFitsCoordinates(QPointF)));
+		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateEpoCoordinates(QPointF)));
 		
 		return true;
 	}
@@ -129,20 +128,18 @@ bool MainWindow::loadImages()
 
 bool MainWindow::loadEpoImage(QString& filename)
 {
-	std::cout << "Loading EPO image ...\n";
-	ui.graphicsView_2->setup(QPixmap(filename), false);
+	qDebug() << "Loading EPO image ...\n";
+	epoImage = new EpoImage(filename);
+	ui.graphicsView_2->setup(*(epoImage->pixmap), false);
 	return true;
 }
 
 
 bool MainWindow::loadFitsImage(QString& filename)
 {
-	std::cout << "Loading FITS image ... \n";
-	fits = new FitsImage(filename);
-
-	std::cout << "Image is " << fits->image->isNull() << "\n";
-	QPixmap *pixmap = new QPixmap(QPixmap::fromImage(*(fits->image), Qt::DiffuseDither));
-	ui.graphicsView_1->setup(*pixmap, true);	
+	qDebug() << "Loading FITS image ... \n";
+	fitsImage = new FitsImage(filename);
+	ui.graphicsView_1->setup(*(fitsImage->pixmap), true);	
 	return true;
 }
 
@@ -231,9 +228,16 @@ void MainWindow::updateCoordPanelProperties()
 	CoordPanelOff->assignProperty(epoCoordPanel, "pos", QPointF(0, h2));
 }
 
-void MainWindow::computeCoordinates(QPointF pos)
+void MainWindow::updateFitsCoordinates(QPointF pos)
 {
 	double *world;
-	world = fits->pixelToCelestialCoordinates(pos);
+	world = fitsImage->pix2sky(pos);
 	fitsCoordPanel->updateCoordinates(pos, world);
+}
+
+void MainWindow::updateEpoCoordinates(QPointF pos)
+{
+	double *world;
+	world = epoImage->pix2sky(pos);
+	epoCoordPanel->updateCoordinates(pos, world);
 }

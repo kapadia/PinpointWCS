@@ -27,6 +27,7 @@
 #include "ui_PinpointWCS.h"
 #include "ui_dockwidget.h"
 #include "FitsImage.h"
+#include "EpoImage.h"
 
  
 class MainWindow : public QMainWindow
@@ -44,7 +45,8 @@ public:
 private:
 	// Attributes
 	Ui::MainWindow ui;
-	FitsImage *fits;
+	FitsImage *fitsImage;
+	EpoImage *epoImage;
 	WcsInfoPanel *fitsWcsInfoPanel;
 	WcsInfoPanel *epoWcsInfoPanel;
 	CoordinatePanel *fitsCoordPanel;
@@ -71,7 +73,8 @@ private slots:
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
 	void updateCoordPanelProperties();
-	void computeCoordinates(QPointF pos);
+	void updateFitsCoordinates(QPointF pos);
+	void updateEpoCoordinates(QPointF pos);
 };
 
 

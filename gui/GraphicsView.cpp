@@ -22,7 +22,7 @@
 #include "GraphicsView.h"
 #include "GraphicsScene.h"
 #include <QtGui>
-#include <QGLWidget>
+//#include <QGLWidget>
 
 GraphicsView::GraphicsView(QWidget *parent)
 : QGraphicsView(parent)
