@@ -72,19 +72,19 @@ MainWindow::~MainWindow() {}
 
 bool MainWindow::loadImages()
 {
-	std::cout << "Attempting to load files to workspace ... \n";
+	qDebug() << "Attempting to load files to workspace ...";
 	if (ui.dropLabel_1->ready and ui.dropLabel_2->ready) {
-		std::cout << "Both DropAreas are ready!\n";
+		qDebug() << "Both DropAreas are ready!";
 		
 		// Call loadEpoImage and loadFitsImage
 		if (!loadEpoImage(ui.dropLabel_2->filepath))
 		{
-			std::cout << "Loading of EPO image failed ...\n";
+			qDebug() << "Loading of EPO image failed ...";
 			return false;
 		}
 		if (!loadFitsImage(ui.dropLabel_1->filepath))
 		{
-			std::cout << "Loading of FITS image failed ...\n";
+			qDebug() << "Loading of FITS image failed ...";
 			return false;
 		}
 		
@@ -106,7 +106,7 @@ bool MainWindow::loadImages()
 		fitsCoordPanel->parentResized(ui.graphicsView_1->size());
 		epoCoordPanel->parentResized(ui.graphicsView_2->size());
 		buildCoordPanelMachine();
-		fitsWcsInfoPanel->loadWCS(*(fitsImage->wcs), fitsImage->image->width(), fitsImage->image->height());
+		fitsWcsInfoPanel->loadWCS(*(fitsImage->wcs));
 		
 		// Connect some signals
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
@@ -115,8 +115,6 @@ bool MainWindow::loadImages()
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoCoordPanel, SLOT(parentResized(QSize)));
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
-//		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), fitsCoordPanel, SLOT(updateCoordinates(QPointF)));
-//		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), epoCoordPanel, SLOT(updateCoordinates(QPointF)));
 		
 		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateFitsCoordinates(QPointF)));
 		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateEpoCoordinates(QPointF)));
@@ -128,7 +126,7 @@ bool MainWindow::loadImages()
 
 bool MainWindow::loadEpoImage(QString& filename)
 {
-	qDebug() << "Loading EPO image ...\n";
+	qDebug() << "Loading EPO image ...";
 	epoImage = new EpoImage(filename);
 	ui.graphicsView_2->setup(*(epoImage->pixmap), false);
 	return true;
@@ -137,7 +135,7 @@ bool MainWindow::loadEpoImage(QString& filename)
 
 bool MainWindow::loadFitsImage(QString& filename)
 {
-	qDebug() << "Loading FITS image ... \n";
+	qDebug() << "Loading FITS image ...";
 	fitsImage = new FitsImage(filename);
 	ui.graphicsView_1->setup(*(fitsImage->pixmap), true);	
 	return true;
@@ -237,7 +235,8 @@ void MainWindow::updateFitsCoordinates(QPointF pos)
 
 void MainWindow::updateEpoCoordinates(QPointF pos)
 {
-	double *world;
-	world = epoImage->pix2sky(pos);
+	double *world = NULL;
+	if (epoImage->wcsExists)
+		world = epoImage->pix2sky(pos);
 	epoCoordPanel->updateCoordinates(pos, world);
 }

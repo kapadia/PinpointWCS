@@ -24,8 +24,11 @@
 #include <QPixmap>
 
 #include "fitsio.h"
-#include "wcshdr.h"
 #include "PPWcsImage.h"
+
+// WCSTools library
+#include "wcs.h"
+#include "fitsfile.h"
 
 #define DOWNSAMPLE_SIZE 2048
 
@@ -70,6 +73,9 @@ class FitsImage : public PPWcsImage {
 		float vmin, vmax;
 		bool downsampled;
 		int M;
+		
+		// Testing WCSTools
+		char alt;
 	};
 
 #endif

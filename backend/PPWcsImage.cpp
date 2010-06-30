@@ -24,40 +24,29 @@
 
 PPWcsImage::PPWcsImage()
 {	
-	qDebug() << "Initializing PPWcsImage object ...\n";
+	qDebug() << "Initializing PPWcsImage object ...";
 	
 	// Initialize attributes common to all base classes
 	wcs = NULL;
 	wcsExists = false; // Might be able to get ride of this boolean, depending on how if(wcs) works ...
-	double *pixcrd = NULL;
-	double *imgcrd = NULL;
-	double phi, theta = NULL;
-	double *world = NULL;
-	int *transformStatus = NULL;
 }
 
 PPWcsImage::~PPWcsImage() {}
 
-void PPWcsImage::finishInit()
+void PPWcsImage::finishInitialization()
 {
-	pixcrd = (double *) malloc(2 * sizeof(double));
-	imgcrd = (double *) malloc(2 * sizeof(double));
-	world = (double *) malloc(2 * sizeof(double));
-	transformStatus = (int *) malloc(2 * sizeof(int));
+	world = (double*) malloc( 2*sizeof(double) );
 }
+
 
 double* PPWcsImage::pix2sky(QPointF pos)
 {
-	
 	if (!wcs)
 		return world;
 	
-	// Write the xy pixel coordinate to variable
-	pixcrd[0] = pos.x();
-	pixcrd[1] = pos.y();
-	
-	// Call pixel to sky function from WCSLIB
-	wcsp2s(wcs, 1, 2, pixcrd, imgcrd, &phi, &theta, world, transformStatus);
+	xpix = pos.x();
+	ypix = pos.y();
+	pix2wcs(wcs, xpix, ypix, &world[0], &world[1]);	
 	
 	// Perhaps the transformationStatus needs to be checked ...
 	return world;

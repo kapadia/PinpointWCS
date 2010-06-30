@@ -21,8 +21,8 @@
 #define PPWCSIMAGE_H
 
 #include <QPixmap>
-
-#include "wcshdr.h"
+#include "wcs.h"
+#include "fitsfile.h"
 
 class PPWcsImage {
 	
@@ -33,17 +33,15 @@ public:
 	double *pix2sky(QPointF pos);
 	bool wcsExists;
 	QPixmap *pixmap;
-	struct wcsprm *wcs;
+	struct WorldCoor *wcs;
 	
 protected:
-	double *pixcrd;
-	double *imgcrd;
-	double phi, theta;
+	// Variables for WCSTools
+	double xpix, ypix;
 	double *world;
-	int *transformStatus;
 	
 	// Private Methods
-	void finishInit();
+	void finishInitialization();
 };
 
 #endif

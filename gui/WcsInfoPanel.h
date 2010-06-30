@@ -21,8 +21,9 @@
 #define WCS_INFO_PANEL_H
 
 #include <QtGui>
-#include "wcshdr.h"
 #include "Ui_WcsInfoPanel.h"
+#include "wcs.h"
+#include "fitsfile.h"
 
 
 class WcsInfoPanel : public QFrame
@@ -33,7 +34,7 @@ class WcsInfoPanel : public QFrame
 		WcsInfoPanel(QWidget *parent = 0);
 		~WcsInfoPanel();
 		Ui::WcsInfoPanel ui;
-		void loadWCS(wcsprm& wcs, int width, int height);
+		void loadWCS(struct WorldCoor wcs);
 		
 	public slots:
 		void parentResized(QSize sz);

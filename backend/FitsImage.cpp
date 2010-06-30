@@ -26,13 +26,16 @@
 #include "FitsImage.h"
 #include "PinpointWCSUtils.h"
 
+#include "wcs.h"
+#include "fitsfile.h"
+
 FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 {	
-	qDebug() << "Initializing FitsImage object ...\n";
+	qDebug() << "Initializing FitsImage object ...";
 	
 	// Initialize some attributes
 	fptr = NULL;
-	wcs = NULL;
+//	wcs = NULL;
 	status = 0;
 	imagedata = NULL;
 	renderdata = NULL;
@@ -69,7 +72,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		fits_movabs_hdu(fptr, kk, &hdutype, &status);
 		fits_get_hdu_type(fptr, &hdutype, &status);
 		
-		std::cout << "Header Number: " << kk << "\n";
+		qDebug() << "Header Number: " << kk;
 		
 		if (hdutype != IMAGE_HDU)
 			continue;
@@ -78,21 +81,21 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		fits_get_img_dim(fptr, &naxis, &status);
 		if (status)
 		{
-			std::cout << "fits_get_img_dim\n";
+			qDebug() << "fits_get_img_dim";
 			fits_report_error(stderr, status);
 			continue;
 		}
 		
 		if (naxis != 2)
 		{
-			std::cout << "Image does not have the correct dimensions ...\n";
+			qDebug() << "Image does not have the correct dimensions ...";
 			continue;
 		}
 		
 		fits_get_img_size(fptr, 2, naxisn, &status);
 		if (status)
 		{
-			std::cout << "fits_get_img_size\n";
+			qDebug() << "fits_get_img_size";
 			fits_report_error(stderr, status);
 			continue;
 		}
@@ -116,7 +119,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 			fits_report_error(stderr, status);
 			continue;
 		}
-		std::cout << "BITPIX: " << bitpix << "\n";
+		qDebug() << "BITPIX: " << bitpix;
 		
 		// Allocate memory for the first pixel
 		fpixel = (long *) malloc(naxis * sizeof(long));
@@ -129,7 +132,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		imagedata = (float *) malloc(numelements * sizeof(float));
 		if (!imagedata)
 		{
-			std::cout << "Failed to allocate memory for the image array ...\n";
+			qDebug() << "Failed to allocate memory for the image array ...";
 			free(fpixel);
 			continue;
 		}
@@ -140,7 +143,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		{
 			// Free the allocated memory
 			free(imagedata);
-			std::cout << "fits_read_pix\n";
+			qDebug() << "fits_read_pix";
 			fits_report_error(stderr, status);
 			continue;
 		}
@@ -171,7 +174,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		renderdata = (float *) malloc(numelements * sizeof(float));
 		if (!renderdata)
 		{
-			std::cout << "Failed to allocate memory for the render array ...\n";
+			qDebug() << "Failed to allocate memory for the render array ...";
 			free(imagedata);
 			continue;
 		}
@@ -219,25 +222,27 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
 		
 		// Found a good HDU
-		std::cout << "BAM!\n";
+		qDebug() << "BAM!";
 		break;
 	}
 	
 	// Seems that no HDU was appropriate ...
 	fits_close_file(fptr, &status);
 	
-	// Call finishInit from base class
-	finishInit();
+	// Call finishInitialization from base class
+	finishInitialization();
 }
 
 FitsImage::~FitsImage() {}
 
 bool FitsImage::checkWorldCoordinateSystem()
 {
-	std::cout << "Checking World Coordinate System ...\n";
+
+	qDebug() << "Checking World Coordinate System ...";
 	// Define all the variables needed for complete WCS
 	char *header;
 	int ncards;
+	alt = NULL;
 	
 	// Call cfitsio routines to get the header
 	fits_hdr2str(fptr, 1, NULL, 0, &header, &ncards, &status);
@@ -245,30 +250,42 @@ bool FitsImage::checkWorldCoordinateSystem()
 	{
 		// Free the allocated memory
 		free(header);
-		std::cout << "fits_hdr2str\n";
+		qDebug() << "fits_hdr2str";
 		fits_report_error(stderr, status);
 		return false;
 	}
 	
-	// Pass header to WCSLIB
-	int nreject, nwcs;
-	wcsstatus = wcspih(header, ncards, WCSHDR_all, -3, &nreject, &nwcs, &wcs);
-	free(header);
-	
-	if (wcs == 0x0) {
-		std::cout << "No world coordinate systems found ...\n";
-		return false;
-	}
-	
-	// Check the status
-	if (wcsstatus == 0)
+	// Pass header to WCSTools
+	wcs = wcsinit(header);
+	if (nowcs(wcs))
 	{
-		std::cout << "World coordinate systems found!\n";
-		std::cout << wcs->crpix[0] << "\n";
-		return true;
+		// No primary WCS found, check alternates
+		int ii;
+		char *alts = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		for (ii=0; ii<26; ii++)
+		{
+			wcs = wcsinitc(header, &alts[ii]);
+			if (nowcs(wcs))
+			{
+				// Check if the last possible alternate
+				if (ii==25)
+				{
+					qDebug() << "No WCS found ...";
+					free(header);
+					return false;
+				}
+				// Try next alternate
+				continue;
+			}
+			
+			// Alternate WCS found
+			alt = alts[ii];
+			qDebug() << "Alternate WCS found, " << alt;
+			break;			
+		}
 	}
-	
-	return false;
+	qDebug() << "WCS found!!!";\
+	return true;
 }
 
 

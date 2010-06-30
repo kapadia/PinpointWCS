@@ -21,8 +21,6 @@
 #define EPOIMAGE_H
 
 #include <QPixmap>
-#include "wcshdr.h"
-
 #include "PPWcsImage.h"
 
 class EpoImage : public PPWcsImage {

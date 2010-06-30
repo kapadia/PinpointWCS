@@ -24,9 +24,9 @@
 
 EpoImage::EpoImage(QString filename) : PPWcsImage()
 {
-	qDebug() << "Initializing EpoImage object ...\n";
+	qDebug() << "Initializing EpoImage object ...";
 	pixmap = new QPixmap(filename);
 	
 	// Call finishInit from base class
-	finishInit();
+	finishInitialization();
 }
