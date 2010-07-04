@@ -16,4 +16,5 @@ build/
 # Compiled application
 *.app
 
-
+# Shell Scripts
+*.sh

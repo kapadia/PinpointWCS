@@ -17,33 +17,21 @@
  *
  */
 
-#ifndef GRAPHICSVIEW_H
-#define GRAPHICSVIEW_H
+#ifndef COORDMARKER_H
+#define COORDMARKER_H
 
-#include <QGraphicsView>
-#include <QPixmap>
-#include <QGraphicsPixmapItem>
+#include <QGraphicsItem>
 
-class GraphicsView : public QGraphicsView
+class CoordMarker : public QGraphicsItem
 {
-	Q_OBJECT
 	
 public:
-	GraphicsView(QWidget *parent = 0);
-	~GraphicsView();
-//	void mouseDoubleClickEvent(QMouseEvent *event);
-	void keyPressEvent(QKeyEvent *event);
-	void keyReleaseEvent(QKeyEvent *event);
-	void enterEvent(QEvent *event);
-	void leaveEvent(QEvent *event);
-//	void wheelEvent(QWheelEvent *event);
-
-protected:
-	// Methods
-	void resizeEvent(QResizeEvent *event);
+	CoordMarker();
+	~CoordMarker();
 	
-signals:
-	void objectResized(QSize s);
+	// Required methods to implement
+	QRectF boundingRect() const;
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 };
 
 #endif

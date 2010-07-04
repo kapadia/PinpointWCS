@@ -37,7 +37,6 @@ GraphicsView::GraphicsView(QWidget *parent)
 	setRenderHint(QPainter::Antialiasing);
 	setDragMode(NoDrag);
 	setTransformationAnchor(AnchorViewCenter);
-	setScene(new GraphicsScene());
 	viewport()->setMouseTracking(true);
 	
 	// Adjust the background color
@@ -54,21 +53,6 @@ void GraphicsView::resizeEvent(QResizeEvent *event)
 	
 	// Call parent function
 	QWidget::resizeEvent(event);
-}
-
-void GraphicsView::setup(QPixmap pix, bool ref)
-{
-	reference = ref;
-	pixmap = scene()->addPixmap(pix);
-	
-	if (reference)
-		clickable = true;
-	else
-		clickable = false;
-	
-	show();
-	std::cout << "Finished setup\n";
-	
 }
 
 void GraphicsView::keyPressEvent(QKeyEvent *event)

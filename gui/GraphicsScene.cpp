@@ -20,9 +20,20 @@
 #include <iostream>
 #include <QtGui>
 #include "GraphicsScene.h"
+#include "CoordMarker.h";
 
-GraphicsScene::GraphicsScene(QObject *parent)
-: QGraphicsScene(parent) {}
+GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
+: QGraphicsScene(parent)
+{
+	reference = ref;
+	pixmap = addPixmap(pix);
+	
+	if (reference)
+		clickable = true;
+	else
+		clickable = false;
+	qDebug() << "Finished Initializing Scene";
+}
 
 GraphicsScene::~GraphicsScene() {}
 
@@ -31,8 +42,25 @@ void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 	mousePositionChanged(event->scenePos());
 }
 
-void mousePositionChanged(QPointF pos)
+
+void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-	std::cout << "Emitting mousePosition signal ...\n";
-	emit mousePositionChanged(pos);
+	if (clickable)
+	{
+		// Get scene position
+		QPointF pos = event->scenePos();
+		// Toggle the boolean
+		clickable = !clickable;
+		CoordMarker *marker = new CoordMarker;
+		marker->setPos(pos);
+		addItem(marker);
+		// Emit signal
+		emit coordinateMarked();
+	}
+}
+
+
+void GraphicsScene::makeClickable()
+{
+	clickable = !clickable;
 }

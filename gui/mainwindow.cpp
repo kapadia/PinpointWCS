@@ -23,6 +23,7 @@
 
 #include "mainwindow.h"
 #include "FitsImage.h"
+#include "GraphicsScene.h"
 
 MainWindow::MainWindow()
 {
@@ -108,7 +109,7 @@ bool MainWindow::loadImages()
 		buildCoordPanelMachine();
 		fitsWcsInfoPanel->loadWCS(*(fitsImage->wcs));
 		
-		// Connect some signals
+		// Connect some signals -- used for resizing panels
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoWcsInfoPanel, SLOT(parentResized(QSize)));		
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsCoordPanel, SLOT(parentResized(QSize)));
@@ -116,8 +117,14 @@ bool MainWindow::loadImages()
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
 		
+		// Connect more signals -- used for updating info on panels
 		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateFitsCoordinates(QPointF)));
 		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateEpoCoordinates(QPointF)));
+		
+		// Connect yet more signals -- para comunicación entre los GraphicsScenes
+		connect(ui.graphicsView_1->scene(), SIGNAL(coordinateMarked()), ui.graphicsView_2->scene(), SLOT(makeClickable()));
+		connect(ui.graphicsView_2->scene(), SIGNAL(coordinateMarked()), ui.graphicsView_1->scene(), SLOT(makeClickable()));
+		
 		
 		return true;
 	}
@@ -128,7 +135,8 @@ bool MainWindow::loadEpoImage(QString& filename)
 {
 	qDebug() << "Loading EPO image ...";
 	epoImage = new EpoImage(filename);
-	ui.graphicsView_2->setup(*(epoImage->pixmap), false);
+	GraphicsScene *epoScene = new GraphicsScene(*(epoImage->pixmap), false);
+	ui.graphicsView_2->setScene(epoScene);
 	return true;
 }
 
@@ -137,7 +145,8 @@ bool MainWindow::loadFitsImage(QString& filename)
 {
 	qDebug() << "Loading FITS image ...";
 	fitsImage = new FitsImage(filename);
-	ui.graphicsView_1->setup(*(fitsImage->pixmap), true);	
+	GraphicsScene *fitsScene = new GraphicsScene(*(fitsImage->pixmap), true);
+	ui.graphicsView_1->setScene(fitsScene);
 	return true;
 }
 

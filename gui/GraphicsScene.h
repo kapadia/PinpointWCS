@@ -23,20 +23,31 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 
-
 class GraphicsScene : public QGraphicsScene
 {
 	Q_OBJECT
 		
 public:
-	GraphicsScene(QObject *parent = 0);
+	GraphicsScene(QPixmap pix, bool ref, QObject *parent = 0);
 	~GraphicsScene();
 		
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+	void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+
+private:
+	bool reference;
+	bool clickable;
+	QGraphicsPixmapItem *pixmap;
 	
 signals:
 	void mousePositionChanged(QPointF pos);
+	void coordinateMarked();
+
+public slots:
+	void makeClickable();
+	
+	
 };
 
 #endif
