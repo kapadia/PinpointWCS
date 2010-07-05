@@ -21,17 +21,27 @@
 #define COORDMARKER_H
 
 #include <QGraphicsItem>
+#include <QGraphicsSceneMouseEvent>
 
 class CoordMarker : public QGraphicsItem
 {
 	
 public:
-	CoordMarker();
+	CoordMarker(float r, QGraphicsItem *parent = 0);
 	~CoordMarker();
 	
 	// Required methods to implement
 	QRectF boundingRect() const;
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+	
+private:
+	float radius;
 };
 
 #endif

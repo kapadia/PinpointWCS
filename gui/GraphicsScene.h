@@ -39,6 +39,7 @@ private:
 	bool reference;
 	bool clickable;
 	QGraphicsPixmapItem *pixmap;
+	float markerRadius;
 	
 signals:
 	void mousePositionChanged(QPointF pos);

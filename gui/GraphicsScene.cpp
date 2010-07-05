@@ -32,14 +32,24 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 		clickable = true;
 	else
 		clickable = false;
+	
+	// Determine marker radius
+	if (width() > height())
+		markerRadius = width()*0.025;
+	else
+	{
+		markerRadius = height()*0.025;
+	}
 	qDebug() << "Finished Initializing Scene";
 }
 
 GraphicsScene::~GraphicsScene() {}
 
+
 void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
 	mousePositionChanged(event->scenePos());
+	QGraphicsScene::mouseMoveEvent(event);
 }
 
 
@@ -51,7 +61,7 @@ void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 		QPointF pos = event->scenePos();
 		// Toggle the boolean
 		clickable = !clickable;
-		CoordMarker *marker = new CoordMarker;
+		CoordMarker *marker = new CoordMarker(markerRadius);
 		marker->setPos(pos);
 		addItem(marker);
 		// Emit signal

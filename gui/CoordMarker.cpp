@@ -22,41 +22,81 @@
 #include <CoordMarker.h>
 
 
-CoordMarker::CoordMarker()
+CoordMarker::CoordMarker(float r, QGraphicsItem *parent)
+: QGraphicsItem(parent)
 {
 	qDebug() << "Initializing CoordMarker object ...";
-	setFlags(QGraphicsItem::ItemIsSelectable|QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsFocusable);
+	radius = r;
 	setZValue(2);
 	setOpacity(100.0);
 	setSelected(true);
 	setFocus();
-	setFlag(ItemSendsScenePositionChanges, true);
-	setFlag(ItemSendsGeometryChanges, true);
+	setEnabled(true);
+	
+	// Set some flags
+	setFlag(QGraphicsItem::ItemIsSelectable, true);
+	setFlag(QGraphicsItem::ItemIsMovable, true);
+	setFlag(QGraphicsItem::ItemIsFocusable, true);
+	setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+	setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
+	
 }
 
 CoordMarker::~CoordMarker() {}
 
 QRectF CoordMarker::boundingRect() const
 {
-	qreal penWidth = 1;
-	return QRectF(-10 - penWidth / 2, -10 - penWidth / 2, 20 + penWidth, 20 + penWidth);
+	float length = radius/30. + radius;
+	return QRectF(-1*length, -1*length, 2*length, 2*length);
 }
 
 void CoordMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {	
-	// Set up pen and brush
 	QPen pen;
-	pen.setWidthF(1);
-	painter->setPen(pen);	
+	pen.setWidthF(1);	
+	// Set selected state style
+	if (option->state & QStyle::State_Selected)
+	{
+		pen.setColor(Qt::red);
+		painter->setPen(pen);
+		float length = radius/30. + radius;
+		painter->drawLine(0, -1*length, 0, length);
+		painter->drawLine(-1*length, 0, length, 0);
+	}
+	// Set regular state style
+	else
+	{
+		pen.setColor(Qt::yellow);
+		painter->setPen(pen);
+	}
+	painter->setBrush(Qt::NoBrush);
 	
 	// Draw an slightly transparent circle and crosshair
-	painter->setBrush(Qt::red);
-//	painter->setOpacity(0.4);
-	painter->drawEllipse(-10, -10, 20, 20);
-	
-//	painter->setOpacity(1.0);
-	painter->setBrush(Qt::black);
-	painter->drawLine(0, -18, 0, 18);
-	painter->drawLine(-18, 0, 18, 0);
-	
+	painter->drawEllipse(-radius/2, -radius/2, radius, radius);
+}
+
+void CoordMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mousePressEvent(event);
+    update();
+}
+
+void CoordMarker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+	QGraphicsItem::mouseMoveEvent(event);
+}
+
+void CoordMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mouseReleaseEvent(event);
+    update();
+}
+
+QVariant CoordMarker::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+	if (change == QGraphicsItem::ItemPositionHasChanged)
+	{
+		qDebug() << "position changed";
+	}
+	return QGraphicsItem::itemChange(change, value);
 }

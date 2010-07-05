@@ -55,6 +55,7 @@ void GraphicsView::resizeEvent(QResizeEvent *event)
 	QWidget::resizeEvent(event);
 }
 
+
 void GraphicsView::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Space)
@@ -66,6 +67,7 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 	if (event->key() == Qt::Key_Space)
 		setDragMode(NoDrag);
 }
+
 
 void GraphicsView::enterEvent(QEvent *event)
 {

@@ -31,7 +31,6 @@ class GraphicsView : public QGraphicsView
 public:
 	GraphicsView(QWidget *parent = 0);
 	~GraphicsView();
-//	void mouseDoubleClickEvent(QMouseEvent *event);
 	void keyPressEvent(QKeyEvent *event);
 	void keyReleaseEvent(QKeyEvent *event);
 	void enterEvent(QEvent *event);
