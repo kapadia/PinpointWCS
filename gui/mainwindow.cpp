@@ -30,34 +30,25 @@ MainWindow::MainWindow()
 	// Set up user interface from the Designer file
     ui.setupUi(this);
 	
-	// Set null to the WcsInfoPanels
+	// Initialize the WcsInfoPanels
 	fitsWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_1);
 	epoWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_2);
 	fitsWcsInfoPanel->hide();
 	epoWcsInfoPanel->hide();
 	
-	// Set null to the CoordinatePanels
+	// Initialize the CoordinatePanels
 	fitsCoordPanel = new CoordinatePanel(ui.graphicsView_1);
 	epoCoordPanel = new CoordinatePanel(ui.graphicsView_2);
 	fitsCoordPanel->hide();
 	epoCoordPanel->hide();
 	
+	// Initialize the FitsToolbar
+	fitsToolbar = new FitsToolbar(ui.graphicsView_1);
+	fitsToolbar->hide();
+	
 	// Set up the DropSites to accept the correct extensions
 	ui.dropLabel_1->setFileExtensions(false);
 	ui.dropLabel_2->setFileExtensions(true);
-	
-	// Create a tool bar
-	dockwidget = new QDockWidget(this);
-	dockwidget->setObjectName(QString::fromUtf8("dockwidget"));
-	dockwidget->setAllowedAreas(Qt::BottomDockWidgetArea);
-	QWidget* blah = new QWidget(this);
-	dockwidget->setTitleBarWidget(blah);
-	 
-	// Add widgets layout to tool bar
-	ui_dockwidget.setupUi(dockwidget);
-	
-	// Add the tool bar to the main window
-	addDockWidget(Qt::BottomDockWidgetArea, dockwidget, Qt::Horizontal);
 	
 	// Testing message on status bar
 //	QLabel *msg = new QLabel(QString("PinpointWCS is ready!"));
@@ -102,12 +93,16 @@ bool MainWindow::loadImages()
 		epoWcsInfoPanel->parentResized(ui.graphicsView_2->size());
 		buildWcsInfoPanelMachine();
 		
+		// Set up the Coordinate Panels for each image
 		fitsCoordPanel->show();
 		epoCoordPanel->show();
 		fitsCoordPanel->parentResized(ui.graphicsView_1->size());
 		epoCoordPanel->parentResized(ui.graphicsView_2->size());
 		buildCoordPanelMachine();
 		fitsWcsInfoPanel->loadWCS(*(fitsImage->wcs));
+		
+		// Set up the FitsToolbar
+		fitsToolbar->show();
 		
 		// Connect some signals -- used for resizing panels
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));

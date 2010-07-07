@@ -22,10 +22,10 @@
 
 #include <QtGui>
 
+#include "ui_PinpointWCS.h"
 #include "WcsInfoPanel.h"
 #include "CoordinatePanel.h"
-#include "ui_PinpointWCS.h"
-#include "ui_dockwidget.h"
+#include "FitsToolbar.h"
 #include "FitsImage.h"
 #include "EpoImage.h"
 
@@ -51,6 +51,7 @@ private:
 	WcsInfoPanel *epoWcsInfoPanel;
 	CoordinatePanel *fitsCoordPanel;
 	CoordinatePanel *epoCoordPanel;
+	FitsToolbar *fitsToolbar;
 	
 	// State Machine
 	QStateMachine *WcsInfoPanelMachine;
@@ -64,9 +65,6 @@ private:
 	// Methods
 	void buildWcsInfoPanelMachine();
 	void buildCoordPanelMachine();
-	
-	// to be deprecated ...
-	Ui::DockWidget ui_dockwidget;
 	
 private slots:
 	bool loadImages();

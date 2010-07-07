@@ -17,26 +17,23 @@
  *
  */
 
-#include <QApplication>
-#include "mainwindow.h"
+#ifndef FITS_TOOLBAR_H
+#define FITS_TOOLBAR_H
 
-int main(int argc, char *argv[])
-{
-	// Initialize application
-	QApplication app(argc, argv);
-	app.setOrganizationName("Smithsonian Astrophysical Observatory");
-	app.setApplicationName("PinpointWCS");
+#include <QtGui>
+#include "ui_FitsToolbar.h"
+
+class FitsToolbar : public QFrame
+	{
+		Q_OBJECT
 		
-	// Set style sheet
-    QFile styleSheet(":/gui/style.qss");
-    if (!styleSheet.open(QIODevice::ReadOnly)) {
-        qWarning("Unable to open :/gui/style.qss");
-    }
-    qApp->setStyleSheet(styleSheet.readAll());
+	public:
+		FitsToolbar(QWidget *parent = 0);
+		~FitsToolbar();
+		Ui::FitsToolbar ui;
+		
+	public slots:
+		void parentResized(QSize sz);
+	};
 
-	// Set up main window
-	MainWindow mainwindow;
-	mainwindow.show();
-	
-	return app.exec();
-}
+#endif

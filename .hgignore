@@ -6,6 +6,7 @@ syntax: glob
 moc_*.cpp
 ui_*.h
 *.plist
+qrc_*.cpp
 
 # Xcode project file
 *.xcodeproj/

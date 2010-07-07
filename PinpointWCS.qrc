@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+	<file>gui/style.qss</file>
+	<file>gui/images/spindown.png</file>
+	<file>gui/images/spindown-pressed.png</file>
+</qresource>
+</RCC>

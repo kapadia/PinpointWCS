@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FitsToolbar</class>
+ <widget class="QWidget" name="FitsToolbar">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>688</width>
+    <height>80</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
+    <widget class="QSlider" name="vminSlider">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QSlider" name="vmaxSlider">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QComboBox" name="stretchComboBox">
+     <item>
+      <property name="text">
+       <string>Linear</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Logarithm</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Square Root</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Arcsinh</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Power</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="invertCheckBox">
+     <property name="text">
+      <string>Invert</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
