@@ -17,7 +17,6 @@
  *
  */
 
-#include <iostream>
 #include <algorithm>
 #include <exception>
 #include <QDebug>
@@ -35,7 +34,6 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	
 	// Initialize some attributes
 	fptr = NULL;
-//	wcs = NULL;
 	status = 0;
 	imagedata = NULL;
 	renderdata = NULL;
@@ -185,8 +183,9 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		
 		// Initialize QImage with correct dimensions and data type
 		image = new QImage(width, height, QImage::Format_RGB32);
-				
+		
 		int y;
+		/*
 		if (bitpix < 0) // Not sure why this is a problem, but without memory errors arise ...
 		{
 			for (x=0; x<width; x++)
@@ -210,6 +209,18 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 					QRgb *p = (QRgb *) image->scanLine(x) + y;
 					*p = qRgb(pixel, pixel, pixel);
 				}
+			}
+		}
+		 */
+		int ii, jj;
+		for (ii=0; ii<height; ii++)
+		{
+			for (jj=0; jj<width; jj++)
+			{
+				long index = jj+width*(height-ii-1);
+				int pixel = floor(255.0 * renderdata[index] + 0.5);
+				QRgb *p = (QRgb *) image->scanLine(ii) + jj;
+				*p = qRgb(pixel, pixel, pixel);
 			}
 		}
 		
@@ -305,7 +316,7 @@ void FitsImage::calculateExtremals()
 
 void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* newH)
 {
-	std::cout << "Downsampling data ... \n";
+	qDebug() << "Downsampling data ...";
 	
 	int i, j, I, J;
 	
@@ -352,7 +363,7 @@ bool FitsImage::calculatePercentile(float lp, float up)
 	dataForSorting = (float *) malloc(numelem * sizeof(float));
 	if (!dataForSorting)
 	{
-		std::cout << "Failed to allocate memory for the sorting array ...\n";
+		qDebug() << "Failed to allocate memory for the sorting array ...";
 		return false;
 	}
 	memcpy(dataForSorting, imagedata, numelem * sizeof(float));
@@ -376,8 +387,8 @@ bool FitsImage::calculatePercentile(float lp, float up)
 	vmax = dataForSorting[vmaxIndex];
 	difference = vmax - vmin;
 	
-	std::cout << "VMIN: " << vmin << "\n";
-	std::cout << "VMAX: " << vmax << "\n";
+	qDebug() << "VMIN: " << vmin;
+	qDebug() << "VMAX: " << vmax;
 	
 	free(dataForSorting);
 	return true;
@@ -385,7 +396,7 @@ bool FitsImage::calculatePercentile(float lp, float up)
 
 void FitsImage::calibrateImage(int stretch)
 {
-	std::cout << "Calibrating image for display ...\n";
+	qDebug() << "Calibrating image for display ...";
 	
 	int i;
 	switch (stretch) {

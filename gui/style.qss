@@ -1,23 +1,23 @@
 QComboBox::drop-down {
 	subcontrol-origin: padding;
 	subcontrol-position: center right;
-	width: 20px;
 	border: none;
+	min-width: 6em;
 }
 
 
 QComboBox::down-arrow {
-	width: 20px;
+	min-width: 6em;
 	height: 22px;
-	image: url(:/gui/spindown.png);
+	image: url(:/gui/images/spindown.png);
 	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgb(97, 97, 92), stop: 1 rgb(40, 40, 40));
 }
 
 QComboBox::down-arrow:on {
-	image: url(:/gui/spindown-pressed.png);
+	image: url(:/gui/images/spindown-pressed.png);
 }
 
-QComboBox {
+QComboBox QAbstractItemView {
 	color: rgb(31, 31, 31);
 	border: 1px solid rgb(0, 0, 0);
 	border-bottom: 1px solid rgb(0, 0, 0);
