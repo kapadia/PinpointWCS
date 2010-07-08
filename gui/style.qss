@@ -1,4 +1,4 @@
-QComboBox::drop-down {
+QComboBox#stretchComboBox::drop-down {
 	subcontrol-origin: padding;
 	subcontrol-position: center right;
 	border: none;
@@ -6,18 +6,17 @@ QComboBox::drop-down {
 }
 
 
-QComboBox::down-arrow {
-	min-width: 6em;
+QComboBox#stretchComboBox::down-arrow {
 	height: 22px;
 	image: url(:/gui/images/spindown.png);
 	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgb(97, 97, 92), stop: 1 rgb(40, 40, 40));
 }
 
-QComboBox::down-arrow:on {
+QComboBox#stretchComboBox::down-arrow:on {
 	image: url(:/gui/images/spindown-pressed.png);
 }
 
-QComboBox QAbstractItemView {
+QComboBox#stretchComboBox QAbstractItemView {
 	color: rgb(31, 31, 31);
 	border: 1px solid rgb(0, 0, 0);
 	border-bottom: 1px solid rgb(0, 0, 0);
@@ -25,6 +24,6 @@ QComboBox QAbstractItemView {
 	background: rgba(93, 95, 98, 100%);
 }
 
-QComboBox {
+QComboBox#stretchComboBox {
 	padding-left: 3px;
 }

@@ -26,14 +26,16 @@ int main(int argc, char *argv[])
 	QApplication app(argc, argv);
 	app.setOrganizationName("Smithsonian Astrophysical Observatory");
 	app.setApplicationName("PinpointWCS");
-		
+	
+	/*
 	// Set style sheet
     QFile styleSheet(":/gui/style.qss");
     if (!styleSheet.open(QIODevice::ReadOnly)) {
         qWarning("Unable to open :/gui/style.qss");
     }
     qApp->setStyleSheet(styleSheet.readAll());
-
+	 */
+	
 	// Set up main window
 	MainWindow mainwindow;
 	mainwindow.show();

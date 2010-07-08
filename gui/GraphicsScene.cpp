@@ -74,3 +74,8 @@ void GraphicsScene::makeClickable()
 {
 	clickable = !clickable;
 }
+
+void GraphicsScene::updatePixmap(QPixmap *pm)
+{
+	pixmap->setPixmap(*pm);
+}

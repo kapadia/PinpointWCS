@@ -30,3 +30,6 @@ EpoImage::EpoImage(QString filename) : PPWcsImage()
 	// Call finishInit from base class
 	finishInitialization();
 }
+
+EpoImage::~EpoImage()
+{}

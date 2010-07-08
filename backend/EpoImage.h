@@ -25,6 +25,8 @@
 
 class EpoImage : public PPWcsImage {
 	
+	Q_OBJECT
+	
 public:
 	// Public Methods
 	EpoImage(QString filename);

@@ -63,7 +63,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	// Begin looping over each HDU
 	for (int kk=1; kk <= numhdus; kk++)
 	{
-		int x;
+		int ii;
 		status = 0;
 		
 		// Change to another HDU and check type
@@ -123,8 +123,8 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		fpixel = (long *) malloc(naxis * sizeof(long));
 		
 		// Initialize the first pixel location to {1, ..., 1}
-		for (x=0; x<naxis; x++)
-			fpixel[x] = 1;
+		for (ii=0; ii<naxis; ii++)
+			fpixel[ii] = 1;
 		
 		// Allocate memory for the image pixels
 		imagedata = (float *) malloc(numelements * sizeof(float));
@@ -179,59 +179,11 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		
 		
 		// Calibrate Image
-		calibrateImage(LINEAR_STRETCH);
+		if ( !calibrateImage(LINEAR_STRETCH, vmin, vmax) )
+			continue;
 		
-		// Initialize QImage with correct dimensions and data type
-		image = new QImage(width, height, QImage::Format_RGB32);
-		
-		int y;
-		/*
-		if (bitpix < 0) // Not sure why this is a problem, but without memory errors arise ...
-		{
-			for (x=0; x<width; x++)
-			{
-				for (y=0; y<height; y++)
-				{	
-					long index = y+width*x;
-					int pixel = floor(255.0 * renderdata[index] + 0.5);
-					image->setPixel(x, y, qRgb(pixel, pixel, pixel));
-				}
-			}
-		}
-		else
-		{
-			for (x=0; x<width; x++)
-			{
-				for (y=0; y<height; y++)
-				{	
-					long index = y+width*x;
-					int pixel = floor(255.0 * renderdata[index] + 0.5);
-					QRgb *p = (QRgb *) image->scanLine(x) + y;
-					*p = qRgb(pixel, pixel, pixel);
-				}
-			}
-		}
-		 */
-		int ii, jj;
-		for (ii=0; ii<height; ii++)
-		{
-			for (jj=0; jj<width; jj++)
-			{
-				long index = jj+width*(height-ii-1);
-				int pixel = floor(255.0 * renderdata[index] + 0.5);
-				QRgb *p = (QRgb *) image->scanLine(ii) + jj;
-				*p = qRgb(pixel, pixel, pixel);
-			}
-		}
-		
-		// Free some allocated memory
-		free(renderdata);
-		
-		// Flip the image
-		
-		// Create QPixmap
-		pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
-		
+		break;
+
 		// Found a good HDU
 		qDebug() << "BAM!";
 		break;
@@ -394,10 +346,21 @@ bool FitsImage::calculatePercentile(float lp, float up)
 	return true;
 }
 
-void FitsImage::calibrateImage(int stretch)
+bool FitsImage::calibrateImage(int stretch, float minpix, float maxpix)
 {
 	qDebug() << "Calibrating image for display ...";
 	
+	// Initialize a working array
+	renderdata = (float *) malloc(numelements * sizeof(float));
+	if (!renderdata)
+	{
+		qDebug() << "Failed to allocate memory for the render array ...";
+		free(imagedata);
+		return false;
+	}
+	
+	// Compute difference
+	difference = maxpix - minpix;
 	int i;
 	switch (stretch) {
 		case LOG_STRETCH:
@@ -406,14 +369,14 @@ void FitsImage::calibrateImage(int stretch)
 				// Copy the array value
 				renderdata[i] = imagedata[i];
 				
-				// First clip values outside of the interval [min, max]
-				if (renderdata[i] < vmin)
-					renderdata[i] = vmin;
-				if (renderdata[i] > vmax)
-					renderdata[i] = vmax;
+				// First clip values outside of the interval [minpix, maxpix]
+				if (renderdata[i] < minpix)
+					renderdata[i] = minpix;
+				if (renderdata[i] > maxpix)
+					renderdata[i] = maxpix;
 				
 				// Scale the array
-				renderdata[i] = (renderdata[i] - vmin)/difference;
+				renderdata[i] = (renderdata[i] - minpix)/difference;
 				renderdata[i] = log10(renderdata[i]/0.05 + 1.0) / log10(1.0/0.05 +1.0);
 			}
 			break;
@@ -424,13 +387,13 @@ void FitsImage::calibrateImage(int stretch)
 				renderdata[i] = imagedata[i];
 				
 				// First clip values outside of the interval [min, max]
-				if (renderdata[i] < vmin)
-					renderdata[i] = vmin;
-				if (renderdata[i] > vmax)
-					renderdata[i] = vmax;
+				if (renderdata[i] < minpix)
+					renderdata[i] = minpix;
+				if (renderdata[i] > maxpix)
+					renderdata[i] = maxpix;
 				
 				// Scale the array
-				renderdata[i] = (renderdata[i] - vmin)/difference;
+				renderdata[i] = (renderdata[i] - minpix)/difference;
 				renderdata[i] = sqrt(renderdata[i]);
 			}
 			break;
@@ -441,13 +404,13 @@ void FitsImage::calibrateImage(int stretch)
 				renderdata[i] = imagedata[i];
 				
 				// First clip values outside of the interval [min, max]
-				if (renderdata[i] < vmin)
-					renderdata[i] = vmin;
-				if (renderdata[i] > vmax)
-					renderdata[i] = vmax;
+				if (renderdata[i] < minpix)
+					renderdata[i] = minpix;
+				if (renderdata[i] > maxpix)
+					renderdata[i] = maxpix;
 				
 				// Scale the array
-				renderdata[i] = (renderdata[i] - vmin)/difference;
+				renderdata[i] = (renderdata[i] - minpix)/difference;
 				renderdata[i] = asinh(renderdata[i]/-0.033) / asinh(1.0/-0.033);
 			}
 			break;
@@ -458,13 +421,13 @@ void FitsImage::calibrateImage(int stretch)
 				renderdata[i] = imagedata[i];
 				
 				// First clip values outside of the interval [min, max]
-				if (renderdata[i] < vmin)
-					renderdata[i] = vmin;
-				if (renderdata[i] > vmax)
-					renderdata[i] = vmax;
+				if (renderdata[i] < minpix)
+					renderdata[i] = minpix;
+				if (renderdata[i] > maxpix)
+					renderdata[i] = maxpix;
 				
 				// Scale the array
-				renderdata[i] = (renderdata[i] - vmin)/difference;
+				renderdata[i] = (renderdata[i] - minpix)/difference;
 				renderdata[i] = pow(renderdata[i], 2);
 			}
 			break;
@@ -475,14 +438,103 @@ void FitsImage::calibrateImage(int stretch)
 				renderdata[i] = imagedata[i];
 				
 				// First clip values outside of the interval [min, max]
-				if (renderdata[i] < vmin)
-					renderdata[i] = vmin;
-				if (renderdata[i] > vmax)
-					renderdata[i] = vmax;
+				if (renderdata[i] < minpix)
+					renderdata[i] = minpix;
+				if (renderdata[i] > maxpix)
+					renderdata[i] = maxpix;
 				
 				// Scale the array
-				renderdata[i] = (renderdata[i] - vmin)/difference;
+				renderdata[i] = (renderdata[i] - minpix)/difference;
 			}
 			break;
 	}
+	
+	// Initialize QImage with correct dimensions and data type
+	image = new QImage(width, height, QImage::Format_RGB32);
+	
+	// Set pixels, using different function depending on the BITPIX
+	int ii, jj;
+	if (bitpix < 0)
+	{
+		for (ii=0; ii<height; ii++)
+		{
+			for (jj=0; jj<width; jj++)
+			{
+				long index = jj+width*(height-ii-1);
+				int pixel = floor(255.0 * renderdata[index] + 0.5);
+				image->setPixel(jj, ii, qRgb(pixel, pixel, pixel));
+			}
+		}
+	}
+	else
+	{
+		for (ii=0; ii<height; ii++)
+		{
+			for (jj=0; jj<width; jj++)
+			{
+				long index = jj+width*(height-ii-1);
+				int pixel = floor(255.0 * renderdata[index] + 0.5);
+				QRgb *p = (QRgb *) image->scanLine(ii) + jj;
+				*p = qRgb(pixel, pixel, pixel);
+			}
+		}	
+	}
+	
+	// Free some memory
+	free(renderdata);
+	
+	// Set pixmap
+	pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
+	
+	// Free some memory
+	free(image);
+	
+	// Emit signal to broadcast the new pixmap
+	emit pixmapChanged();
+	
+	return true;
+}
+
+
+void FitsImage::setQImage()
+{
+	// Initialize QImage with correct dimensions and data type
+	image = new QImage(width, height, QImage::Format_RGB32);
+	
+	// Set pixels, using different function depending on the BITPIX
+	int ii, jj;
+	if (bitpix < 0)
+	{
+		for (ii=0; ii<height; ii++)
+		{
+			for (jj=0; jj<width; jj++)
+			{
+				long index = jj+width*(height-ii-1);
+				int pixel = floor(255.0 * renderdata[index] + 0.5);
+				image->setPixel(jj, ii, qRgb(pixel, pixel, pixel));
+			}
+		}
+	}
+	else
+	{
+		for (ii=0; ii<height; ii++)
+		{
+			for (jj=0; jj<width; jj++)
+			{
+				long index = jj+width*(height-ii-1);
+				int pixel = floor(255.0 * renderdata[index] + 0.5);
+				QRgb *p = (QRgb *) image->scanLine(ii) + jj;
+				*p = qRgb(pixel, pixel, pixel);
+			}
+		}	
+	}
+	
+	free(renderdata);
+}
+
+
+void FitsImage::setQPixmap()
+{
+	pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
+	free(image);
 }

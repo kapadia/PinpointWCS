@@ -20,11 +20,14 @@
 #ifndef PPWCSIMAGE_H
 #define PPWCSIMAGE_H
 
+#include <QObject>
 #include <QPixmap>
 #include "wcs.h"
 #include "fitsfile.h"
 
-class PPWcsImage {
+class PPWcsImage : public QObject {
+	
+	Q_OBJECT
 	
 public:
 	// Public Methods

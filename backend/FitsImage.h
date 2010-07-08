@@ -22,13 +22,13 @@
 
 #include <QImage>
 #include <QPixmap>
-
 #include "fitsio.h"
-#include "PPWcsImage.h"
 
 // WCSTools library
 #include "wcs.h"
 #include "fitsfile.h"
+
+#include "PPWcsImage.h"
 
 #define DOWNSAMPLE_SIZE 2048
 
@@ -39,43 +39,50 @@
 #define POWER_STRETCH 4
 
 class FitsImage : public PPWcsImage {
-
-	public:
-		// Methods
-		FitsImage(QString & fileName);
-		~FitsImage();
+	
+	Q_OBJECT
+	
+public:
+	// Methods
+	FitsImage(QString & fileName);
+	~FitsImage();
+	
+	// Attributes
+	QImage *image;
 		
-		// Attributes
-		QImage *image;
+signals:
+	void pixmapChanged();
+	
+private:
+	// Methods
+	bool checkWorldCoordinateSystem();
+	void calculateExtremals();
+	void downsample(float** arr, int W, int H, int S, int* newW, int* newH);
+	bool calculatePercentile(float lp, float up);
+	bool calibrateImage(int stretch, float minpix, float maxpix);
+	void setQImage();
+	void setQPixmap();
 		
-	private:
-		// Methods
-		bool checkWorldCoordinateSystem();
-		void calculateExtremals();
-		void downsample(float** arr, int W, int H, int S, int* newW, int* newH);
-		bool calculatePercentile(float lp, float up);
-		void calibrateImage(int stretch);
+	// Attributes
+	fitsfile *fptr;
+	int status, wcsstatus;
+	int numhdus, numimgs, naxis, hdutype;
+	long naxisn[2];
+	long width, height;
+	long numelements;
+	long* fpixel;
+	int bitpix;
+	float* imagedata;
+	float* renderdata;
+	float minpix, maxpix, difference;
+	float lowerPercentile;
+	float upperPercentile;
+	float vmin, vmax;
+	bool downsampled;
+	int M;
 		
-		// Attributes
-		fitsfile *fptr;
-		int status, wcsstatus;
-		int numhdus, numimgs, naxis, hdutype;
-		long naxisn[2];
-		long width, height;
-		long numelements;
-		long* fpixel;
-		int bitpix;
-		float* imagedata;
-		float* renderdata;
-		float minpix, maxpix, difference;
-		float lowerPercentile;
-		float upperPercentile;
-		float vmin, vmax;
-		bool downsampled;
-		int M;
-		
-		// Testing WCSTools
-		char alt;
+	// Testing WCSTools
+	char alt;
 	};
 
 #endif

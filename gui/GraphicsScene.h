@@ -46,6 +46,7 @@ signals:
 	void coordinateMarked();
 
 public slots:
+	void updatePixmap(QPixmap *pm);
 	void makeClickable();
 	
 	
