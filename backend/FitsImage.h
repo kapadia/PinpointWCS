@@ -49,9 +49,12 @@ public:
 	
 	// Attributes
 	QImage *image;
-		
+	
+public slots:
+	void magic(int stretch);
+	
 signals:
-	void pixmapChanged();
+	void pixmapChanged(QPixmap *pm);
 	
 private:
 	// Methods

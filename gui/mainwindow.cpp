@@ -120,6 +120,9 @@ bool MainWindow::loadImages()
 		connect(ui.graphicsView_1->scene(), SIGNAL(coordinateMarked()), ui.graphicsView_2->scene(), SLOT(makeClickable()));
 		connect(ui.graphicsView_2->scene(), SIGNAL(coordinateMarked()), ui.graphicsView_1->scene(), SLOT(makeClickable()));
 		
+		// Connect even more signals -- Notify GraphicsScene of an update pixmap
+		connect(fitsToolbar->ui.stretchComboBox, SIGNAL(currentIndexChanged(int index)), fitsImage, SLOT(magic(int)));
+		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap)), ui.graphicsView_1->scene(), SLOT(updatePixmap(QPixmap)));
 		
 		return true;
 	}

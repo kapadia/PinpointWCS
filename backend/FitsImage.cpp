@@ -490,7 +490,7 @@ bool FitsImage::calibrateImage(int stretch, float minpix, float maxpix)
 	free(image);
 	
 	// Emit signal to broadcast the new pixmap
-	emit pixmapChanged();
+	emit pixmapChanged(pixmap);
 	
 	return true;
 }
@@ -537,4 +537,10 @@ void FitsImage::setQPixmap()
 {
 	pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
 	free(image);
+}
+
+void FitsImage::magic(int stretch)
+{
+	qDebug() << "Magic";
+	calibrateImage(stretch, vmin, vmax);
 }
