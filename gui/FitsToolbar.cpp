@@ -46,15 +46,53 @@ FitsToolbar::FitsToolbar(QWidget *parent)
 //	ui.stretchComboBox->setStyleSheet("background: black;"
 //									  "color: white;");
 	
-	
 	// Resize font
 	QFont font;
 	font.setPointSize(10);
+	
+	// Make signal and slot connections
+	connect(ui.vminSlider, SIGNAL(sliderReleased()), this, SLOT(vminSliderReleased()));
+	connect(ui.vmaxSlider, SIGNAL(sliderReleased()), this, SLOT(vmaxSliderReleased()));
+	
 }
 
 FitsToolbar::~FitsToolbar() {}
 
+void FitsToolbar::setExtremals(float min, float max)
+{
+	minimum = min;
+	maximum = max;
+	qDebug() << "Min " << minimum << "Max " << maximum;
+}
+
+void FitsToolbar::setSliderValues(float vmin, float vmax)
+{
+	// Normalize vmin and vmax
+	int minValue, maxValue;
+	minValue = 999 * (vmin - minimum) / (maximum - minimum);
+	maxValue = 999 * (vmax - minimum) / (maximum - minimum);
+	
+	ui.vminSlider->setSliderPosition(minValue);
+	ui.vmaxSlider->setSliderPosition(maxValue);
+}
+
+void FitsToolbar::vminSliderReleased()
+{
+	int value;
+	value = (int) (ui.vminSlider->value() * (maximum - minimum) / 999.0 + minimum);
+	qDebug() << value;
+	emit updateVmin(value);
+}
+
+void FitsToolbar::vmaxSliderReleased()
+{
+	int value;
+	value = (int) (ui.vmaxSlider->value() * (maximum - minimum) / 999.0 + minimum);
+	qDebug() << value;
+	emit updateVmax(value);
+}
+
 void FitsToolbar::parentResized(QSize sz)
 {
-	resize(sz.width(), 30);
+	resize(sz.width(), height());
 }

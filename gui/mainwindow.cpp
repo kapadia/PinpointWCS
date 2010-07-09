@@ -101,7 +101,10 @@ bool MainWindow::loadImages()
 		buildCoordPanelMachine();
 		fitsWcsInfoPanel->loadWCS(*(fitsImage->wcs));
 		
-		// Set up the FitsToolbar
+		// Set up the FitsToolbar, set range and value for sliders
+		fitsToolbar->setExtremals(fitsImage->minpixel, fitsImage->maxpixel);
+		fitsToolbar->setSliderValues(fitsImage->vmin, fitsImage->vmax);
+		fitsToolbar->parentResized(ui.graphicsView_1->size());
 		fitsToolbar->show();
 		
 		// Connect some signals -- used for resizing panels
@@ -112,6 +115,8 @@ bool MainWindow::loadImages()
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
 		
+		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsToolbar, SLOT(parentResized(QSize)));
+		
 		// Connect more signals -- used for updating info on panels
 		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateFitsCoordinates(QPointF)));
 		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateEpoCoordinates(QPointF)));
@@ -120,8 +125,11 @@ bool MainWindow::loadImages()
 		connect(ui.graphicsView_1->scene(), SIGNAL(coordinateMarked()), ui.graphicsView_2->scene(), SLOT(makeClickable()));
 		connect(ui.graphicsView_2->scene(), SIGNAL(coordinateMarked()), ui.graphicsView_1->scene(), SLOT(makeClickable()));
 		
-		// Connect even more signals -- ComboBox to FitsImage to GraphicsScene
-		connect(fitsToolbar->ui.stretchComboBox, SIGNAL(currentIndexChanged(int)), fitsImage, SLOT(magic(int)));
+		// Connect even more signals -- ComboBox and Sliders for FitsImage and GraphicsScene
+		connect(fitsToolbar->ui.stretchComboBox, SIGNAL(currentIndexChanged(int)), fitsImage, SLOT(setStretch(int)));
+		connect(fitsToolbar, SIGNAL(updateVmin(int)), fitsImage, SLOT(setVmin(int)));
+		connect(fitsToolbar, SIGNAL(updateVmax(int)), fitsImage, SLOT(setVmax(int)));
+		connect(fitsToolbar->ui.invertCheckBox, SIGNAL(stateChanged(int)), fitsImage, SLOT(invert()));
 		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), ui.graphicsView_1->scene(), SLOT(updatePixmap(QPixmap*)));
 		
 		return true;
@@ -171,20 +179,24 @@ void MainWindow::buildWcsInfoPanelMachine()
 	// Properties for the on state
 	WcsInfoPanelOn->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, 0));
 	WcsInfoPanelOn->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, 0));
+	WcsInfoPanelOn->assignProperty(fitsToolbar, "pos", QPointF(0, -1*fitsToolbar->height()));
 	
 	// Properties for the off state
 	WcsInfoPanelOff->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -55));
 	WcsInfoPanelOff->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -55));
+	WcsInfoPanelOff->assignProperty(fitsToolbar, "pos", QPointF(0, 0));
 	
 	// Set transition from on state to off state
 	QAbstractTransition *t1 = WcsInfoPanelOn->addTransition(ui.actionInfo, SIGNAL(triggered()), WcsInfoPanelOff);
 	t1->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
 	t1->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
+	t1->addAnimation(new QPropertyAnimation(fitsToolbar, "pos"));
 	
 	// Set transition from off state to on state
 	QAbstractTransition *t2 = WcsInfoPanelOff->addTransition(ui.actionInfo, SIGNAL(triggered()), WcsInfoPanelOn);
 	t2->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
 	t2->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
+	t2->addAnimation(new QPropertyAnimation(fitsToolbar, "pos"));
 	
 	// Start the machine
 	WcsInfoPanelMachine->start();

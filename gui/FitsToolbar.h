@@ -24,16 +24,28 @@
 #include "ui_FitsToolbar.h"
 
 class FitsToolbar : public QFrame
-	{
-		Q_OBJECT
+{
+
+	Q_OBJECT
 		
-	public:
-		FitsToolbar(QWidget *parent = 0);
-		~FitsToolbar();
-		Ui::FitsToolbar ui;
+public:
+	FitsToolbar(QWidget *parent = 0);
+	~FitsToolbar();
+	Ui::FitsToolbar ui;
+	void setExtremals(float min, float max);
+	void setSliderValues(float vmin, float vmax);
 		
-	public slots:
-		void parentResized(QSize sz);
-	};
+public slots:
+	void parentResized(QSize sz);
+	void vminSliderReleased();
+	void vmaxSliderReleased();
+
+signals:
+	void updateVmin(int value);
+	void updateVmax(int value);
+	
+private:
+	float minimum, maximum;
+};
 
 #endif

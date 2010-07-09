@@ -46,12 +46,18 @@ public:
 	// Methods
 	FitsImage(QString & fileName);
 	~FitsImage();
+	float minpixel, maxpixel, difference;
+	float vmin, vmax;
 	
 public slots:
-	void magic(int stretch);
+	void setStretch(int s);
+	void setVmin(int minpix);
+	void setVmax(int maxpix);
+	void invert();
 	
 signals:
 	void pixmapChanged(QPixmap *pm);
+	void imageExtremals(float min, float max);
 	
 private:
 	// Methods
@@ -59,12 +65,13 @@ private:
 	void calculateExtremals();
 	void downsample(float** arr, int W, int H, int S, int* newW, int* newH);
 	bool calculatePercentile(float lp, float up);
-	bool calibrateImage(int stretch, float minpix, float maxpix);
+	bool calibrateImage(int s, float minpix, float maxpix);
 		
 	// Attributes
 	fitsfile *fptr;
 	int status, wcsstatus;
 	int numhdus, numimgs, naxis, hdutype;
+	int stretch;
 	long naxisn[2];
 	long width, height;
 	long numelements;
@@ -72,10 +79,8 @@ private:
 	int bitpix;
 	float* imagedata;
 	float* renderdata;
-	float minpix, maxpix, difference;
 	float lowerPercentile;
 	float upperPercentile;
-	float vmin, vmax;
 	bool downsampled;
 	int M;
 	char alt;

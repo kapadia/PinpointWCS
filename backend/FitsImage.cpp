@@ -254,16 +254,19 @@ bool FitsImage::verifyWCS()
 
 void FitsImage::calculateExtremals()
 {
-	minpix = imagedata[0];
-	maxpix = imagedata[0];
+	minpixel = imagedata[0];
+	maxpixel = imagedata[0];
 	int i;
 	for (i=0; i<numelements; i++)
 	{
-		if (imagedata[i] < minpix)
-			minpix = imagedata[i];
-		if (imagedata[i] > maxpix)
-			maxpix = imagedata[i];
+		if (imagedata[i] < minpixel)
+			minpixel = imagedata[i];
+		if (imagedata[i] > maxpixel)
+			maxpixel = imagedata[i];
 	}
+	
+	// Broadcast the min and max pixels
+	emit imageExtremals(minpixel, maxpixel);
 }
 
 void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* newH)
@@ -346,7 +349,7 @@ bool FitsImage::calculatePercentile(float lp, float up)
 	return true;
 }
 
-bool FitsImage::calibrateImage(int stretch, float minpix, float maxpix)
+bool FitsImage::calibrateImage(int s, float minpix, float maxpix)
 {
 	qDebug() << "Calibrating image for display ...";
 	
@@ -361,6 +364,7 @@ bool FitsImage::calibrateImage(int stretch, float minpix, float maxpix)
 	
 	// Compute difference
 	difference = maxpix - minpix;
+	stretch = s;
 	int i;
 	switch (stretch) {
 		case LOG_STRETCH:
@@ -486,19 +490,42 @@ bool FitsImage::calibrateImage(int stretch, float minpix, float maxpix)
 	// Set pixmap
 	pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
 	
-	// Destroy the image and free memory
+	// Deconstruct the image and free memory
 	image->~QImage();
 	free(image);
 	
-	// Emit signal to broadcast the new pixmap
+	// Emit signal to broadcast the new pixmap and slider values
 	emit pixmapChanged(pixmap);
 	
 	return true;
 }
 
-
-void FitsImage::magic(int stretch)
+void FitsImage::setStretch(int s)
 {
-	qDebug() << "Magic";
+	qDebug() << "Setting Stretch";
+	calibrateImage(s, vmin, vmax);
+}
+
+void FitsImage::setVmin(int minpix)
+{
+	qDebug() << "Setting vmin";
+	vmin = minpix;
 	calibrateImage(stretch, vmin, vmax);
+}
+
+void FitsImage::setVmax(int maxpix)
+{
+	qDebug() << "Setting vmax";
+	vmax = maxpix;
+	calibrateImage(stretch, vmin, vmax);	
+}
+
+void FitsImage::invert()
+{
+	qDebug() << "Inverting";
+	QImage image = pixmap->toImage();
+	image.invertPixels();
+	pixmap = new QPixmap(QPixmap::fromImage(image, Qt::DiffuseDither));
+	image.~QImage();
+	emit pixmapChanged(pixmap);
 }
