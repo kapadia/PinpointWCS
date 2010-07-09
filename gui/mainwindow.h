@@ -73,6 +73,7 @@ private slots:
 	void updateCoordPanelProperties();
 	void updateFitsCoordinates(QPointF pos);
 	void updateEpoCoordinates(QPointF pos);
+	void testSlot();
 };
 
 

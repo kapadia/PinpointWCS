@@ -101,7 +101,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		height = naxisn[1];
 		
 		// Check that the image contains sufficient WCS
-		if (!checkWorldCoordinateSystem())
+		if ( !verifyWCS() )
 			continue;
 		
 		// Compute the total number of pixels in image array
@@ -198,10 +198,10 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 
 FitsImage::~FitsImage() {}
 
-bool FitsImage::checkWorldCoordinateSystem()
+bool FitsImage::verifyWCS()
 {
 
-	qDebug() << "Checking World Coordinate System ...";
+	qDebug() << "Verifying World Coordinate System ...";
 	// Define all the variables needed for complete WCS
 	char *header;
 	int ncards;
@@ -450,7 +450,7 @@ bool FitsImage::calibrateImage(int stretch, float minpix, float maxpix)
 	}
 	
 	// Initialize QImage with correct dimensions and data type
-	image = new QImage(width, height, QImage::Format_RGB32);
+	QImage *image = new QImage(width, height, QImage::Format_RGB32);
 	
 	// Set pixels, using different function depending on the BITPIX
 	int ii, jj;
@@ -486,7 +486,8 @@ bool FitsImage::calibrateImage(int stretch, float minpix, float maxpix)
 	// Set pixmap
 	pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
 	
-	// Free some memory
+	// Destroy the image and free memory
+	image->~QImage();
 	free(image);
 	
 	// Emit signal to broadcast the new pixmap
@@ -495,49 +496,6 @@ bool FitsImage::calibrateImage(int stretch, float minpix, float maxpix)
 	return true;
 }
 
-
-void FitsImage::setQImage()
-{
-	// Initialize QImage with correct dimensions and data type
-	image = new QImage(width, height, QImage::Format_RGB32);
-	
-	// Set pixels, using different function depending on the BITPIX
-	int ii, jj;
-	if (bitpix < 0)
-	{
-		for (ii=0; ii<height; ii++)
-		{
-			for (jj=0; jj<width; jj++)
-			{
-				long index = jj+width*(height-ii-1);
-				int pixel = floor(255.0 * renderdata[index] + 0.5);
-				image->setPixel(jj, ii, qRgb(pixel, pixel, pixel));
-			}
-		}
-	}
-	else
-	{
-		for (ii=0; ii<height; ii++)
-		{
-			for (jj=0; jj<width; jj++)
-			{
-				long index = jj+width*(height-ii-1);
-				int pixel = floor(255.0 * renderdata[index] + 0.5);
-				QRgb *p = (QRgb *) image->scanLine(ii) + jj;
-				*p = qRgb(pixel, pixel, pixel);
-			}
-		}	
-	}
-	
-	free(renderdata);
-}
-
-
-void FitsImage::setQPixmap()
-{
-	pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
-	free(image);
-}
 
 void FitsImage::magic(int stretch)
 {

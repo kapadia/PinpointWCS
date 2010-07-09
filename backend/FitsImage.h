@@ -47,9 +47,6 @@ public:
 	FitsImage(QString & fileName);
 	~FitsImage();
 	
-	// Attributes
-	QImage *image;
-	
 public slots:
 	void magic(int stretch);
 	
@@ -58,13 +55,11 @@ signals:
 	
 private:
 	// Methods
-	bool checkWorldCoordinateSystem();
+	bool verifyWCS();
 	void calculateExtremals();
 	void downsample(float** arr, int W, int H, int S, int* newW, int* newH);
 	bool calculatePercentile(float lp, float up);
 	bool calibrateImage(int stretch, float minpix, float maxpix);
-	void setQImage();
-	void setQPixmap();
 		
 	// Attributes
 	fitsfile *fptr;
@@ -83,9 +78,7 @@ private:
 	float vmin, vmax;
 	bool downsampled;
 	int M;
-		
-	// Testing WCSTools
 	char alt;
-	};
+};
 
 #endif

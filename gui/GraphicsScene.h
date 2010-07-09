@@ -49,7 +49,6 @@ public slots:
 	void updatePixmap(QPixmap *pm);
 	void makeClickable();
 	
-	
 };
 
 #endif
