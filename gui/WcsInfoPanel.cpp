@@ -44,7 +44,7 @@ WcsInfoPanel::WcsInfoPanel(QWidget *parent)
 	
 	// Resize font
 	QFont font;
-	font.setPointSize(10);
+	font.setPointSize(11);
 	updateFontSize(font);
 }
 
@@ -128,4 +128,9 @@ void WcsInfoPanel::loadWCS(struct WorldCoor wcs)
 void WcsInfoPanel::parentResized(QSize sz)
 {
 	resize(sz.width(), 55);
+	qDebug() << sz.width();
+	float fontsize = 1./80. * (sz.width() - 390) + 7;
+	QFont font;
+	font.setPointSize(fontsize);
+	updateFontSize(font);
 }
