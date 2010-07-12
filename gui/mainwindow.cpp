@@ -94,17 +94,17 @@ bool MainWindow::loadImages()
 		ui.actionImageAdjustments->setEnabled(true);
 		
 		// Set up the WcsInfoPanel for each image
-		fitsWcsInfoPanel->show();
-		epoWcsInfoPanel->show();
 		fitsWcsInfoPanel->parentResized(ui.graphicsView_1->size());
 		epoWcsInfoPanel->parentResized(ui.graphicsView_2->size());
+		fitsWcsInfoPanel->show();
+		epoWcsInfoPanel->show();
 		buildWcsInfoPanelMachine();
 		
 		// Set up the Coordinate Panels for each image
-		fitsCoordPanel->show();
-		epoCoordPanel->show();
 		fitsCoordPanel->parentResized(ui.graphicsView_1->size());
 		epoCoordPanel->parentResized(ui.graphicsView_2->size());
+		fitsCoordPanel->show();
+		epoCoordPanel->show();
 		buildCoordPanelMachine();
 		fitsWcsInfoPanel->loadWCS(*(fitsImage->wcs));
 		
@@ -112,6 +112,7 @@ bool MainWindow::loadImages()
 		fitsToolbar->setExtremals(fitsImage->minpixel, fitsImage->maxpixel);
 		fitsToolbar->setSliderValues(fitsImage->vmin, fitsImage->vmax);
 		fitsToolbar->parentResized(ui.graphicsView_1->size());
+		buildImageAdjustmentMachine();
 		fitsToolbar->show();
 		
 		// Connect some signals -- used for resizing panels
@@ -168,41 +169,6 @@ bool MainWindow::loadFitsImage(QString& filename)
 	return true;
 }
 
-void MainWindow::buildMachine()
-{
-	// Initialize machine and states
-	machine = new QStateMachine;
-	state1 = new QState(machine);
-	state2 = new QState(machine);
-	state3 = new QState(machine);
-	
-	// Set the initial state
-	machine->setInitialState(state1);
-
-	// Get the position of the GraphicsViews
-	QRect p1 = ui.graphicsView_1->geometry();
-	QRect p2 = ui.graphicsView_2->geometry();
-	
-	// Properties for state 1 - top panels off
-	state1->assignProperty(fitsToolbar, "pos", QPointF(0, -1*fitsToolbar->height()));
-	state1->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
-	state1->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*epoWcsInfoPanel->height()));
-	
-	// Properties for state 2 - image adjustment panel on
-	state2->assignProperty(fitsToolbar, "pos", QPointF(0, 0));
-	state2->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
-	state2->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*epoWcsInfoPanel->height()));
-	
-	// Properties for state 3 - wcs info panel on
-	state3->assignProperty(fitsToolbar, "pos", QPointF(0, -1*fitsToolbar->height()));
-	state3->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, 0));
-	state3->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, 0));
-	
-	// Set up transitions for each state
-//	QAbstractTransition *t1 = state1->addTransition(ui.actionInfo, SIGNAL(toggled(true)), 
-	
-}
-
 
 void MainWindow::buildWcsInfoPanelMachine()
 {
@@ -222,26 +188,59 @@ void MainWindow::buildWcsInfoPanelMachine()
 	WcsInfoPanelOn->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, 0));
 	WcsInfoPanelOn->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, 0));
 	WcsInfoPanelOn->assignProperty(fitsToolbar, "pos", QPointF(0, -1*fitsToolbar->height()));
+	WcsInfoPanelOn->assignProperty(ui.actionImageAdjustments, "checked", false);
 	
 	// Properties for the off state
 	WcsInfoPanelOff->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
-	WcsInfoPanelOff->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
-	WcsInfoPanelOff->assignProperty(fitsToolbar, "pos", QPointF(0, 0));
+	WcsInfoPanelOff->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*epoWcsInfoPanel->height()));
 	
 	// Set transition from on state to off state
-	QAbstractTransition *t1 = WcsInfoPanelOn->addTransition(ui.actionInfo, SIGNAL(triggered()), WcsInfoPanelOff);
+	QAbstractTransition *t1 = WcsInfoPanelOn->addTransition(ui.actionInfo, SIGNAL(toggled(bool)), WcsInfoPanelOff);
 	t1->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
 	t1->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
-	t1->addAnimation(new QPropertyAnimation(fitsToolbar, "pos"));
 	
 	// Set transition from off state to on state
-	QAbstractTransition *t2 = WcsInfoPanelOff->addTransition(ui.actionInfo, SIGNAL(triggered()), WcsInfoPanelOn);
+	QAbstractTransition *t2 = WcsInfoPanelOff->addTransition(ui.actionInfo, SIGNAL(toggled(bool)), WcsInfoPanelOn);
 	t2->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
 	t2->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
 	t2->addAnimation(new QPropertyAnimation(fitsToolbar, "pos"));
 	
 	// Start the machine
 	WcsInfoPanelMachine->start();
+}
+
+void MainWindow::buildImageAdjustmentMachine()
+{
+	// Initialize machine and states
+	imageAdjustmentMachine = new QStateMachine;
+	imageAdjustmentPanelOn = new QState(imageAdjustmentMachine);
+	imageAdjustmentPanelOff = new QState(imageAdjustmentMachine);
+	
+	// Set initial state of the machine
+	imageAdjustmentMachine->setInitialState(imageAdjustmentPanelOn);
+	
+	// Set properties for the on state - image adjustment panel on, wcs info panel off
+	imageAdjustmentPanelOn->assignProperty(fitsToolbar, "pos", QPointF(0, 0));
+	imageAdjustmentPanelOn->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
+	imageAdjustmentPanelOn->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*epoWcsInfoPanel->height()));
+	imageAdjustmentPanelOn->assignProperty(ui.actionInfo, "checked", false);
+	
+	// Set properites for the off state - image adjustment panel off, wcs info panel off
+	imageAdjustmentPanelOff->assignProperty(fitsToolbar, "pos", QPointF(0, -1*fitsToolbar->height()));
+	
+	// Set transition from on state to off state
+	QAbstractTransition *t1 = imageAdjustmentPanelOn->addTransition(ui.actionImageAdjustments, SIGNAL(toggled(bool)), imageAdjustmentPanelOff);
+	t1->addAnimation(new QPropertyAnimation(fitsToolbar, "pos"));
+	
+	// Set transition from off state to on state
+	QAbstractTransition *t2 = imageAdjustmentPanelOff->addTransition(ui.actionImageAdjustments, SIGNAL(toggled(bool)), imageAdjustmentPanelOn);
+	t2->addAnimation(new QPropertyAnimation(fitsToolbar, "pos"));
+	t2->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
+	t2->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
+	
+	// Start the machine
+	imageAdjustmentMachine->start();
+	
 }
 
 void MainWindow::buildCoordPanelMachine()

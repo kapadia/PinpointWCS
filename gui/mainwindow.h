@@ -53,7 +53,7 @@ private:
 	CoordinatePanel *epoCoordPanel;
 	FitsToolbar *fitsToolbar;
 	
-	// State Machine
+	// State Machines
 	QStateMachine *WcsInfoPanelMachine;
 	QState *WcsInfoPanelOn;
 	QState *WcsInfoPanelOff;
@@ -62,17 +62,14 @@ private:
 	QState *CoordPanelOn;
 	QState *CoordPanelOff;
 	
-	// Testing using only one state machine ...
-	QStateMachine *machine;
-	QState *state1;
-	QState *state2;
-	QState *state3;
+	QStateMachine *imageAdjustmentMachine;
+	QState *imageAdjustmentPanelOn;
+	QState *imageAdjustmentPanelOff;
 	
 	// Methods
 	void buildWcsInfoPanelMachine();
 	void buildCoordPanelMachine();
-	void buildMachine();
-	
+	void buildImageAdjustmentMachine();
 	
 private slots:
 	bool loadImages();
