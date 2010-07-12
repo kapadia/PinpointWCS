@@ -62,9 +62,17 @@ private:
 	QState *CoordPanelOn;
 	QState *CoordPanelOff;
 	
+	// Testing using only one state machine ...
+	QStateMachine *machine;
+	QState *state1;
+	QState *state2;
+	QState *state3;
+	
 	// Methods
 	void buildWcsInfoPanelMachine();
 	void buildCoordPanelMachine();
+	void buildMachine();
+	
 	
 private slots:
 	bool loadImages();

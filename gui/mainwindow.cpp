@@ -81,10 +81,17 @@ bool MainWindow::loadImages()
 		}
 		
 		// Disconnect dropLabels from signal
+		disconnect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
+		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		
 		// Flip the stacked widgets
 		ui.stackedWidget_1->setCurrentIndex(1);
 		ui.stackedWidget_2->setCurrentIndex(1);
+		
+		// Enable some menu items
+		ui.actionInfo->setEnabled(true);
+		ui.actionCoordinates->setEnabled(true);
+		ui.actionImageAdjustments->setEnabled(true);
 		
 		// Set up the WcsInfoPanel for each image
 		fitsWcsInfoPanel->show();
@@ -161,6 +168,41 @@ bool MainWindow::loadFitsImage(QString& filename)
 	return true;
 }
 
+void MainWindow::buildMachine()
+{
+	// Initialize machine and states
+	machine = new QStateMachine;
+	state1 = new QState(machine);
+	state2 = new QState(machine);
+	state3 = new QState(machine);
+	
+	// Set the initial state
+	machine->setInitialState(state1);
+
+	// Get the position of the GraphicsViews
+	QRect p1 = ui.graphicsView_1->geometry();
+	QRect p2 = ui.graphicsView_2->geometry();
+	
+	// Properties for state 1 - top panels off
+	state1->assignProperty(fitsToolbar, "pos", QPointF(0, -1*fitsToolbar->height()));
+	state1->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
+	state1->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*epoWcsInfoPanel->height()));
+	
+	// Properties for state 2 - image adjustment panel on
+	state2->assignProperty(fitsToolbar, "pos", QPointF(0, 0));
+	state2->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
+	state2->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*epoWcsInfoPanel->height()));
+	
+	// Properties for state 3 - wcs info panel on
+	state3->assignProperty(fitsToolbar, "pos", QPointF(0, -1*fitsToolbar->height()));
+	state3->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, 0));
+	state3->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, 0));
+	
+	// Set up transitions for each state
+//	QAbstractTransition *t1 = state1->addTransition(ui.actionInfo, SIGNAL(toggled(true)), 
+	
+}
+
 
 void MainWindow::buildWcsInfoPanelMachine()
 {
@@ -182,8 +224,8 @@ void MainWindow::buildWcsInfoPanelMachine()
 	WcsInfoPanelOn->assignProperty(fitsToolbar, "pos", QPointF(0, -1*fitsToolbar->height()));
 	
 	// Properties for the off state
-	WcsInfoPanelOff->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -55));
-	WcsInfoPanelOff->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -55));
+	WcsInfoPanelOff->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
+	WcsInfoPanelOff->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
 	WcsInfoPanelOff->assignProperty(fitsToolbar, "pos", QPointF(0, 0));
 	
 	// Set transition from on state to off state
