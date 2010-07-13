@@ -301,53 +301,41 @@ void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* new
 }
 
 bool FitsImage::calculatePercentile(float lp, float up)
-{	
+{		
+	// Set some variables and parameters
+	int ii;
+	int nth = floor(numelements/(numelements*0.004));
+//	qDebug() << numelements << "\t" << nth;
+	float* sample = NULL;
 	
-	/*
-	vmin = PinpointWCSUtils::computeQuantile(imagedata, numelements, lp);
-	vmax = PinpointWCSUtils::computeQuantile(imagedata, numelements, up);
-	difference = vmax - vmin;
-	std::cout << "VMIN: " << vmin << "\n";
-	std::cout << "VMAX: " << vmax << "\n";
-	return true;
-	*/
-
-	// Create a copy of the data
-	long numelem = numelements;
-	float* dataForSorting = NULL;
-	dataForSorting = (float *) malloc(numelem * sizeof(float));
-	if (!dataForSorting)
+	// Determine the sample size and allocate memory
+	long samplesize = numelements / nth + 1;
+	sample = (float *) malloc(samplesize * sizeof(float));
+	if (!sample)
 	{
-		qDebug() << "Failed to allocate memory for the sorting array ...";
+		qDebug() << "Failed to allocate memory for the sample array ...";
 		return false;
 	}
-	memcpy(dataForSorting, imagedata, numelem * sizeof(float));
 	
-	// First downsample to reduce the number of operations in sort
-	if (downsampled)
-	{
-		int newW, newH;
-		downsample(&dataForSorting, width, height, 10*M, &newW, &newH);
-		numelem = newW*newH;
-	}
+	// Copy every nth element
+	for (ii=0; ii<samplesize; ii++)
+		sample[ii] = imagedata[ii*nth];
 	
+	// Sort using the standard library
+	std::sort(&(sample)[0], &(sample)[samplesize]);
 	
-	// Sort using standard library
-	std::sort(&(dataForSorting)[0], &(dataForSorting)[numelem]);
+	// Determine quantiles
+	int vminIndex = floor(lp*(samplesize-1)+1);
+	int vmaxIndex = floor(up*(samplesize-1)+1);
 	
-	// Determine percentiles
-	int vminIndex = floor(lp*(numelem-1)+1);
-	int vmaxIndex= floor(up*(numelem-1)+1);
-	vmin = dataForSorting[vminIndex];
-	vmax = dataForSorting[vmaxIndex];
+	vmin = sample[vminIndex];
+	vmax = sample[vmaxIndex];
 	difference = vmax - vmin;
 	
-	qDebug() << "VMIN: " << vmin;
-	qDebug() << "VMAX: " << vmax;
-	
-	free(dataForSorting);
+	free(sample);
 	return true;
 }
+
 
 bool FitsImage::calibrateImage(int s, float minpix, float maxpix)
 {
