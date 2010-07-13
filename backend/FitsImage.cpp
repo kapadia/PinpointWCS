@@ -148,6 +148,9 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		
 		// FITS data retrieved!!!
 		
+		// Set some default parameters (or only one for now)
+		inverted = false;
+		
 		// Downsample the image if either axis is too large
 		if (width > DOWNSAMPLE_SIZE or height > DOWNSAMPLE_SIZE){
 			if (width > height)
@@ -160,6 +163,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 			downsample(&imagedata, width, height, M, &newW, &newH);
 			width = newW;
 			height = newH;
+			numelements = width * height;
 		}
 
 		// Calculate the minimum and maximum pixel values
@@ -264,9 +268,6 @@ void FitsImage::calculateExtremals()
 		if (imagedata[i] > maxpixel)
 			maxpixel = imagedata[i];
 	}
-	
-	// Broadcast the min and max pixels
-	emit imageExtremals(minpixel, maxpixel);
 }
 
 void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* newH)
@@ -305,7 +306,6 @@ bool FitsImage::calculatePercentile(float lp, float up)
 	// Set some variables and parameters
 	int ii;
 	int nth = floor(numelements/(numelements*0.004));
-//	qDebug() << numelements << "\t" << nth;
 	float* sample = NULL;
 	
 	// Determine the sample size and allocate memory
@@ -324,14 +324,20 @@ bool FitsImage::calculatePercentile(float lp, float up)
 	// Sort using the standard library
 	std::sort(&(sample)[0], &(sample)[samplesize]);
 	
-	// Determine quantiles
+	// Determine quantile indices
 	int vminIndex = floor(lp*(samplesize-1)+1);
 	int vmaxIndex = floor(up*(samplesize-1)+1);
+	int lowerLimitIndex = floor((lp-0.0015)*(samplesize-1)+1);
+	int upperLimitIndex = floor((up+0.0015)*(samplesize-1)+1);
 	
+	// Select quantiles
 	vmin = sample[vminIndex];
 	vmax = sample[vmaxIndex];
+	lowerLimit = sample[lowerLimitIndex];
+	upperLimit = sample[upperLimitIndex];
 	difference = vmax - vmin;
 	
+	// Free some memory and return
 	free(sample);
 	return true;
 }
@@ -444,32 +450,63 @@ bool FitsImage::calibrateImage(int s, float minpix, float maxpix)
 	// Initialize QImage with correct dimensions and data type
 	QImage *image = new QImage(width, height, QImage::Format_RGB32);
 	
-	// Set pixels, using different function depending on the BITPIX
+	// Set pixels, depending on invert and BITPIX
 	int ii, jj;
-	if (bitpix < 0)
+	if (inverted)
 	{
-		for (ii=0; ii<height; ii++)
+		if (bitpix < 0)
 		{
-			for (jj=0; jj<width; jj++)
+			for (ii=0; ii<height; ii++)
 			{
-				long index = jj+width*(height-ii-1);
-				int pixel = floor(255.0 * renderdata[index] + 0.5);
-				image->setPixel(jj, ii, qRgb(pixel, pixel, pixel));
+				for (jj=0; jj<width; jj++)
+				{
+					long index = jj+width*(height-ii-1);
+					int pixel = 255 - floor(255.0 * renderdata[index] + 0.5);
+					image->setPixel(jj, ii, qRgb(pixel, pixel, pixel));
+				}
 			}
+		}
+		else
+		{
+			for (ii=0; ii<height; ii++)
+			{
+				for (jj=0; jj<width; jj++)
+				{
+					long index = jj+width*(height-ii-1);
+					int pixel = 255 - floor(255.0 * renderdata[index] + 0.5);
+					QRgb *p = (QRgb *) image->scanLine(ii) + jj;
+					*p = qRgb(pixel, pixel, pixel);
+				}
+			}	
 		}
 	}
 	else
 	{
-		for (ii=0; ii<height; ii++)
+		if (bitpix < 0)
 		{
-			for (jj=0; jj<width; jj++)
+			for (ii=0; ii<height; ii++)
 			{
-				long index = jj+width*(height-ii-1);
-				int pixel = floor(255.0 * renderdata[index] + 0.5);
-				QRgb *p = (QRgb *) image->scanLine(ii) + jj;
-				*p = qRgb(pixel, pixel, pixel);
+				for (jj=0; jj<width; jj++)
+				{
+					long index = jj+width*(height-ii-1);
+					int pixel = floor(255.0 * renderdata[index] + 0.5);
+					image->setPixel(jj, ii, qRgb(pixel, pixel, pixel));
+				}
 			}
-		}	
+		}
+		else
+		{
+			for (ii=0; ii<height; ii++)
+			{
+				for (jj=0; jj<width; jj++)
+				{
+					long index = jj+width*(height-ii-1);
+					int pixel = floor(255.0 * renderdata[index] + 0.5);
+					QRgb *p = (QRgb *) image->scanLine(ii) + jj;
+					*p = qRgb(pixel, pixel, pixel);
+				}
+			}	
+		}
 	}
 	
 	// Free some memory
@@ -494,14 +531,14 @@ void FitsImage::setStretch(int s)
 	calibrateImage(s, vmin, vmax);
 }
 
-void FitsImage::setVmin(int minpix)
+void FitsImage::setVmin(float minpix)
 {
 	qDebug() << "Setting vmin";
 	vmin = minpix;
 	calibrateImage(stretch, vmin, vmax);
 }
 
-void FitsImage::setVmax(int maxpix)
+void FitsImage::setVmax(float maxpix)
 {
 	qDebug() << "Setting vmax";
 	vmax = maxpix;
@@ -515,5 +552,6 @@ void FitsImage::invert()
 	image.invertPixels();
 	pixmap = new QPixmap(QPixmap::fromImage(image, Qt::DiffuseDither));
 	image.~QImage();
+	inverted = !inverted;
 	emit pixmapChanged(pixmap);
 }

@@ -17,35 +17,23 @@
  *
  */
 
-#ifndef FITS_TOOLBAR_H
-#define FITS_TOOLBAR_H
+#ifndef COMMANDS_H
+#define COMMANDS_H
 
-#include <QtGui>
-#include "ui_FitsToolbar.h"
+#include <QUndoCommand>
+#include "CoordMarker.h"
 
-class FitsToolbar : public QFrame
+class AddCommand : public QUndoCommand
 {
-
-	Q_OBJECT
-		
 public:
-	FitsToolbar(QWidget *parent = 0);
-	~FitsToolbar();
-	Ui::FitsToolbar ui;
-	void setExtremals(float min, float max);
-	void setSliderValues(float vmin, float vmax);
-		
-public slots:
-	void parentResized(QSize sz);
-	void vminSliderReleased();
-	void vmaxSliderReleased();
-
-signals:
-	void updateVmin(float value);
-	void updateVmax(float value);
+	AddCommand(GraphicsScene *graphicsScene, QUndoCommand *parent = 0);
+	void undo();
+	void redo();
 	
 private:
-	float minimum, maximum;
-};
+	CoordMarker *marker;
+	GraphicsScene *scene;
+	QPointF initialPosition;
+}
 
 #endif

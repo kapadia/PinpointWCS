@@ -42,10 +42,6 @@ FitsToolbar::FitsToolbar(QWidget *parent)
 	palette.setColor(QPalette::WindowText, textcolor);
 	setPalette(palette);
 	
-	// Change style of the Stretch Combo Box
-//	ui.stretchComboBox->setStyleSheet("background: black;"
-//									  "color: white;");
-	
 	// Resize font
 	QFont font;
 	font.setPointSize(10);
@@ -69,8 +65,8 @@ void FitsToolbar::setSliderValues(float vmin, float vmax)
 {
 	// Normalize vmin and vmax
 	int minValue, maxValue;
-	minValue = 999 * (vmin - minimum) / (maximum - minimum);
-	maxValue = 999 * (vmax - minimum) / (maximum - minimum);
+	minValue = 1000. * (vmin - minimum) / (maximum - minimum);
+	maxValue = 1000. * (vmax - minimum) / (maximum - minimum);
 	
 	ui.vminSlider->setSliderPosition(minValue);
 	ui.vmaxSlider->setSliderPosition(maxValue);
@@ -78,16 +74,16 @@ void FitsToolbar::setSliderValues(float vmin, float vmax)
 
 void FitsToolbar::vminSliderReleased()
 {
-	int value;
-	value = (int) (ui.vminSlider->value() * (maximum - minimum) / 999.0 + minimum);
+	float value;
+	value = (ui.vminSlider->value() * (maximum - minimum) / 1000. + minimum);
 	qDebug() << value;
 	emit updateVmin(value);
 }
 
 void FitsToolbar::vmaxSliderReleased()
 {
-	int value;
-	value = (int) (ui.vmaxSlider->value() * (maximum - minimum) / 999.0 + minimum);
+	float value;
+	value = (ui.vmaxSlider->value() * (maximum - minimum) / 1000. + minimum);
 	qDebug() << value;
 	emit updateVmax(value);
 }

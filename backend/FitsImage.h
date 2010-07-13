@@ -47,17 +47,16 @@ public:
 	FitsImage(QString & fileName);
 	~FitsImage();
 	float minpixel, maxpixel, difference;
-	float vmin, vmax;
+	float vmin, vmax, lowerLimit, upperLimit;
 	
 public slots:
 	void setStretch(int s);
-	void setVmin(int minpix);
-	void setVmax(int maxpix);
+	void setVmin(float minpix);
+	void setVmax(float maxpix);
 	void invert();
 	
 signals:
 	void pixmapChanged(QPixmap *pm);
-	void imageExtremals(float min, float max);
 	
 private:
 	// Methods
@@ -84,6 +83,7 @@ private:
 	bool downsampled;
 	int M;
 	char alt;
+	bool inverted;
 };
 
 #endif

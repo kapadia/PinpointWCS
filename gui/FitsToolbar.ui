@@ -17,7 +17,10 @@
    <item row="0" column="1">
     <widget class="QSlider" name="vminSlider">
      <property name="maximum">
-      <number>999</number>
+      <number>1000</number>
+     </property>
+     <property name="tracking">
+      <bool>true</bool>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -27,7 +30,10 @@
    <item row="1" column="1">
     <widget class="QSlider" name="vmaxSlider">
      <property name="maximum">
-      <number>999</number>
+      <number>1000</number>
+     </property>
+     <property name="tracking">
+      <bool>true</bool>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

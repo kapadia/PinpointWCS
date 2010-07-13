@@ -30,6 +30,9 @@ MainWindow::MainWindow()
 	// Set up user interface from the Designer file
     ui.setupUi(this);
 	
+	// Initialize the undo stack
+	undoStack = new QUndoStack();
+	
 	// Initialize the WcsInfoPanels
 	fitsWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_1);
 	epoWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_2);
@@ -109,7 +112,7 @@ bool MainWindow::loadImages()
 		fitsWcsInfoPanel->loadWCS(*(fitsImage->wcs));
 		
 		// Set up the FitsToolbar, set range and value for sliders
-		fitsToolbar->setExtremals(fitsImage->minpixel, fitsImage->maxpixel);
+		fitsToolbar->setExtremals(fitsImage->lowerLimit, fitsImage->upperLimit);
 		fitsToolbar->setSliderValues(fitsImage->vmin, fitsImage->vmax);
 		fitsToolbar->parentResized(ui.graphicsView_1->size());
 		buildImageAdjustmentMachine();
@@ -135,8 +138,8 @@ bool MainWindow::loadImages()
 		
 		// Connect even more signals -- ComboBox and Sliders for FitsImage and GraphicsScene
 		connect(fitsToolbar->ui.stretchComboBox, SIGNAL(currentIndexChanged(int)), fitsImage, SLOT(setStretch(int)));
-		connect(fitsToolbar, SIGNAL(updateVmin(int)), fitsImage, SLOT(setVmin(int)));
-		connect(fitsToolbar, SIGNAL(updateVmax(int)), fitsImage, SLOT(setVmax(int)));
+		connect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
+		connect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
 		connect(fitsToolbar->ui.invertCheckBox, SIGNAL(stateChanged(int)), fitsImage, SLOT(invert()));
 		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), ui.graphicsView_1->scene(), SLOT(updatePixmap(QPixmap*)));
 		

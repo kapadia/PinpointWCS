@@ -38,9 +38,6 @@ public:
 	// Methods
 	MainWindow();
 	~MainWindow();
-	
-	// Attributes
-	QDockWidget *dockwidget;
 
 private:
 	// Attributes
@@ -52,6 +49,7 @@ private:
 	CoordinatePanel *fitsCoordPanel;
 	CoordinatePanel *epoCoordPanel;
 	FitsToolbar *fitsToolbar;
+	QUndoStack *undoStack;
 	
 	// State Machines
 	QStateMachine *WcsInfoPanelMachine;
