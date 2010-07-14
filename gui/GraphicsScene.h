@@ -30,6 +30,7 @@ class GraphicsScene : public QGraphicsScene
 public:
 	GraphicsScene(QPixmap pix, bool ref, QObject *parent = 0);
 	~GraphicsScene();
+	float markerRadius;
 		
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -39,16 +40,15 @@ private:
 	bool reference;
 	bool clickable;
 	QGraphicsPixmapItem *pixmap;
-	float markerRadius;
 	
 signals:
 	void mousePositionChanged(QPointF pos);
-	void coordinateMarked();
-	void sceneDoubleClicked(GraphicsScene *scene, QPointF pos);
+	void sceneDoubleClicked(QPointF pos);
+	void toggleNeighborScene(bool sendSignal = false);
 
 public slots:
 	void updatePixmap(QPixmap *pm);
-	void makeClickable();
+	void toggleClickable(bool sendSignal = true);
 	
 };
 

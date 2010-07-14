@@ -23,11 +23,12 @@
 #include <QtGui>
 
 #include "ui_PinpointWCS.h"
+#include "FitsImage.h"
+#include "EpoImage.h"
+#include "GraphicsScene.h"
 #include "WcsInfoPanel.h"
 #include "CoordinatePanel.h"
 #include "FitsToolbar.h"
-#include "FitsImage.h"
-#include "EpoImage.h"
 
  
 class MainWindow : public QMainWindow
@@ -44,12 +45,16 @@ private:
 	Ui::MainWindow ui;
 	FitsImage *fitsImage;
 	EpoImage *epoImage;
+	GraphicsScene *fitsScene;
+	GraphicsScene *epoScene;
 	WcsInfoPanel *fitsWcsInfoPanel;
 	WcsInfoPanel *epoWcsInfoPanel;
 	CoordinatePanel *fitsCoordPanel;
 	CoordinatePanel *epoCoordPanel;
 	FitsToolbar *fitsToolbar;
 	QUndoStack *undoStack;
+	QAction *undoAction;
+	QAction *redoAction;
 	
 	// State Machines
 	QStateMachine *WcsInfoPanelMachine;
@@ -76,6 +81,8 @@ private slots:
 	void updateCoordPanelProperties();
 	void updateFitsCoordinates(QPointF pos);
 	void updateEpoCoordinates(QPointF pos);
+	void addFitsMarker(QPointF pos);
+	void addEpoMarker(QPointF pos);
 	void testSlot();
 };
 

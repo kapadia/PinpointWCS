@@ -52,23 +52,6 @@ void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 	QGraphicsScene::mouseMoveEvent(event);
 }
 
-/*
-void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-	if (clickable)
-	{
-		// Get scene position
-		QPointF pos = event->scenePos();
-		// Toggle the boolean
-		clickable = !clickable;
-		CoordMarker *marker = new CoordMarker(markerRadius);
-		marker->setPos(pos);
-		addItem(marker);
-		// Emit signal
-		emit coordinateMarked();
-	}
-}
-*/
  
 void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -77,18 +60,17 @@ void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 		// Get scene position
 		QPointF pos = event->scenePos();
 		
-		// Toggle the boolean attribute
-		clickable = !clickable;
-		
 		// Broadcast the event for AddCommand and the other GraphicsScene
-		emit sceneDoubleClicked(this, pos);
+		emit sceneDoubleClicked(pos);
 	}
 }
 
 
-void GraphicsScene::makeClickable()
+void GraphicsScene::toggleClickable(bool sendSignal)
 {
 	clickable = !clickable;
+	if (sendSignal)
+		emit toggleNeighborScene(false);
 }
 
 void GraphicsScene::updatePixmap(QPixmap *pm)

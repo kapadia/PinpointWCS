@@ -28,7 +28,7 @@ class AddCommand : public QUndoCommand
 {
 	
 public:
-	AddCommand(GraphicsScene *graphicsScene, QUndoCommand *parent = 0);
+	AddCommand(GraphicsScene *graphicsScene, QPointF position, QUndoCommand *parent = 0);
 	~AddCommand();
 	void undo();
 	void redo();

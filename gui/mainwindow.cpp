@@ -23,7 +23,7 @@
 
 #include "mainwindow.h"
 #include "FitsImage.h"
-#include "GraphicsScene.h"
+#include "Commands.h"
 
 MainWindow::MainWindow()
 {
@@ -32,6 +32,12 @@ MainWindow::MainWindow()
 	
 	// Initialize the undo stack
 	undoStack = new QUndoStack();
+	undoAction = undoStack->createUndoAction(this, tr("&Undo"));
+	redoAction = undoStack->createRedoAction(this, tr("&Redo"));
+	undoAction->setShortcut(QKeySequence::Undo);
+	redoAction->setShortcut(QKeySequence::Redo);
+	ui.menuEdit->addAction(undoAction);
+	ui.menuEdit->addAction(redoAction);
 	
 	// Initialize the WcsInfoPanels
 	fitsWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_1);
@@ -129,35 +135,32 @@ bool MainWindow::loadImages()
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsToolbar, SLOT(parentResized(QSize)));
 		
 		// Connect more signals -- used for updating info on panels
-		connect(ui.graphicsView_1->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateFitsCoordinates(QPointF)));
-		connect(ui.graphicsView_2->scene(), SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateEpoCoordinates(QPointF)));
+		connect(fitsScene, SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateFitsCoordinates(QPointF)));
+		connect(epoScene, SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateEpoCoordinates(QPointF)));
 		
 		// Connect yet more signals -- para comunicación entre los GraphicsScenes
-		connect(ui.graphicsView_1->scene(), SIGNAL(coordinateMarked()), ui.graphicsView_2->scene(), SLOT(makeClickable()));
-		connect(ui.graphicsView_2->scene(), SIGNAL(coordinateMarked()), ui.graphicsView_1->scene(), SLOT(makeClickable()));
+		connect(fitsScene, SIGNAL(sceneDoubleClicked(QPointF)), this, SLOT(addFitsMarker(QPointF)));
+		connect(epoScene, SIGNAL(sceneDoubleClicked(QPointF)), this, SLOT(addEpoMarker(QPointF)));
+		connect(fitsScene, SIGNAL(toggleNeighborScene(bool)), epoScene, SLOT(toggleClickable(bool)));
+		connect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
 		
 		// Connect even more signals -- ComboBox and Sliders for FitsImage and GraphicsScene
 		connect(fitsToolbar->ui.stretchComboBox, SIGNAL(currentIndexChanged(int)), fitsImage, SLOT(setStretch(int)));
 		connect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
 		connect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
 		connect(fitsToolbar->ui.invertCheckBox, SIGNAL(stateChanged(int)), fitsImage, SLOT(invert()));
-		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), ui.graphicsView_1->scene(), SLOT(updatePixmap(QPixmap*)));
+		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
 		
 		return true;
 	}
 	return false;
 }
 
-void MainWindow::testSlot()
-{
-	qDebug() << "Test Slot";
-}
-
 bool MainWindow::loadEpoImage(QString& filename)
 {
 	qDebug() << "Loading EPO image ...";
 	epoImage = new EpoImage(filename);
-	GraphicsScene *epoScene = new GraphicsScene(*(epoImage->pixmap), false);
+	epoScene = new GraphicsScene(*(epoImage->pixmap), false);
 	ui.graphicsView_2->setScene(epoScene);
 	return true;
 }
@@ -167,9 +170,28 @@ bool MainWindow::loadFitsImage(QString& filename)
 {
 	qDebug() << "Loading FITS image ...";
 	fitsImage = new FitsImage(filename);
-	GraphicsScene *fitsScene = new GraphicsScene(*(fitsImage->pixmap), true);
+	fitsScene = new GraphicsScene(*(fitsImage->pixmap), true);
 	ui.graphicsView_1->setScene(fitsScene);
 	return true;
+}
+
+
+void MainWindow::addFitsMarker(QPointF pos)
+{
+	QUndoCommand *addCommand = new AddCommand(fitsScene, pos);
+	undoStack->push(addCommand);
+}
+
+void MainWindow::addEpoMarker(QPointF pos)
+{
+	QUndoCommand *addCommand = new AddCommand(epoScene, pos);
+	undoStack->push(addCommand);
+}
+
+
+void MainWindow::testSlot()
+{
+	qDebug() << "Test Slot";
 }
 
 

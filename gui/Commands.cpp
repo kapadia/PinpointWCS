@@ -20,19 +20,33 @@
 #include <QtGui>
 #include "Commands.h"
 
-AddCommand::AddCommand(GraphicsScene *graphicsScene, QUndoCommand *parent)
+AddCommand::AddCommand(GraphicsScene *graphicsScene, QPointF position, QUndoCommand *parent)
 : QUndoCommand(parent)
 {
-	static int itemCount = 0;	
+	static int itemCount = 0;
 	scene = graphicsScene;
-//	marker = new CoordMarker();
+	marker = new CoordMarker(scene->markerRadius);
+	initialPosition = position;
+	marker->setPos(initialPosition);
+	scene->update();
+	++itemCount;
 }
 
 AddCommand::~AddCommand()
 {}
 
 void AddCommand::undo()
-{}
+{
+	scene->removeItem(marker);
+	scene->toggleClickable(true);
+	scene->update();
+}
 
 void AddCommand::redo()
-{}
+{
+	scene->addItem(marker);
+	marker->setPos(initialPosition);
+	scene->toggleClickable(true);
+	scene->clearSelection();
+	scene->update();
+}
