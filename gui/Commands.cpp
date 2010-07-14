@@ -23,13 +23,9 @@
 AddCommand::AddCommand(GraphicsScene *graphicsScene, QPointF position, QUndoCommand *parent)
 : QUndoCommand(parent)
 {
-	static int itemCount = 0;
 	scene = graphicsScene;
 	marker = new CoordMarker(scene->markerRadius);
 	initialPosition = position;
-	marker->setPos(initialPosition);
-	scene->update();
-	++itemCount;
 }
 
 AddCommand::~AddCommand()
@@ -49,4 +45,35 @@ void AddCommand::redo()
 	scene->toggleClickable(true);
 	scene->clearSelection();
 	scene->update();
+}
+
+MoveCommand::MoveCommand(CoordMarker *item, const QPointF &oldPosition, QUndoCommand *parent)
+: QUndoCommand(parent)
+{
+	marker = item;
+	newPos = marker->scenePos();
+	oldPos = oldPosition;
+}
+
+bool MoveCommand::mergeWith(const QUndoCommand *command)
+{
+	const MoveCommand *moveCommand = static_cast<const MoveCommand *>(command);
+	CoordMarker *item = moveCommand->marker;
+	
+	if (marker != item)
+		return false;
+	
+	newPos = item->scenePos();
+	return true;
+}
+
+void MoveCommand::undo()
+{
+	marker->setPos(oldPos);
+	marker->scene()->update();
+}
+
+void MoveCommand::redo()
+{
+	marker->setPos(newPos);
 }

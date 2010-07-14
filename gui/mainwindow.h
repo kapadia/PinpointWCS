@@ -26,6 +26,7 @@
 #include "FitsImage.h"
 #include "EpoImage.h"
 #include "GraphicsScene.h"
+#include "CoordMarker.h"
 #include "WcsInfoPanel.h"
 #include "CoordinatePanel.h"
 #include "FitsToolbar.h"
@@ -83,6 +84,7 @@ private slots:
 	void updateEpoCoordinates(QPointF pos);
 	void addFitsMarker(QPointF pos);
 	void addEpoMarker(QPointF pos);
+	void itemMoved(CoordMarker *movedItem, const QPointF &moveStartPosition);
 	void testSlot();
 };
 

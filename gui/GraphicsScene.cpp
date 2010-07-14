@@ -26,6 +26,7 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 : QGraphicsScene(parent)
 {
 	reference = ref;
+	movingItem = 0;
 	pixmap = addPixmap(pix);
 	
 	if (reference)
@@ -65,6 +66,31 @@ void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
+void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    QPointF mousePos(event->buttonDownScenePos(Qt::LeftButton).x(),
+                     event->buttonDownScenePos(Qt::LeftButton).y());
+    movingItem = itemAt(mousePos.x(), mousePos.y());
+	
+    if (movingItem != 0 && event->button() == Qt::LeftButton) {
+        oldPos = movingItem->pos();
+    }
+    
+    clearSelection();    
+    QGraphicsScene::mousePressEvent(event);
+}
+
+
+void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (movingItem != 0 && event->button() == Qt::LeftButton) {
+        if (oldPos != movingItem->pos())
+            emit itemMoved(qgraphicsitem_cast<CoordMarker *>(movingItem),
+                           oldPos);
+        movingItem = 0;
+    }
+    QGraphicsScene::mouseReleaseEvent(event);
+}
 
 void GraphicsScene::toggleClickable(bool sendSignal)
 {

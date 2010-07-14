@@ -39,4 +39,23 @@ private:
 	QPointF initialPosition;
 };
 
+
+class MoveCommand : public QUndoCommand
+{
+	
+public:
+	enum { Id = 1234 };
+	
+	MoveCommand(CoordMarker *item, const QPointF &oldPosition, QUndoCommand *parent = 0);
+	void undo();
+	void redo();
+	bool mergeWith(const QUndoCommand *command);
+	int id() const { return Id; }
+	
+private:
+	CoordMarker *marker;
+	QPointF oldPos;
+	QPointF newPos;	
+};
+
 #endif

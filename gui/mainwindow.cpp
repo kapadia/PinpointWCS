@@ -143,6 +143,8 @@ bool MainWindow::loadImages()
 		connect(epoScene, SIGNAL(sceneDoubleClicked(QPointF)), this, SLOT(addEpoMarker(QPointF)));
 		connect(fitsScene, SIGNAL(toggleNeighborScene(bool)), epoScene, SLOT(toggleClickable(bool)));
 		connect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
+		connect(fitsScene, SIGNAL(itemMoved(CoordMarker*, QPointF)), this, SLOT(itemMoved(CoordMarker*, QPointF)));
+		connect(epoScene, SIGNAL(itemMoved(CoordMarker*, QPointF)), this, SLOT(itemMoved(CoordMarker*, QPointF)));
 		
 		// Connect even more signals -- ComboBox and Sliders for FitsImage and GraphicsScene
 		connect(fitsToolbar->ui.stretchComboBox, SIGNAL(currentIndexChanged(int)), fitsImage, SLOT(setStretch(int)));
@@ -186,6 +188,11 @@ void MainWindow::addEpoMarker(QPointF pos)
 {
 	QUndoCommand *addCommand = new AddCommand(epoScene, pos);
 	undoStack->push(addCommand);
+}
+
+void MainWindow::itemMoved(CoordMarker *movedItem, const QPointF &oldPosition)
+{
+	undoStack->push(new MoveCommand(movedItem, oldPosition));
 }
 
 
