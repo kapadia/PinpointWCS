@@ -52,7 +52,7 @@ void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 	QGraphicsScene::mouseMoveEvent(event);
 }
 
-
+/*
 void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
 	if (clickable)
@@ -66,6 +66,22 @@ void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 		addItem(marker);
 		// Emit signal
 		emit coordinateMarked();
+	}
+}
+*/
+ 
+void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+	if (clickable)
+	{
+		// Get scene position
+		QPointF pos = event->scenePos();
+		
+		// Toggle the boolean attribute
+		clickable = !clickable;
+		
+		// Broadcast the event for AddCommand and the other GraphicsScene
+		emit sceneDoubleClicked(this, pos);
 	}
 }
 

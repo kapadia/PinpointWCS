@@ -44,6 +44,7 @@ private:
 signals:
 	void mousePositionChanged(QPointF pos);
 	void coordinateMarked();
+	void sceneDoubleClicked(GraphicsScene *scene, QPointF pos);
 
 public slots:
 	void updatePixmap(QPixmap *pm);

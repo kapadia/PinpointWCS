@@ -21,12 +21,15 @@
 #define COMMANDS_H
 
 #include <QUndoCommand>
+#include "GraphicsScene.h"
 #include "CoordMarker.h"
 
 class AddCommand : public QUndoCommand
 {
+	
 public:
 	AddCommand(GraphicsScene *graphicsScene, QUndoCommand *parent = 0);
+	~AddCommand();
 	void undo();
 	void redo();
 	
@@ -34,6 +37,6 @@ private:
 	CoordMarker *marker;
 	GraphicsScene *scene;
 	QPointF initialPosition;
-}
+};
 
 #endif

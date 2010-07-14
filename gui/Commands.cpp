@@ -23,9 +23,16 @@
 AddCommand::AddCommand(GraphicsScene *graphicsScene, QUndoCommand *parent)
 : QUndoCommand(parent)
 {
-	static int itemCount = 0;
-	
+	static int itemCount = 0;	
 	scene = graphicsScene;
-	marker = new CoordMarker();
-	
+//	marker = new CoordMarker();
 }
+
+AddCommand::~AddCommand()
+{}
+
+void AddCommand::undo()
+{}
+
+void AddCommand::redo()
+{}
