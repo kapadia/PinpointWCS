@@ -32,6 +32,7 @@ public:
 	GraphicsScene(QPixmap pix, bool ref, QObject *parent = 0);
 	~GraphicsScene();
 	float markerRadius;
+	bool reference;
 		
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -40,7 +41,6 @@ protected:
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 private:
-	bool reference;
 	bool clickable;
 	QGraphicsItem *movingItem;
 	QPointF oldPos;

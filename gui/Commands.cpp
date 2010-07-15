@@ -20,6 +20,65 @@
 #include <QtGui>
 #include "Commands.h"
 
+AddCommand::AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *model, QUndoCommand *parent)
+: QUndoCommand(parent)
+{
+	// Initialize attributes
+	scene = graphicsScene;
+	row = index.row();
+	column = index.column();
+	initialPosition = value;
+	dataModel = model;
+	
+	// Instantiate a CoordMarker object
+	marker = new CoordMarker(scene->markerRadius);
+}
+
+AddCommand::~AddCommand()
+{}
+
+void AddCommand::undo()
+{
+	// Remove datum from model
+	if (scene->reference)
+	{
+		// Datum coming from FITS scene, so remove a row
+		dataModel->removeRows(0, 1, QModelIndex());
+	}
+	else
+	{
+		// Clear only the index (0, 1)
+		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
+		p.second = QPointF(-1, -1);
+	}
+	
+	// Remove marker from scene and adjust some parameters
+	scene->removeItem(marker);
+	scene->toggleClickable(true);
+	scene->update();
+}
+
+void AddCommand::redo()
+{	
+	// Access the data (remember AddCommand is a friend of CoordinateModel)
+	QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
+	
+	if (column == 0)
+		p.first = initialPosition.toPointF();
+	else if (column == 1)
+		p.second = initialPosition.toPointF();
+	else
+		return;
+	
+	// Add marker to scene and adjust some parameters
+	scene->addItem(marker);
+	marker->setPos(initialPosition.toPointF());
+	scene->toggleClickable(true);
+	scene->clearSelection();
+	scene->update();
+}
+
+/*
 AddCommand::AddCommand(GraphicsScene *graphicsScene, QPointF position, QUndoCommand *parent)
 : QUndoCommand(parent)
 {
@@ -77,3 +136,4 @@ void MoveCommand::redo()
 {
 	marker->setPos(newPos);
 }
+*/

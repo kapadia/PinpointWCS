@@ -177,22 +177,42 @@ bool MainWindow::loadFitsImage(QString& filename)
 	return true;
 }
 
+// TESTING THIS SLOT ...
+void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
+{
+	// Determine which scene was double-clicked
+	if (scene->reference)
+	{
+		// FITS scene double-clicked, so insert a row to the data model
+		dataModel->insertRows(0, 1, QModelIndex());
+		
+		// Compute index
+		QModelIndex index = dataModel->index(0, 0, QModelIndex());
+	}
+	else
+	{
+		// EPO scene double-clicked, so row already exists, compute index
+		QModelIndex index = dataModel->index(0, 1, QModelIndex());
+	}
+	dataModel->setData(scene, index, pos, Qt::EditRole);
+}
+
 
 void MainWindow::addFitsMarker(QPointF pos)
 {
-	QUndoCommand *addCommand = new AddCommand(fitsScene, pos);
-	undoStack->push(addCommand);
+//	QUndoCommand *addCommand = new AddCommand(fitsScene, pos);
+//	undoStack->push(addCommand);
 }
 
 void MainWindow::addEpoMarker(QPointF pos)
 {
-	QUndoCommand *addCommand = new AddCommand(epoScene, pos);
-	undoStack->push(addCommand);
+//	QUndoCommand *addCommand = new AddCommand(epoScene, pos);
+//	undoStack->push(addCommand);
 }
 
 void MainWindow::itemMoved(CoordMarker *movedItem, const QPointF &oldPosition)
 {
-	undoStack->push(new MoveCommand(movedItem, oldPosition));
+//	undoStack->push(new MoveCommand(movedItem, oldPosition));
 }
 
 

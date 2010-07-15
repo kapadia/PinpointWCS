@@ -21,14 +21,37 @@
 #define COMMANDS_H
 
 #include <QUndoCommand>
+#include <QVariant>
 #include "GraphicsScene.h"
 #include "CoordMarker.h"
+#include "CoordinateModel.h"
 
 class AddCommand : public QUndoCommand
 {
 	
 public:
+	AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *model, QUndoCommand *parent);
+	~AddCommand();
+	void undo();
+	void redo();
+	
+private:
+	CoordMarker *marker;
+	GraphicsScene *scene;
+	QVariant initialPosition;
+	CoordinateModel *dataModel;
+	int row, column;
+};
+
+
+
+/*
+class AddCommand : public QUndoCommand
+{
+	
+public:
 	AddCommand(GraphicsScene *graphicsScene, QPointF position, QUndoCommand *parent = 0);
+//	AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *m, QUndoCommand *parent);
 	~AddCommand();
 	void undo();
 	void redo();
@@ -37,6 +60,7 @@ private:
 	CoordMarker *marker;
 	GraphicsScene *scene;
 	QPointF initialPosition;
+//	CoordinateModel *model;
 };
 
 
@@ -55,7 +79,9 @@ public:
 private:
 	CoordMarker *marker;
 	QPointF oldPos;
-	QPointF newPos;	
+	QPointF newPos;
+//	CoordinateModel *model;
 };
+*/
 
 #endif

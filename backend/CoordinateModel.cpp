@@ -17,6 +17,7 @@
  *
  */
 
+#include <QUndoCommand>
 #include "CoordinateModel.h"
 
 
@@ -105,7 +106,7 @@ bool CoordinateModel::insertRows(int position, int rows, const QModelIndex &inde
         QPair<QPointF, QPointF> pair(*p1, *p2);
         listOfCoordinatePairs.insert(position, pair);
     }
-	
+
     endInsertRows();
     return true;
 }
@@ -125,27 +126,12 @@ bool CoordinateModel::removeRows(int position, int rows, const QModelIndex &inde
 }
 
 
-bool CoordinateModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool CoordinateModel::setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role)
 {
 	if (index.isValid() && role == Qt::EditRole) {
-		int row = index.row();
 		
-		QPair<QPointF, QPointF> p = listOfCoordinatePairs.value(row);
-		
-		if (index.column() == 0)
-			p.first.setX(value.toFloat());
-		else if (index.column() == 1)
-			p.first.setY(value.toFloat());
-		else if (index.column() == 2)
-			p.second.setX(value.toFloat());
-		else if (index.column() == 3)
-			p.second.setY(value.toFloat());
-        else
-            return false;
-		
-        listOfCoordinatePairs.replace(row, p);
-		emit(dataChanged(index, index));
-		
+		// Call add command and push to undo stack
+		undoStack->push(new AddCommand(scene, index, value, this));
         return true;
 	}
 	
@@ -165,4 +151,9 @@ Qt::ItemFlags CoordinateModel::flags(const QModelIndex &index) const
 QList< QPair<QPointF, QPointF> > CoordinateModel::getList()
 {
     return listOfCoordinatePairs;
+}
+
+
+void CoordinateModel::emitDataChanged(const QModelIndex &index){
+    emit dataChanged(index, index);
 }
