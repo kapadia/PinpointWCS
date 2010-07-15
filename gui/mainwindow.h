@@ -30,6 +30,7 @@
 #include "WcsInfoPanel.h"
 #include "CoordinatePanel.h"
 #include "FitsToolbar.h"
+#include "CoordinateModel.h"
 
  
 class MainWindow : public QMainWindow
@@ -42,10 +43,8 @@ public:
 	~MainWindow();
 
 private:
-	// Attributes
+	// Ui Attributes
 	Ui::MainWindow ui;
-	FitsImage *fitsImage;
-	EpoImage *epoImage;
 	GraphicsScene *fitsScene;
 	GraphicsScene *epoScene;
 	WcsInfoPanel *fitsWcsInfoPanel;
@@ -53,11 +52,16 @@ private:
 	CoordinatePanel *fitsCoordPanel;
 	CoordinatePanel *epoCoordPanel;
 	FitsToolbar *fitsToolbar;
+	
+	// Other Attributes
+	FitsImage *fitsImage;
+	EpoImage *epoImage;
 	QUndoStack *undoStack;
 	QAction *undoAction;
 	QAction *redoAction;
+	CoordinateModel *dataModel;
 	
-	// State Machines
+	// State Machines Attributes
 	QStateMachine *WcsInfoPanelMachine;
 	QState *WcsInfoPanelOn;
 	QState *WcsInfoPanelOff;

@@ -21,6 +21,9 @@
 #define COORDINATE_MODEL_H
 
 #include <QAbstractTableModel>
+#include <QPair>
+#include <QList>
+#include <QPointF>
 
 class CoordinateModel : public QAbstractTableModel
 {
@@ -28,17 +31,25 @@ class CoordinateModel : public QAbstractTableModel
 	Q_OBJECT
 	
 public:
-	CoordinateModel(QObject parent = 0);
-	int rowCount(const QModelIndex &parent = QModelIndex()) const;
-	int columnCount(const QModelIndex &parent = QModelIndex()) const;
-	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-	bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-	Qt::ItemFlags flags(const QModelIndex &index) const;
-	bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
-	bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
-	bool insertColumns(int column, int count, const QModelIndex &parent = QModelIndex());
-	bool removeColumns(int column, int count, const QModelIndex &parent = QModelIndex());
+	
+	CoordinateModel(QObject *parent=0);
+    CoordinateModel(QList< QPair<QPointF, QPointF> > coordPairs, QObject *parent=0);
+	~CoordinateModel();
+	
+    int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
+    bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex());
+    bool removeRows(int position, int rows, const QModelIndex &index=QModelIndex());
+	QList< QPair<QPointF, QPointF> > getList();
+	
+private:
+	// Need some type of storage for the data here
+	QList< QPair<QPointF, QPointF> > listOfCoordinatePairs;
+
 };
 
 #endif
