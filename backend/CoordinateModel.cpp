@@ -18,12 +18,15 @@
  */
 
 #include <QUndoCommand>
+#include <QDebug>
 #include "CoordinateModel.h"
 
 
 CoordinateModel::CoordinateModel(QObject *parent)
 : QAbstractTableModel(parent)
-{}
+{
+	undoStack = new QUndoStack(this);
+}
 
 
 CoordinateModel::CoordinateModel(QList< QPair<QPointF, QPointF> > pairs, QObject *parent)
@@ -99,10 +102,10 @@ QVariant CoordinateModel::headerData(int section, Qt::Orientation orientation, i
 bool CoordinateModel::insertRows(int position, int rows, const QModelIndex &index)
 {
     beginInsertRows(QModelIndex(), position, position+rows-1);
-    
+
     for (int row=0; row < rows; row++) {
-		QPointF *p1 = new QPointF();
-		QPointF *p2 = new QPointF();
+		p1 = new QPointF();
+		p2 = new QPointF();
         QPair<QPointF, QPointF> pair(*p1, *p2);
         listOfCoordinatePairs.insert(position, pair);
     }
@@ -131,7 +134,8 @@ bool CoordinateModel::setData(GraphicsScene *scene, const QModelIndex &index, co
 	if (index.isValid() && role == Qt::EditRole) {
 		
 		// Call add command and push to undo stack
-		undoStack->push(new AddCommand(scene, index, value, this));
+		AddCommand *a = new AddCommand(scene, index, value, this);
+		undoStack->push(a);
         return true;
 	}
 	

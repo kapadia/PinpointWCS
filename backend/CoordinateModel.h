@@ -35,7 +35,7 @@ class CoordinateModel : public QAbstractTableModel
 	
 	Q_OBJECT
 	
-//	friend class AddCommand;
+	friend class AddCommand;
 //	friend class MoveCommand;
 	
 public:	
@@ -48,16 +48,17 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
-    bool setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
+	bool setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
     bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex &index=QModelIndex());
 	QList< QPair<QPointF, QPointF> > getList();
-	
+	QUndoStack *undoStack;
 	QList< QPair<QPointF, QPointF> > listOfCoordinatePairs;
 	
 protected:
 	void emitDataChanged(const QModelIndex &index);
-	QUndoStack *undoStack;
+	QPointF *p1;
+	QPointF *p2;
 //	QList< QPair<QPointF, QPointF> > listOfCoordinatePairs;
 
 };

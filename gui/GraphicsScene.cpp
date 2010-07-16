@@ -58,11 +58,13 @@ void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
 	if (clickable)
 	{
+		qDebug() << "double";
 		// Get scene position
 		QPointF pos = event->scenePos();
 		
 		// Broadcast the event for AddCommand and the other GraphicsScene
-		emit sceneDoubleClicked(pos);
+//		emit sceneDoubleClicked(pos);
+		emit sceneDoubleClicked(this, pos);
 	}
 }
 

@@ -30,10 +30,12 @@ MainWindow::MainWindow()
 	// Set up user interface from the Designer file
     ui.setupUi(this);
 	
+	// Initialize the data model
+	dataModel = new CoordinateModel();
+	
 	// Initialize the undo stack
-	undoStack = new QUndoStack();
-	undoAction = undoStack->createUndoAction(this, tr("&Undo"));
-	redoAction = undoStack->createRedoAction(this, tr("&Redo"));
+	undoAction = dataModel->undoStack->createUndoAction(this, tr("&Undo"));
+	redoAction = dataModel->undoStack->createRedoAction(this, tr("&Redo"));
 	undoAction->setShortcut(QKeySequence::Undo);
 	redoAction->setShortcut(QKeySequence::Redo);
 	ui.menuEdit->addAction(undoAction);
@@ -139,8 +141,11 @@ bool MainWindow::loadImages()
 		connect(epoScene, SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateEpoCoordinates(QPointF)));
 		
 		// Connect yet more signals -- para comunicación entre los GraphicsScenes
-		connect(fitsScene, SIGNAL(sceneDoubleClicked(QPointF)), this, SLOT(addFitsMarker(QPointF)));
-		connect(epoScene, SIGNAL(sceneDoubleClicked(QPointF)), this, SLOT(addEpoMarker(QPointF)));
+//		connect(fitsScene, SIGNAL(sceneDoubleClicked(QPointF)), this, SLOT(addFitsMarker(QPointF)));
+//		connect(epoScene, SIGNAL(sceneDoubleClicked(QPointF)), this, SLOT(addEpoMarker(QPointF)));
+		connect(fitsScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), this, SLOT(addMarker(GraphicsScene*, QPointF)));
+		connect(epoScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), this, SLOT(addMarker(GraphicsScene*, QPointF)));
+		
 		connect(fitsScene, SIGNAL(toggleNeighborScene(bool)), epoScene, SLOT(toggleClickable(bool)));
 		connect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
 		connect(fitsScene, SIGNAL(itemMoved(CoordMarker*, QPointF)), this, SLOT(itemMoved(CoordMarker*, QPointF)));
@@ -188,13 +193,14 @@ void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 		
 		// Compute index
 		QModelIndex index = dataModel->index(0, 0, QModelIndex());
+		dataModel->setData(scene, index, pos, Qt::EditRole);
 	}
 	else
 	{
 		// EPO scene double-clicked, so row already exists, compute index
 		QModelIndex index = dataModel->index(0, 1, QModelIndex());
+		dataModel->setData(scene, index, pos, Qt::EditRole);
 	}
-	dataModel->setData(scene, index, pos, Qt::EditRole);
 }
 
 

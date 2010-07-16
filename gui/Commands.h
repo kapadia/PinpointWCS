@@ -26,11 +26,13 @@
 #include "CoordMarker.h"
 #include "CoordinateModel.h"
 
+class CoordinateModel;
+
 class AddCommand : public QUndoCommand
 {
 	
 public:
-	AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *model, QUndoCommand *parent);
+	AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *model);
 	~AddCommand();
 	void undo();
 	void redo();

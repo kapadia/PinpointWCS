@@ -20,8 +20,9 @@
 #include <QtGui>
 #include "Commands.h"
 
-AddCommand::AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *model, QUndoCommand *parent)
-: QUndoCommand(parent)
+
+AddCommand::AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *model)
+: QUndoCommand()
 {
 	// Initialize attributes
 	scene = graphicsScene;
