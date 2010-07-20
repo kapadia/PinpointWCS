@@ -95,6 +95,11 @@ bool MainWindow::loadImages()
 		disconnect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		
+		// Set up the table view
+		tableView = new QTableView;
+		tableView->setModel(dataModel);
+		tableView->show();
+		
 		// Flip the stacked widgets
 		ui.stackedWidget_1->setCurrentIndex(1);
 		ui.stackedWidget_2->setCurrentIndex(1);

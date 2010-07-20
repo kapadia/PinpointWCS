@@ -49,7 +49,7 @@ int CoordinateModel::columnCount(const QModelIndex &parent) const
 }
 
 QVariant CoordinateModel::data(const QModelIndex &index, int role) const
-{
+{	
     if (!index.isValid())
         return QVariant();
     
@@ -58,15 +58,23 @@ QVariant CoordinateModel::data(const QModelIndex &index, int role) const
     
     if (role == Qt::DisplayRole) {
         QPair<QPointF, QPointF> pair = listOfCoordinatePairs.at(index.row());
-        
+		
         if (index.column() == 0)
+		{
             return pair.first.x();
+		}
         else if (index.column() == 1)
+		{
             return pair.first.y();
+		}
 		else if (index.column() == 2)
+		{
 			return pair.second.x();
+		}
 		else if (index.column() == 3)
+		{
 			return pair.second.y();
+		}
 
     }
     return QVariant();
@@ -158,6 +166,6 @@ QList< QPair<QPointF, QPointF> > CoordinateModel::getList()
 }
 
 
-void CoordinateModel::emitDataChanged(const QModelIndex &index){
-    emit dataChanged(index, index);
+void CoordinateModel::emitDataChanged(const QModelIndex &index1, const QModelIndex &index2){
+    emit dataChanged(index1, index2);
 }

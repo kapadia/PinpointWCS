@@ -46,7 +46,7 @@ void AddCommand::undo()
 		// Datum coming from FITS scene, so remove a row
 		dataModel->removeRows(0, 1, QModelIndex());
 		QModelIndex index = dataModel->index(0, 0);
-		dataModel->emitDataChanged(index);
+		dataModel->emitDataChanged(index, index);
 	}
 	else
 	{
@@ -54,7 +54,7 @@ void AddCommand::undo()
 		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
 		p.second = QPointF(-1, -1);
 		QModelIndex index = dataModel->index(0, 1);
-		dataModel->emitDataChanged(index);
+		dataModel->emitDataChanged(index, index);
 	}
 	
 	// Remove marker from scene and adjust some parameters
@@ -72,13 +72,16 @@ void AddCommand::redo()
 	{
 		p.first = initialPosition.toPointF();
 		QModelIndex index = dataModel->index(0, 0);
-		dataModel->emitDataChanged(index);
+		dataModel->listOfCoordinatePairs.replace(row, p);
+		dataModel->emitDataChanged(index, index);
 	}
 	else if (column == 1)
 	{
 		p.second = initialPosition.toPointF();
-		QModelIndex index = dataModel->index(0, 1);
-		dataModel->emitDataChanged(index);
+		QModelIndex index1 = dataModel->index(0, 0);
+		QModelIndex index2 = dataModel->index(0, 1);
+		dataModel->listOfCoordinatePairs.replace(row, p);
+		dataModel->emitDataChanged(index1, index2);
 	}
 	else
 		return;

@@ -60,6 +60,7 @@ private:
 	QAction *undoAction;
 	QAction *redoAction;
 	CoordinateModel *dataModel;
+	QTableView *tableView;
 	
 	// State Machines Attributes
 	QStateMachine *WcsInfoPanelMachine;

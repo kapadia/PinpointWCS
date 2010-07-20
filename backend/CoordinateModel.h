@@ -56,7 +56,7 @@ public:
 	QList< QPair<QPointF, QPointF> > listOfCoordinatePairs;
 	
 protected:
-	void emitDataChanged(const QModelIndex &index);
+	void emitDataChanged(const QModelIndex &index1, const QModelIndex &index2);
 	QPointF *p1;
 	QPointF *p2;
 //	QList< QPair<QPointF, QPointF> > listOfCoordinatePairs;
