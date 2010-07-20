@@ -139,14 +139,12 @@ bool CoordinateModel::removeRows(int position, int rows, const QModelIndex &inde
 
 bool CoordinateModel::setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role)
 {
-	if (index.isValid() && role == Qt::EditRole) {
-		
+	if (role == Qt::EditRole) {
 		// Call add command and push to undo stack
-		AddCommand *a = new AddCommand(scene, index, value, this);
+		AddCommand *a = new AddCommand(scene, value, this);
 		undoStack->push(a);
         return true;
 	}
-	
 	return false;
 }
 
@@ -167,5 +165,6 @@ QList< QPair<QPointF, QPointF> > CoordinateModel::getList()
 
 
 void CoordinateModel::emitDataChanged(const QModelIndex &index1, const QModelIndex &index2){
+	qDebug() << listOfCoordinatePairs;
     emit dataChanged(index1, index2);
 }

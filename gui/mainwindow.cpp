@@ -190,22 +190,7 @@ bool MainWindow::loadFitsImage(QString& filename)
 // TESTING THIS SLOT ...
 void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 {
-	// Determine which scene was double-clicked
-	if (scene->reference)
-	{
-		// FITS scene double-clicked, so insert a row to the data model
-		dataModel->insertRows(0, 1, QModelIndex());
-		
-		// Compute index
-		QModelIndex index = dataModel->index(0, 0, QModelIndex());
-		dataModel->setData(scene, index, pos, Qt::EditRole);
-	}
-	else
-	{
-		// EPO scene double-clicked, so row already exists, compute index
-		QModelIndex index = dataModel->index(0, 1, QModelIndex());
-		dataModel->setData(scene, index, pos, Qt::EditRole);
-	}
+	dataModel->setData(scene, QModelIndex(), pos, Qt::EditRole);
 }
 
 

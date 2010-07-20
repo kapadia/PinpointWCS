@@ -32,7 +32,7 @@ class AddCommand : public QUndoCommand
 {
 	
 public:
-	AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *model);
+	AddCommand(GraphicsScene *graphicsScene, const QVariant &value, CoordinateModel *model);
 	~AddCommand();
 	void undo();
 	void redo();
@@ -42,7 +42,6 @@ private:
 	GraphicsScene *scene;
 	QVariant initialPosition;
 	CoordinateModel *dataModel;
-	int row, column;
 };
 
 

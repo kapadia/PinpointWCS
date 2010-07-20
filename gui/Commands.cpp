@@ -21,13 +21,11 @@
 #include "Commands.h"
 
 
-AddCommand::AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *model)
+AddCommand::AddCommand(GraphicsScene *graphicsScene, const QVariant &value, CoordinateModel *model)
 : QUndoCommand()
 {
 	// Initialize attributes
 	scene = graphicsScene;
-	row = index.row();
-	column = index.column();
 	initialPosition = value;
 	dataModel = model;
 	
@@ -35,26 +33,33 @@ AddCommand::AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, c
 	marker = new CoordMarker(scene->markerRadius);
 }
 
+
 AddCommand::~AddCommand()
 {}
 
 void AddCommand::undo()
 {
+	// Determine the number of rows in the data model
+	int numrows = dataModel->rowCount(QModelIndex());
+	
 	// Remove datum from model
 	if (scene->reference)
 	{
 		// Datum coming from FITS scene, so remove a row
-		dataModel->removeRows(0, 1, QModelIndex());
-		QModelIndex index = dataModel->index(0, 0);
-		dataModel->emitDataChanged(index, index);
+		dataModel->removeRows(numrows-1, 1, QModelIndex());
+		QModelIndex index1 = dataModel->index(numrows-1, 0);
+		QModelIndex index2 = dataModel->index(numrows-1, 1);
+		dataModel->emitDataChanged(index1, index2);
 	}
 	else
 	{
 		// Clear only the index (0, 1)
-		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
+		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(numrows-1);
 		p.second = QPointF(-1, -1);
-		QModelIndex index = dataModel->index(0, 1);
-		dataModel->emitDataChanged(index, index);
+		QModelIndex index1 = dataModel->index(numrows-1, 0);
+		QModelIndex index2 = dataModel->index(numrows-1, 1);
+		dataModel->listOfCoordinatePairs.replace(numrows-1, p);
+		dataModel->emitDataChanged(index1, index2);
 	}
 	
 	// Remove marker from scene and adjust some parameters
@@ -65,26 +70,33 @@ void AddCommand::undo()
 
 void AddCommand::redo()
 {	
-	// Access the data (remember AddCommand is a friend of CoordinateModel)
-	QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
+	// Determine the number of rows in the data model
+	int numrows = dataModel->rowCount(QModelIndex());
 	
-	if (column == 0)
+	if (scene->reference)
 	{
+		// Insert a row
+		dataModel->insertRows(numrows, 1, QModelIndex());
+		
+		// Access the data (remember AddCommand is a friend of CoordinateModel)
+		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(numrows);
+		
 		p.first = initialPosition.toPointF();
-		QModelIndex index = dataModel->index(0, 0);
-		dataModel->listOfCoordinatePairs.replace(row, p);
+		QModelIndex index = dataModel->index(numrows, 0);
+		dataModel->listOfCoordinatePairs.replace(numrows, p);
 		dataModel->emitDataChanged(index, index);
 	}
-	else if (column == 1)
+	else
 	{
+		// Access the data (remember AddCommand is a friend of CoordinateModel)
+		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(numrows-1);
+		
 		p.second = initialPosition.toPointF();
-		QModelIndex index1 = dataModel->index(0, 0);
-		QModelIndex index2 = dataModel->index(0, 1);
-		dataModel->listOfCoordinatePairs.replace(row, p);
+		QModelIndex index1 = dataModel->index(numrows-1, 0);
+		QModelIndex index2 = dataModel->index(numrows-1, 1);
+		dataModel->listOfCoordinatePairs.replace(numrows-1, p);
 		dataModel->emitDataChanged(index1, index2);
 	}
-	else
-		return;
 	
 	// Add marker to scene and adjust some parameters
 	scene->addItem(marker);
