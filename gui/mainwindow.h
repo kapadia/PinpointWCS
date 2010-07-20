@@ -84,15 +84,13 @@ private slots:
 	bool loadImages();
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
+	void addMarker(GraphicsScene *scene, QPointF pos);
 	void updateCoordPanelProperties();
 	void updateFitsCoordinates(QPointF pos);
 	void updateEpoCoordinates(QPointF pos);
-	void addFitsMarker(QPointF pos);
-	void addEpoMarker(QPointF pos);
 	void itemMoved(CoordMarker *movedItem, const QPointF &moveStartPosition);
 	
 	// Testing this slot ...
-	void addMarker(GraphicsScene *scene, QPointF pos);
 	void testSlot();
 };
 

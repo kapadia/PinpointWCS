@@ -84,6 +84,7 @@ void AddCommand::redo()
 		p.first = initialPosition.toPointF();
 		QModelIndex index = dataModel->index(numrows, 0);
 		dataModel->listOfCoordinatePairs.replace(numrows, p);
+		marker->row = numrows;
 		dataModel->emitDataChanged(index, index);
 	}
 	else
@@ -95,6 +96,7 @@ void AddCommand::redo()
 		QModelIndex index1 = dataModel->index(numrows-1, 0);
 		QModelIndex index2 = dataModel->index(numrows-1, 1);
 		dataModel->listOfCoordinatePairs.replace(numrows-1, p);
+		marker->row = numrows-1;
 		dataModel->emitDataChanged(index1, index2);
 	}
 	

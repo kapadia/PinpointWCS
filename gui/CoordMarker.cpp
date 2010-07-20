@@ -17,16 +17,16 @@
  *
  */
 
-#include <iostream>
 #include <QtGui>
 #include <CoordMarker.h>
-
+#include "GraphicsScene.h"
 
 CoordMarker::CoordMarker(float r, QGraphicsItem *parent)
 : QGraphicsItem(parent)
 {
 	qDebug() << "Initializing CoordMarker object ...";
 	radius = r;
+	row = NULL;
 	setZValue(2);
 	setOpacity(100.0);
 	setSelected(true);
@@ -96,7 +96,8 @@ QVariant CoordMarker::itemChange(GraphicsItemChange change, const QVariant &valu
 {
 	if (change == QGraphicsItem::ItemPositionHasChanged)
 	{
-		qDebug() << "position changed";
+		GraphicsScene *s = qobject_cast<GraphicsScene*> (scene());
+		s->itemChange(this);
 	}
 	return QGraphicsItem::itemChange(change, value);
 }

@@ -62,7 +62,7 @@ MainWindow::MainWindow()
 	ui.dropLabel_2->setFileExtensions(true);
 	
 	// Testing message on status bar
-//	QLabel *msg = new QLabel(QString("PinpointWCS is ready!"));
+//	QLabel *msg = new QLabel(QString("PinpointWCS from the Chandra X-ray Observatory"));
 //	ui.statusbar->addWidget(msg);
 	
 	// Connect signals and slots
@@ -146,8 +146,6 @@ bool MainWindow::loadImages()
 		connect(epoScene, SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateEpoCoordinates(QPointF)));
 		
 		// Connect yet more signals -- para comunicación entre los GraphicsScenes
-//		connect(fitsScene, SIGNAL(sceneDoubleClicked(QPointF)), this, SLOT(addFitsMarker(QPointF)));
-//		connect(epoScene, SIGNAL(sceneDoubleClicked(QPointF)), this, SLOT(addEpoMarker(QPointF)));
 		connect(fitsScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), this, SLOT(addMarker(GraphicsScene*, QPointF)));
 		connect(epoScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), this, SLOT(addMarker(GraphicsScene*, QPointF)));
 		
@@ -194,21 +192,10 @@ void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 }
 
 
-void MainWindow::addFitsMarker(QPointF pos)
-{
-//	QUndoCommand *addCommand = new AddCommand(fitsScene, pos);
-//	undoStack->push(addCommand);
-}
-
-void MainWindow::addEpoMarker(QPointF pos)
-{
-//	QUndoCommand *addCommand = new AddCommand(epoScene, pos);
-//	undoStack->push(addCommand);
-}
 
 void MainWindow::itemMoved(CoordMarker *movedItem, const QPointF &oldPosition)
 {
-//	undoStack->push(new MoveCommand(movedItem, oldPosition));
+	dataModel->updateData(movedItem, oldPosition, Qt::EditRole);
 }
 
 

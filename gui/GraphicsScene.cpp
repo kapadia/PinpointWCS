@@ -49,7 +49,7 @@ GraphicsScene::~GraphicsScene() {}
 
 void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-	mousePositionChanged(event->scenePos());
+	emit mousePositionChanged(event->scenePos());
 	QGraphicsScene::mouseMoveEvent(event);
 }
 
@@ -58,12 +58,10 @@ void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
 	if (clickable)
 	{
-		qDebug() << "double";
 		// Get scene position
 		QPointF pos = event->scenePos();
 		
 		// Broadcast the event for AddCommand and the other GraphicsScene
-//		emit sceneDoubleClicked(pos);
 		emit sceneDoubleClicked(this, pos);
 	}
 }
@@ -77,7 +75,7 @@ void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (movingItem != 0 && event->button() == Qt::LeftButton) {
         oldPos = movingItem->pos();
     }
-    
+
     clearSelection();    
     QGraphicsScene::mousePressEvent(event);
 }
@@ -85,12 +83,13 @@ void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+	/*
     if (movingItem != 0 && event->button() == Qt::LeftButton) {
         if (oldPos != movingItem->pos())
-            emit itemMoved(qgraphicsitem_cast<CoordMarker *>(movingItem),
-                           oldPos);
+            emit itemMoved(qgraphicsitem_cast<CoordMarker *>(movingItem), oldPos);
         movingItem = 0;
     }
+	 */
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
@@ -104,4 +103,9 @@ void GraphicsScene::toggleClickable(bool sendSignal)
 void GraphicsScene::updatePixmap(QPixmap *pm)
 {
 	pixmap->setPixmap(*pm);
+}
+
+void GraphicsScene::itemChange(CoordMarker *m)
+{
+	emit markerChange(m);
 }

@@ -22,6 +22,7 @@
 
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QModelIndex>
 
 class CoordMarker : public QGraphicsItem
 {
@@ -29,6 +30,7 @@ class CoordMarker : public QGraphicsItem
 public:
 	CoordMarker(float r, QGraphicsItem *parent = 0);
 	~CoordMarker();
+	int row;
 	
 	// Required methods to implement
 	QRectF boundingRect() const;
@@ -42,6 +44,7 @@ protected:
 	
 private:
 	float radius;
+	
 };
 
 #endif

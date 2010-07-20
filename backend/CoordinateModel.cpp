@@ -26,6 +26,8 @@ CoordinateModel::CoordinateModel(QObject *parent)
 : QAbstractTableModel(parent)
 {
 	undoStack = new QUndoStack(this);
+	p1 = new QPointF(-1, -1);
+	p2 = new QPointF(-1, -1);
 }
 
 
@@ -45,9 +47,57 @@ int CoordinateModel::rowCount(const QModelIndex &parent) const
 
 int CoordinateModel::columnCount(const QModelIndex &parent) const
 {
-    return 4;
+    return 2;
 }
 
+QVariant CoordinateModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid())
+        return QVariant();
+    
+    if (index.row() >= listOfCoordinatePairs.size() || index.row() < 0)
+        return QVariant();
+	
+	if (role == Qt::DisplayRole)
+	{
+		QPair<QPointF, QPointF> pair = listOfCoordinatePairs.at(index.row());
+		
+		QString formattedData;
+		
+		if (index.column() == 0)
+			return formattedData.sprintf("%.2f, %.2f", pair.first.x(), pair.first.y());
+		else
+		{
+			if (pair.second.x() == -1 && pair.second.y() == -1)
+				return formattedData.sprintf("%s, %s", "-", "-");
+			return formattedData.sprintf("%.2f, %.2f", pair.second.x(), pair.second.y());
+		}
+	}
+	
+	return QVariant();
+}
+
+QVariant CoordinateModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    
+    if (orientation == Qt::Horizontal) {
+        switch (section) {
+            case 0:
+                return tr("FITS Coordinates");
+                
+            case 1:
+                return tr("EPO Coordinates");
+                
+            default:
+                return QVariant();
+        }
+    }
+    return QVariant();
+}
+
+/*
 QVariant CoordinateModel::data(const QModelIndex &index, int role) const
 {	
     if (!index.isValid())
@@ -79,7 +129,7 @@ QVariant CoordinateModel::data(const QModelIndex &index, int role) const
     }
     return QVariant();
 }
-
+ 
 QVariant CoordinateModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
@@ -105,15 +155,13 @@ QVariant CoordinateModel::headerData(int section, Qt::Orientation orientation, i
     }
     return QVariant();
 }
-
+*/
 
 bool CoordinateModel::insertRows(int position, int rows, const QModelIndex &index)
 {
     beginInsertRows(QModelIndex(), position, position+rows-1);
 
     for (int row=0; row < rows; row++) {
-		p1 = new QPointF();
-		p2 = new QPointF();
         QPair<QPointF, QPointF> pair(*p1, *p2);
         listOfCoordinatePairs.insert(position, pair);
     }
@@ -139,11 +187,23 @@ bool CoordinateModel::removeRows(int position, int rows, const QModelIndex &inde
 
 bool CoordinateModel::setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role)
 {
-	if (role == Qt::EditRole) {
+	if (role == Qt::EditRole)
+	{
 		// Call add command and push to undo stack
 		AddCommand *a = new AddCommand(scene, value, this);
 		undoStack->push(a);
         return true;
+	}
+	return false;
+}
+
+bool CoordinateModel::updateData(CoordMarker *item, const QVariant &value, int role)
+{
+	if (role == Qt::EditRole)
+	{
+//		MoveCommand *m = new MoveCommand(item, value);
+//		undoStack->push(m);
+		return true;
 	}
 	return false;
 }
