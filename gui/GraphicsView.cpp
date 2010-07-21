@@ -58,6 +58,10 @@ void GraphicsView::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Space)
 		setDragMode(ScrollHandDrag);
+	else if(event->key() == Qt::Key_R)
+	{
+		rotate(10);
+	}
 }
 
 void GraphicsView::keyReleaseEvent(QKeyEvent *event)
