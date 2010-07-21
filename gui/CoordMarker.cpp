@@ -94,10 +94,12 @@ void CoordMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 QVariant CoordMarker::itemChange(GraphicsItemChange change, const QVariant &value)
 {
+	/*
 	if (change == QGraphicsItem::ItemPositionHasChanged)
 	{
 		GraphicsScene *s = qobject_cast<GraphicsScene*> (scene());
 		s->itemChange(this);
 	}
+	 */
 	return QGraphicsItem::itemChange(change, value);
 }

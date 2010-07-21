@@ -45,33 +45,13 @@ private:
 };
 
 
-
-/*
-class AddCommand : public QUndoCommand
-{
-	
-public:
-	AddCommand(GraphicsScene *graphicsScene, QPointF position, QUndoCommand *parent = 0);
-//	AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *m, QUndoCommand *parent);
-	~AddCommand();
-	void undo();
-	void redo();
-	
-private:
-	CoordMarker *marker;
-	GraphicsScene *scene;
-	QPointF initialPosition;
-//	CoordinateModel *model;
-};
-
-
 class MoveCommand : public QUndoCommand
 {
 	
 public:
 	enum { Id = 1234 };
 	
-	MoveCommand(CoordMarker *item, const QPointF &oldPosition, QUndoCommand *parent = 0);
+	MoveCommand(CoordMarker *item, const QVariant &value, CoordinateModel *model);
 	void undo();
 	void redo();
 	bool mergeWith(const QUndoCommand *command);
@@ -79,10 +59,29 @@ public:
 	
 private:
 	CoordMarker *marker;
-	QPointF oldPos;
-	QPointF newPos;
-//	CoordinateModel *model;
+	QVariant oldPos;
+	QVariant newPos;
+	CoordinateModel *dataModel;
 };
-*/
+
+
+/*
+ class AddCommand : public QUndoCommand
+ {
+ 
+ public:
+ AddCommand(GraphicsScene *graphicsScene, QPointF position, QUndoCommand *parent = 0);
+ //	AddCommand(GraphicsScene *graphicsScene, const QModelIndex &index, const QVariant &value, CoordinateModel *m, QUndoCommand *parent);
+ ~AddCommand();
+ void undo();
+ void redo();
+ 
+ private:
+ CoordMarker *marker;
+ GraphicsScene *scene;
+ QPointF initialPosition;
+ //	CoordinateModel *model;
+ };
+ */
 
 #endif

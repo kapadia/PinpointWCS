@@ -108,40 +108,14 @@ void AddCommand::redo()
 	scene->update();
 }
 
-/*
-AddCommand::AddCommand(GraphicsScene *graphicsScene, QPointF position, QUndoCommand *parent)
-: QUndoCommand(parent)
-{
-	scene = graphicsScene;
-	marker = new CoordMarker(scene->markerRadius);
-	initialPosition = position;
-}
 
-AddCommand::~AddCommand()
-{}
-
-void AddCommand::undo()
-{
-	scene->removeItem(marker);
-	scene->toggleClickable(true);
-	scene->update();
-}
-
-void AddCommand::redo()
-{
-	scene->addItem(marker);
-	marker->setPos(initialPosition);
-	scene->toggleClickable(true);
-	scene->clearSelection();
-	scene->update();
-}
-
-MoveCommand::MoveCommand(CoordMarker *item, const QPointF &oldPosition, QUndoCommand *parent)
-: QUndoCommand(parent)
+MoveCommand::MoveCommand(CoordMarker *item, const QVariant &value, CoordinateModel *model)
+: QUndoCommand()
 {
 	marker = item;
 	newPos = marker->scenePos();
-	oldPos = oldPosition;
+	oldPos = value;
+	dataModel = model;
 }
 
 bool MoveCommand::mergeWith(const QUndoCommand *command)
@@ -158,12 +132,59 @@ bool MoveCommand::mergeWith(const QUndoCommand *command)
 
 void MoveCommand::undo()
 {
-	marker->setPos(oldPos);
+	// Get the scene
+	GraphicsScene *scene = qobject_cast<GraphicsScene*> (marker->scene());
+	int row = marker->row;
+	
+	// Get data from model
+	QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
+	
+	if (scene->reference)
+	{
+		p.first = oldPos.toPointF();
+		dataModel->listOfCoordinatePairs.replace(row, p);
+		QModelIndex index = dataModel->index(row, 0);
+		dataModel->emitDataChanged(index, index);
+	}
+	else
+	{
+		p.second = oldPos.toPointF();
+		dataModel->listOfCoordinatePairs.replace(row, p);
+		QModelIndex index1 = dataModel->index(row, 0);
+		QModelIndex index2 = dataModel->index(row, 1);
+		dataModel->emitDataChanged(index1, index2);
+	}
+	
+	// Move marker to old position
+	marker->setPos(oldPos.toPointF());
 	marker->scene()->update();
 }
 
 void MoveCommand::redo()
 {
-	marker->setPos(newPos);
+	// Get the scene
+	GraphicsScene *scene = qobject_cast<GraphicsScene*> (marker->scene());
+	int row = marker->row;
+	
+	// Get data from model
+	QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
+	
+	if (scene->reference)
+	{
+		p.first = newPos.toPointF();
+		dataModel->listOfCoordinatePairs.replace(row, p);
+		QModelIndex index = dataModel->index(row, 0);
+		dataModel->emitDataChanged(index, index);
+	}
+	else
+	{
+		p.second = newPos.toPointF();
+		dataModel->listOfCoordinatePairs.replace(row, p);
+		QModelIndex index1 = dataModel->index(row, 0);
+		QModelIndex index2 = dataModel->index(row, 1);
+		dataModel->emitDataChanged(index1, index2);
+	}
+	
+	// Move the marker to the new position
+	marker->setPos(newPos.toPointF());
 }
-*/

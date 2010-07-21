@@ -185,7 +185,6 @@ bool MainWindow::loadFitsImage(QString& filename)
 	return true;
 }
 
-// TESTING THIS SLOT ...
 void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 {
 	dataModel->setData(scene, QModelIndex(), pos, Qt::EditRole);
@@ -195,6 +194,7 @@ void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 
 void MainWindow::itemMoved(CoordMarker *movedItem, const QPointF &oldPosition)
 {
+	qDebug() << "itemMoved";
 	dataModel->updateData(movedItem, oldPosition, Qt::EditRole);
 }
 

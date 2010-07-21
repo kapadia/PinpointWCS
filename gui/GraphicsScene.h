@@ -33,7 +33,7 @@ public:
 	~GraphicsScene();
 	float markerRadius;
 	bool reference;
-	void itemChange(CoordMarker *m);
+//	void itemChange(CoordMarker *m);
 		
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);

@@ -36,7 +36,7 @@ class CoordinateModel : public QAbstractTableModel
 	Q_OBJECT
 	
 	friend class AddCommand;
-//	friend class MoveCommand;
+	friend class MoveCommand;
 	
 public:	
 	CoordinateModel(QObject *parent=0);

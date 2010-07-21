@@ -201,8 +201,8 @@ bool CoordinateModel::updateData(CoordMarker *item, const QVariant &value, int r
 {
 	if (role == Qt::EditRole)
 	{
-//		MoveCommand *m = new MoveCommand(item, value);
-//		undoStack->push(m);
+		MoveCommand *m = new MoveCommand(item, value, this);
+		undoStack->push(m);
 		return true;
 	}
 	return false;
