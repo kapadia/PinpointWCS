@@ -48,6 +48,9 @@ public:
 	~FitsImage();
 	float minpixel, maxpixel, difference;
 	float vmin, vmax, lowerLimit, upperLimit;
+	long naxisn[2];
+	bool downsampled;
+	int M;
 	
 public slots:
 	void setStretch(int s);
@@ -71,7 +74,6 @@ private:
 	int status, wcsstatus;
 	int numhdus, numimgs, naxis, hdutype;
 	int stretch;
-	long naxisn[2];
 	long width, height;
 	long numelements;
 	long* fpixel;
@@ -80,8 +82,6 @@ private:
 	float* renderdata;
 	float lowerPercentile;
 	float upperPercentile;
-	bool downsampled;
-	int M;
 	char alt;
 	bool inverted;
 };

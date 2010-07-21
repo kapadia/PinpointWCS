@@ -39,6 +39,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	renderdata = NULL;
 	lowerPercentile = 0.0025;
 	upperPercentile = 0.9975;
+	M = 1;
 	downsampled = false;
 	
 	// Open FITS file
@@ -272,7 +273,7 @@ void FitsImage::calculateExtremals()
 
 void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* newH)
 {
-	qDebug() << "Downsampling data ...";
+	qDebug() << "Downsampling Factor:" << S;
 	
 	int i, j, I, J;
 	
