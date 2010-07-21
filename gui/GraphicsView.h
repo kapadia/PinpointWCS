@@ -35,11 +35,12 @@ public:
 	void keyReleaseEvent(QKeyEvent *event);
 	void enterEvent(QEvent *event);
 	void leaveEvent(QEvent *event);
-//	void wheelEvent(QWheelEvent *event);
 
 protected:
 	// Methods
 	void resizeEvent(QResizeEvent *event);
+	void wheelEvent(QWheelEvent *event);
+	void scaleView(qreal scaleFactor);
 	
 signals:
 	void objectResized(QSize s);

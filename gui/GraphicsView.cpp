@@ -17,8 +17,6 @@
  *
  */
 
-#include <iostream>
-
 #include "GraphicsView.h"
 #include "GraphicsScene.h"
 #include <QtGui>
@@ -79,3 +77,18 @@ void GraphicsView::leaveEvent(QEvent *event)
 {
 	setDragMode(QGraphicsView::NoDrag);
 }
+
+void GraphicsView::wheelEvent(QWheelEvent *event)
+{
+	scaleView(pow((double)2, -event->delta() / 240.0));
+}
+
+void GraphicsView::scaleView(qreal scaleFactor)
+{
+	qreal factor = matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
+	if (factor < 0.07 || factor > 100)
+		return;
+	
+	scale(scaleFactor, scaleFactor);
+}
+
