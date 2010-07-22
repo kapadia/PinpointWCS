@@ -552,7 +552,6 @@ void FitsImage::invert()
 	QImage image = pixmap->toImage();
 	image.invertPixels();
 	pixmap = new QPixmap(QPixmap::fromImage(image, Qt::DiffuseDither));
-	image.~QImage();
 	inverted = !inverted;
 	emit pixmapChanged(pixmap);
 }
