@@ -19,6 +19,7 @@
 
 #include <math.h>
 #include <Eigen/LU>
+#include <QDebug>
 #include "ComputeWCS.h"
 
 
@@ -76,7 +77,35 @@ void ComputeWCS::computeSums()
 }
 
 void ComputeWCS::computeResiduals()
-{}
+{
+	// Initialize some variables
+	double sumn = 0;
+	double sumx2 = 0;
+	double sumy2 = 0;
+	
+	// Loop over the pairs stored in the data model
+	int ii;
+	for (ii=0; ii < dataModel->size(); ii++)
+	{
+		// Store the coordinate pairs
+		QPointF point1 = dataModel->at(ii).first;
+		QPointF point2 = dataModel->at(ii).second;
+		
+		// Map EPO coordinates to FITS coordinates
+		Vector2d fit = epoToFits(&point2);
+		
+		// Compute residuals
+		sumn += 1;
+		sumx2 += pow(point1.x() - fit[0], 2);
+		sumy2 += pow(point1.y() - fit[1], 2);
+	}
+	
+	rms_x = sqrt(sumx2 / sumn);
+	rms_y = sqrt(sumy2 / sumn);
+	
+	qDebug() << "RMS X:" << rms_x;
+	qDebug() << "RMS Y:" << rms_y;
+}
 
 void ComputeWCS::plateSolution()
 {
@@ -90,10 +119,18 @@ void ComputeWCS::plateSolution()
 	// Print to standard output
 	std::cout << xcoeff << std::endl;
 	std::cout << ycoeff << std::endl;
+	
+	// Compute residuals
+	computeResiduals();
 }
 
-void ComputeWCS::referenceToTarget()
+Vector2d ComputeWCS::fitsToEpo(QPointF *p)
 {}
 
-void ComputeWCS::targetToReference()
-{}
+
+Vector2d ComputeWCS::epoToFits(QPointF *p)
+{
+	Vector2d coordinate;
+	coordinate << xcoeff[0] * p->x() + xcoeff[1] * p->y() + xcoeff[2], ycoeff[0] * p->x() + ycoeff[1] * p->y() + ycoeff[2];
+	return coordinate;
+}

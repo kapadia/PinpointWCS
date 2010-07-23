@@ -42,8 +42,8 @@ private:
 	void xi_eta();
 	void computeSums();
 	void computeResiduals();
-	void referenceToTarget();
-	void targetToReference();
+	Vector2d fitsToEpo(QPointF *p);
+	Vector2d epoToFits(QPointF *p);
 
 	// Attributes
 	QList< QPair<QPointF, QPointF> > *dataModel;
@@ -52,6 +52,7 @@ private:
 	Vector3d ycoeff;
 	Vector3d xvector;
 	Vector3d yvector;
+	double rms_x, rms_y;
 };
 
 #endif
