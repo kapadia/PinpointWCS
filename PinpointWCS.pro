@@ -5,7 +5,7 @@
 TEMPLATE = app
 TARGET =
 DEPENDPATH += . backend gui
-INCLUDEPATH += . gui backend /usr/local/include ../libwcs/
+INCLUDEPATH += . gui backend /usr/local/include ../libwcs/ ../eigen
 CONFIG += debug_and_release
 LIBS += -L/usr/local/lib -lcfitsio
 LIBS += -L../libwcs -lwcs -lm

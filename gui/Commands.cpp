@@ -50,6 +50,9 @@ void AddCommand::undo()
 		QModelIndex index1 = dataModel->index(numrows-1, 0);
 		QModelIndex index2 = dataModel->index(numrows-1, 1);
 		dataModel->emitDataChanged(index1, index2);
+		
+		// Testing signal to ComputeWCS object
+		dataModel->computeMapping();
 	}
 	else
 	{
@@ -98,6 +101,9 @@ void AddCommand::redo()
 		dataModel->listOfCoordinatePairs.replace(numrows-1, p);
 		marker->row = numrows-1;
 		dataModel->emitDataChanged(index1, index2);
+		
+		// Testing signal to ComputeWCS object
+		dataModel->computeMapping();
 	}
 	
 	// Add marker to scene and adjust some parameters
@@ -155,6 +161,9 @@ void MoveCommand::undo()
 		dataModel->emitDataChanged(index1, index2);
 	}
 	
+	// Testing signal to ComputeWCS object
+	dataModel->computeMapping();
+	
 	// Move marker to old position
 	marker->setPos(oldPos.toPointF());
 	marker->scene()->update();
@@ -184,6 +193,9 @@ void MoveCommand::redo()
 		QModelIndex index2 = dataModel->index(row, 1);
 		dataModel->emitDataChanged(index1, index2);
 	}
+	
+	// Testing signal to ComputeWCS object
+	dataModel->computeMapping();
 	
 	// Move the marker to the new position
 	marker->setPos(newPos.toPointF());

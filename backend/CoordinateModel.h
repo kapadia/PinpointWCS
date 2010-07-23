@@ -58,9 +58,13 @@ public:
 	
 protected:
 	void emitDataChanged(const QModelIndex &index1, const QModelIndex &index2);
+	void computeMapping();
 	QPointF *p1;
 	QPointF *p2;
 //	QList< QPair<QPointF, QPointF> > listOfCoordinatePairs;
+	
+signals:
+	void compute();
 
 };
 

@@ -95,6 +95,9 @@ bool MainWindow::loadImages()
 		disconnect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		
+		// Initialize the ComputeWCS object
+		computewcs = new ComputeWCS(&(dataModel->listOfCoordinatePairs));
+		
 		// Set up the table view
 		tableView = new QTableView;
 		tableView->setModel(dataModel);
@@ -161,6 +164,9 @@ bool MainWindow::loadImages()
 		connect(fitsToolbar->ui.invertCheckBox, SIGNAL(stateChanged(int)), fitsImage, SLOT(invert()));
 		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
 		
+		// Connect more signals -- communicate between data model and ComputeWCS object
+		connect(dataModel, SIGNAL(compute()), this, SLOT(testSlot()));
+		
 		return true;
 	}
 	return false;
@@ -202,6 +208,7 @@ void MainWindow::itemMoved(CoordMarker *movedItem, const QPointF &oldPosition)
 void MainWindow::testSlot()
 {
 	qDebug() << "Test Slot";
+	computewcs->plateSolution();
 }
 
 

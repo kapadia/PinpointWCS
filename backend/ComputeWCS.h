@@ -20,31 +20,38 @@
 #ifndef COMPUTEWCS_H
 #define COMPUTEWCS_H
 
-class ComputeWCS
-	{
-	public:
-		// Methods
-		ComputeWCS();
-		~ComputeWCS();
-		
-		// Attributes
-		
-	private:
-		// Methods
-		void getReferenceWCS();
-		void addPoint();
-		void deletePoint();
-		void updatePoint();
-		void computeTargetWCS();
-		void xi_eta();
-		void computeSums();
-		void computeResiduals();
-		void plateSolutions();
-		void referenceToTarget();
-		void targetToReference();
+#include <QList>
+#include <QPair>
+#include <QPointF>
+#include <Eigen/Core>
 
-		// Attributes
-		
-	};
+USING_PART_OF_NAMESPACE_EIGEN
+
+class ComputeWCS
+{
+public:
+	// Methods
+	ComputeWCS(QList< QPair<QPointF, QPointF> > *m);
+	~ComputeWCS();
+	void plateSolution();
+	// Attributes
+	
+private:
+	// Methods
+	void computeTargetWCS();
+	void xi_eta();
+	void computeSums();
+	void computeResiduals();
+	void referenceToTarget();
+	void targetToReference();
+
+	// Attributes
+	QList< QPair<QPointF, QPointF> > *dataModel;
+	Matrix3d A;
+	Vector3d xcoeff;
+	Vector3d ycoeff;
+	Vector3d xvector;
+	Vector3d yvector;
+};
 
 #endif

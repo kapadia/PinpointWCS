@@ -31,6 +31,7 @@
 #include "CoordinatePanel.h"
 #include "FitsToolbar.h"
 #include "CoordinateModel.h"
+#include "ComputeWCS.h"
 
  
 class MainWindow : public QMainWindow
@@ -53,14 +54,19 @@ private:
 	CoordinatePanel *epoCoordPanel;
 	FitsToolbar *fitsToolbar;
 	
-	// Other Attributes
+	// Image Attributes
 	FitsImage *fitsImage;
 	EpoImage *epoImage;
+	
+	// Undo/Redo and Model/View Attributes
 	QUndoStack *undoStack;
 	QAction *undoAction;
 	QAction *redoAction;
 	CoordinateModel *dataModel;
 	QTableView *tableView;
+	
+	// Other attributes
+	ComputeWCS *computewcs;
 	
 	// State Machines Attributes
 	QStateMachine *WcsInfoPanelMachine;

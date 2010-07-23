@@ -228,3 +228,8 @@ void CoordinateModel::emitDataChanged(const QModelIndex &index1, const QModelInd
 	qDebug() << listOfCoordinatePairs;
     emit dataChanged(index1, index2);
 }
+
+void CoordinateModel::computeMapping()
+{
+	emit compute();
+}
