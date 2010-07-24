@@ -33,6 +33,7 @@ public:
 	// Methods
 	ComputeWCS(QList< QPair<QPointF, QPointF> > *m);
 	~ComputeWCS();
+	void initializeMatrixVectors(int degree);
 	void plateSolution();
 	// Attributes
 	
@@ -53,6 +54,12 @@ private:
 	Vector3d xvector;
 	Vector3d yvector;
 	double rms_x, rms_y;
+	
+	MatrixXd matrix_test;
+	VectorXd xcoeff_test;
+	VectorXd ycoeff_test;
+	VectorXd xvector_test;
+	VectorXd yvector_test;
 };
 
 #endif

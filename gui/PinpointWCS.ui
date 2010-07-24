@@ -162,8 +162,23 @@
      <string>Edit</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuAdvanced">
+    <property name="title">
+     <string>Advanced</string>
+    </property>
+    <widget class="QMenu" name="menuPixel_Mapping">
+     <property name="title">
+      <string>Pixel Mapping</string>
+     </property>
+     <addaction name="actionLinear"/>
+     <addaction name="actionQuadratic"/>
+     <addaction name="actionCubic"/>
+    </widget>
+    <addaction name="menuPixel_Mapping"/>
+   </widget>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
+   <addaction name="menuAdvanced"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionCoordinates">
@@ -228,6 +243,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+Z</string>
+   </property>
+  </action>
+  <action name="actionLinear">
+   <property name="text">
+    <string>Linear</string>
+   </property>
+  </action>
+  <action name="actionQuadratic">
+   <property name="text">
+    <string>Quadratic</string>
+   </property>
+  </action>
+  <action name="actionCubic">
+   <property name="text">
+    <string>Cubic</string>
    </property>
   </action>
  </widget>

@@ -31,6 +31,17 @@ ComputeWCS::ComputeWCS(QList< QPair<QPointF, QPointF> > *m)
 ComputeWCS::~ComputeWCS()
 {}
 
+void ComputeWCS::initializeMatrixVectors(int degree)
+{
+	int size = 2*degree+1;
+	
+	matrix_test = MatrixXd(size, size);
+	xcoeff_test = VectorXd(size);
+	ycoeff_test = VectorXd(size);
+	xvector_test = VectorXd(size);
+	yvector_test = VectorXd(size);
+}
+
 void ComputeWCS::computeTargetWCS()
 {}
 
