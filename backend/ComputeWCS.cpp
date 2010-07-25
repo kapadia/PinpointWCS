@@ -31,15 +31,16 @@ ComputeWCS::ComputeWCS(QList< QPair<QPointF, QPointF> > *m)
 ComputeWCS::~ComputeWCS()
 {}
 
-void ComputeWCS::initializeMatrixVectors(int degree)
+void ComputeWCS::initializeMatrixVectors(int d)
 {
+	degree = d;
 	int size = 2*degree+1;
 	
-	matrix_test = MatrixXd(size, size);
-	xcoeff_test = VectorXd(size);
-	ycoeff_test = VectorXd(size);
-	xvector_test = VectorXd(size);
-	yvector_test = VectorXd(size);
+	matrix = MatrixXd::Zero(size, size);
+	xcoeff = VectorXd::Zero(size);
+	ycoeff = VectorXd::Zero(size);
+	xvector = VectorXd::Zero(size);
+	yvector = VectorXd::Zero(size);
 }
 
 void ComputeWCS::computeTargetWCS()
@@ -50,6 +51,73 @@ void ComputeWCS::xi_eta()
 
 void ComputeWCS::computeSums()
 {
+	// Dynamically initialize matrix and vectors
+	initializeMatrixVectors(1);
+	
+	int ii;	
+	if (degree == 1)
+	{
+		// Linear mapping
+		for (ii=0; ii < dataModel->size(); ii++)
+		{
+			QPointF point1 = dataModel->at(ii).first; 
+			QPointF point2 = dataModel->at(ii).second;
+			
+			matrix(0, 0) += pow(point2.x(), 2);
+			matrix(0, 1) = matrix(1, 0) += point2.x() * point2.y();
+			matrix(0, 2) = matrix(2, 0) += point2.x();
+			matrix(1, 1) += pow(point2.y(), 2);
+			matrix(1, 2) = matrix(2, 1) += point2.y();
+			matrix(2, 2) += 1;
+			
+			xvector(0) += point1.x() * point2.x();
+			xvector(1) += point1.x() * point2.y();
+			xvector(2) += point1.x();
+			
+			yvector(0) += point1.y() * point2.x();
+			yvector(1) += point1.y() * point2.y();
+			yvector(2) += point1.y();
+		}
+		
+	}
+	else if (degree == 2)
+	{
+		// Quadratic mapping
+		for (ii=0; ii < dataModel->size(); ii++)
+		{
+			QPointF point1 = dataModel->at(ii).first; 
+			QPointF point2 = dataModel->at(ii).second;
+			
+			/*
+			matrix(0, 0) += 
+			matrix(0, 1) = matrix(1, 0) +=
+			matrix(0, 2) = matrix(2, 0) +=
+			matrix(0, 3) = matrix(3, 0) += 
+			matrix(0, 4) = matrix(4, 0) +=
+			
+			matrix(1, 1) += 
+			matrix(1, 2) = matrix(2, 1) +=
+			matrix(1, 3) = matrix(3, 1) += 
+			matrix(1, 4) = matrix(4, 1) +=
+			
+			matrix(2, 2) +=
+			matrix(2, 3) = matrix(3, 2) +=
+			matrix(2, 4) = matrix(4, 2) +=
+			
+			matrix(3, 3) +=
+			matrix(3, 4) = matrix(4, 3) +=
+			
+			matrix(4, 4) +=
+			 */
+		}
+	}
+	else if (degree == 3)
+	{
+		// Cubic mapping
+	}
+	
+	
+	/*
 	// Initialize variable for the matrix elements
 	float a_elem[5] = {0.0};
 	float x_elem[3] = {0.0};
@@ -68,20 +136,20 @@ void ComputeWCS::computeSums()
 		a_elem[3] += pow(point2.y(), 2);
 		a_elem[4] += point2.y();
 		
-		x_elem[0] += point1.x() * point2.x();  
+		x_elem[0] += point1.x() * point2.x();
 		x_elem[1] += point1.x() * point2.y();
 		x_elem[2] += point1.x();
 		
-		y_elem[0] += point1.y() * point2.x();  
+		y_elem[0] += point1.y() * point2.x();
 		y_elem[1] += point1.y() * point2.y();
 		y_elem[2] += point1.y();
 		
 	}
 	
-	A << a_elem[0], a_elem[1], a_elem[2], a_elem[1], a_elem[3], a_elem[4], a_elem[2], a_elem[4], dataModel->size();
+	matrix << a_elem[0], a_elem[1], a_elem[2], a_elem[1], a_elem[3], a_elem[4], a_elem[2], a_elem[4], dataModel->size();
 	xvector << x_elem[0], x_elem[1], x_elem[2];
 	yvector << y_elem[0], y_elem[1], y_elem[2];
-	
+	 */
 //	std::cout << A << std::endl;
 //	std::cout << xvector << std::endl;
 //	std::cout << yvector << std::endl;
@@ -124,8 +192,8 @@ void ComputeWCS::plateSolution()
 	computeSums();
 	
 	// Solve the linear system
-	A.lu().solve(xvector, &xcoeff);
-	A.lu().solve(yvector, &ycoeff);
+	matrix.lu().solve(xvector, &xcoeff);
+	matrix.lu().solve(yvector, &ycoeff);
 	
 	// Print to standard output
 	std::cout << xcoeff << std::endl;
