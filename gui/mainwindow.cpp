@@ -96,7 +96,7 @@ bool MainWindow::loadImages()
 		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		
 		// Initialize the ComputeWCS object
-		computewcs = new ComputeWCS(&(dataModel->listOfCoordinatePairs));
+		computewcs = new ComputeWCS(&(dataModel->listOfCoordinatePairs), fitsImage->wcs);
 		
 		// Set up the table view
 		tableView = new QTableView;
@@ -208,7 +208,7 @@ void MainWindow::itemMoved(CoordMarker *movedItem, const QPointF &oldPosition)
 void MainWindow::testSlot()
 {
 	qDebug() << "Test Slot";
-	computewcs->plateSolution();
+	computewcs->computeTargetWCS();
 }
 
 

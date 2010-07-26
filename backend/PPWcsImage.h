@@ -23,7 +23,6 @@
 #include <QObject>
 #include <QPixmap>
 #include "wcs.h"
-#include "fitsfile.h"
 
 class PPWcsImage : public QObject {
 	
@@ -33,10 +32,14 @@ public:
 	// Public Methods
 	PPWcsImage();
 	~PPWcsImage();
-	double *pix2sky(QPointF pos);
+	
+	// Attributes
 	bool wcsExists;
-	QPixmap *pixmap;
 	struct WorldCoor *wcs;
+	QPixmap *pixmap;
+	
+	// Methods
+	double *pix2sky(QPointF pos);
 	
 protected:
 	// Variables for WCSTools

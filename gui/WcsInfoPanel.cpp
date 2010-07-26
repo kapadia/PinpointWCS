@@ -94,7 +94,7 @@ void WcsInfoPanel::loadWCS(struct WorldCoor wcs)
 	QString cd21;
 	QString cd22;
 	
-	radesys.sprintf("%i", wcs.sysout); // Need to figure out where WCSTools stores RADESYS!!
+	radesys.sprintf("%s", wcs.radecsys);
 	equinox.sprintf("%.1f", wcs.equinox);
 	ctype1.sprintf("%s", wcs.c1type);
 	ctype2.sprintf("%s", wcs.c2type);

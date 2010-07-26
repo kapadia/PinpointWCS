@@ -24,6 +24,7 @@
 #include <QPair>
 #include <QPointF>
 #include <Eigen/Core>
+#include "wcs.h"
 
 USING_PART_OF_NAMESPACE_EIGEN
 
@@ -31,15 +32,15 @@ class ComputeWCS
 {
 public:
 	// Methods
-	ComputeWCS(QList< QPair<QPointF, QPointF> > *m);
+	ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *refWCS);
 	~ComputeWCS();
-	void initializeMatrixVectors(int d);
-	void plateSolution();
-	// Attributes
+	
+	void computeTargetWCS();
 	
 private:
 	// Methods
-	void computeTargetWCS();
+	void initializeMatrixVectors(int d);
+	void plateSolution();
 	void xi_eta();
 	void computeSums();
 	void computeResiduals();
@@ -54,8 +55,10 @@ private:
 	VectorXd yvector;
 	VectorXd xcoeff;
 	VectorXd ycoeff;
-	VectorXd base;
+	VectorXd basis;
 	double rms_x, rms_y;
+	struct WorldCoor *referenceWCS;
+	struct WorldCoor *targetWCS;
 };
 
 #endif

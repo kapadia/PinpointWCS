@@ -17,9 +17,7 @@
  *
  */
 
-#include <iostream>
 #include <QDebug>
-
 #include "PPWcsImage.h"
 
 PPWcsImage::PPWcsImage()

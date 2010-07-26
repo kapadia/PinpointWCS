@@ -23,9 +23,10 @@
 #include "ComputeWCS.h"
 
 
-ComputeWCS::ComputeWCS(QList< QPair<QPointF, QPointF> > *m)
+ComputeWCS::ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *refWCS)
 {
 	dataModel = m;
+	referenceWCS = refWCS;
 }
 
 ComputeWCS::~ComputeWCS()
@@ -36,7 +37,7 @@ void ComputeWCS::initializeMatrixVectors(int d)
 	degree = d;
 	int size = 2*degree+1;
 	
-	base = VectorXd::Zero(size);
+	basis = VectorXd::Zero(size);
 	matrix = MatrixXd::Zero(size, size);
 	xcoeff = VectorXd::Zero(size);
 	ycoeff = VectorXd::Zero(size);
@@ -45,7 +46,19 @@ void ComputeWCS::initializeMatrixVectors(int d)
 }
 
 void ComputeWCS::computeTargetWCS()
-{}
+{
+	// Compute matrix and vectors
+	computeSums();
+	
+	// Solve matrix equation for mapping
+	plateSolution();
+	
+	// Compute residuals
+	computeResiduals();
+	
+	
+	
+}
 
 void ComputeWCS::xi_eta()
 {}
@@ -64,12 +77,12 @@ void ComputeWCS::computeSums()
 			QPointF point2 = dataModel->at(ii).second;
 			
 			// Set the base
-			base << point2.x(), point2.y(), 1;
+			basis << point2.x(), point2.y(), 1;
 			
 			// Generate matrix and vectors
-			matrix += base * base.transpose();
-			xvector += point1.x() * base;
-			yvector += point1.y() * base;
+			matrix += basis * basis.transpose();
+			xvector += point1.x() * basis;
+			yvector += point1.y() * basis;
 		}
 	}
 	else if (degree == 2)
@@ -81,12 +94,12 @@ void ComputeWCS::computeSums()
 			QPointF point2 = dataModel->at(ii).second;
 			
 			// Set the base
-			base << pow(point2.x(), 2), pow(point2.y(), 2), point2.x(), point2.y(), 1;
+			basis << pow(point2.x(), 2), pow(point2.y(), 2), point2.x(), point2.y(), 1;
 			
 			// Generate matrix and vectors
-			matrix += base * base.transpose();
-			xvector += point1.x() * base;
-			yvector += point1.y() * base;
+			matrix += basis * basis.transpose();
+			xvector += point1.x() * basis;
+			yvector += point1.y() * basis;
 			
 			/*
 			matrix(0, 0) += pow(point2.x(), 4);
@@ -133,12 +146,12 @@ void ComputeWCS::computeSums()
 			QPointF point2 = dataModel->at(ii).second;
 			
 			// Set the base
-			base << pow(point2.x(), 3), pow(point2.y(), 3), pow(point2.x(), 2), pow(point2.y(), 2), point2.x(), point2.y(), 1;
+			basis << pow(point2.x(), 3), pow(point2.y(), 3), pow(point2.x(), 2), pow(point2.y(), 2), point2.x(), point2.y(), 1;
 			
 			// Generate matrix and vectors
-			matrix += base * base.transpose();
-			xvector += point1.x() * base;
-			yvector += point1.y() * base;
+			matrix += basis * basis.transpose();
+			xvector += point1.x() * basis;
+			yvector += point1.y() * basis;
 		}
 	}
 	
@@ -146,6 +159,19 @@ void ComputeWCS::computeSums()
 //	std::cout << xvector << std::endl;
 //	std::cout << yvector << std::endl;
 }
+
+
+void ComputeWCS::plateSolution()
+{	
+	// Solve the linear system
+	matrix.lu().solve(xvector, &xcoeff);
+	matrix.lu().solve(yvector, &ycoeff);
+	
+	// Print to standard output
+//	std::cout << xcoeff << std::endl;
+//	std::cout << ycoeff << std::endl;
+}
+
 
 void ComputeWCS::computeResiduals()
 {
@@ -174,26 +200,10 @@ void ComputeWCS::computeResiduals()
 	rms_x = sqrt(sumx2 / sumn);
 	rms_y = sqrt(sumy2 / sumn);
 	
-//	qDebug() << "RMS X:" << rms_x;
-//	qDebug() << "RMS Y:" << rms_y;
+	qDebug() << "RMS X:" << rms_x;
+	qDebug() << "RMS Y:" << rms_y;
 }
 
-void ComputeWCS::plateSolution()
-{
-	// Generate the matrix and vectors
-	computeSums();
-	
-	// Solve the linear system
-	matrix.lu().solve(xvector, &xcoeff);
-	matrix.lu().solve(yvector, &ycoeff);
-	
-	// Print to standard output
-	std::cout << xcoeff << std::endl;
-	std::cout << ycoeff << std::endl;
-	
-	// Compute residuals
-	computeResiduals();
-}
 
 Vector2d ComputeWCS::fitsToEpo(QPointF *p)
 {
@@ -203,8 +213,6 @@ Vector2d ComputeWCS::fitsToEpo(QPointF *p)
 
 Vector2d ComputeWCS::epoToFits(QPointF *p)
 {
-//	Vector2d epoCoordinates(p->x(), p->y());
-//	Vector2d fitsCoordinates;
 	Vector2d coordinate;
 		
 	if (degree == 1)
