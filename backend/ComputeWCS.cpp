@@ -36,6 +36,7 @@ void ComputeWCS::initializeMatrixVectors(int d)
 	degree = d;
 	int size = 2*degree+1;
 	
+	base = VectorXd::Zero(size);
 	matrix = MatrixXd::Zero(size, size);
 	xcoeff = VectorXd::Zero(size);
 	ycoeff = VectorXd::Zero(size);
@@ -52,33 +53,24 @@ void ComputeWCS::xi_eta()
 void ComputeWCS::computeSums()
 {
 	// Dynamically initialize matrix and vectors
-	initializeMatrixVectors(2);
+	initializeMatrixVectors(1);
 	
 	int ii;	
 	if (degree == 1)
 	{
-		// Linear mapping
 		for (ii=0; ii < dataModel->size(); ii++)
 		{
 			QPointF point1 = dataModel->at(ii).first; 
 			QPointF point2 = dataModel->at(ii).second;
 			
-			matrix(0, 0) += pow(point2.x(), 2);
-			matrix(0, 1) = matrix(1, 0) += point2.x() * point2.y();
-			matrix(0, 2) = matrix(2, 0) += point2.x();
-			matrix(1, 1) += pow(point2.y(), 2);
-			matrix(1, 2) = matrix(2, 1) += point2.y();
-			matrix(2, 2) += 1;
+			// Set the base
+			base << point2.x(), point2.y(), 1;
 			
-			xvector(0) += point1.x() * point2.x();
-			xvector(1) += point1.x() * point2.y();
-			xvector(2) += point1.x();
-			
-			yvector(0) += point1.y() * point2.x();
-			yvector(1) += point1.y() * point2.y();
-			yvector(2) += point1.y();
+			// Generate matrix and vectors
+			matrix += base * base.transpose();
+			xvector += point1.x() * base;
+			yvector += point1.y() * base;
 		}
-		
 	}
 	else if (degree == 2)
 	{
@@ -88,6 +80,15 @@ void ComputeWCS::computeSums()
 			QPointF point1 = dataModel->at(ii).first; 
 			QPointF point2 = dataModel->at(ii).second;
 			
+			// Set the base
+			base << pow(point2.x(), 2), pow(point2.y(), 2), point2.x(), point2.y(), 1;
+			
+			// Generate matrix and vectors
+			matrix += base * base.transpose();
+			xvector += point1.x() * base;
+			yvector += point1.y() * base;
+			
+			/*
 			matrix(0, 0) += pow(point2.x(), 4);
 			matrix(0, 1) = matrix(1, 0) += pow(point2.y(), 2) * pow(point2.x(), 2);
 			matrix(0, 2) = matrix(2, 0) += pow(point2.x(), 3);
@@ -118,50 +119,30 @@ void ComputeWCS::computeSums()
 			yvector(1) += point1.y() * pow(point2.y(), 2);
 			yvector(2) += point1.y() * point2.x();
 			yvector(3) += point1.y() * point2.y();
-			yvector(4) += point1.y(); 
+			yvector(4) += point1.y();
+			 */
 	
 		}
 	}
 	else if (degree == 3)
 	{
 		// Cubic mapping
+		for (ii=0; ii < dataModel->size(); ii++)
+		{
+			QPointF point1 = dataModel->at(ii).first; 
+			QPointF point2 = dataModel->at(ii).second;
+			
+			// Set the base
+			base << pow(point2.x(), 3), pow(point2.y(), 3), pow(point2.x(), 2), pow(point2.y(), 2), point2.x(), point2.y(), 1;
+			
+			// Generate matrix and vectors
+			matrix += base * base.transpose();
+			xvector += point1.x() * base;
+			yvector += point1.y() * base;
+		}
 	}
 	
-	
-	/*
-	// Initialize variable for the matrix elements
-	float a_elem[5] = {0.0};
-	float x_elem[3] = {0.0};
-	float y_elem[3] = {0.0};
-	
-	// Loop over all the elements in the data model (QList)
-	int ii;
-	for (ii=0; ii < dataModel->size(); ii++)
-	{
-		QPointF point1 = dataModel->at(ii).first; 
-		QPointF point2 = dataModel->at(ii).second;
-		
-		a_elem[0] += pow(point2.x(), 2);
-		a_elem[1] += point2.x() * point2.y();
-		a_elem[2] += point2.x();
-		a_elem[3] += pow(point2.y(), 2);
-		a_elem[4] += point2.y();
-		
-		x_elem[0] += point1.x() * point2.x();
-		x_elem[1] += point1.x() * point2.y();
-		x_elem[2] += point1.x();
-		
-		y_elem[0] += point1.y() * point2.x();
-		y_elem[1] += point1.y() * point2.y();
-		y_elem[2] += point1.y();
-		
-	}
-	
-	matrix << a_elem[0], a_elem[1], a_elem[2], a_elem[1], a_elem[3], a_elem[4], a_elem[2], a_elem[4], dataModel->size();
-	xvector << x_elem[0], x_elem[1], x_elem[2];
-	yvector << y_elem[0], y_elem[1], y_elem[2];
-	 */
-//	std::cout << A << std::endl;
+//	std::cout << matrix << std::endl;
 //	std::cout << xvector << std::endl;
 //	std::cout << yvector << std::endl;
 }
@@ -193,8 +174,8 @@ void ComputeWCS::computeResiduals()
 	rms_x = sqrt(sumx2 / sumn);
 	rms_y = sqrt(sumy2 / sumn);
 	
-	qDebug() << "RMS X:" << rms_x;
-	qDebug() << "RMS Y:" << rms_y;
+//	qDebug() << "RMS X:" << rms_x;
+//	qDebug() << "RMS Y:" << rms_y;
 }
 
 void ComputeWCS::plateSolution()
@@ -215,21 +196,32 @@ void ComputeWCS::plateSolution()
 }
 
 Vector2d ComputeWCS::fitsToEpo(QPointF *p)
-{}
+{
+	return Vector2d(0, 0);
+}
 
 
 Vector2d ComputeWCS::epoToFits(QPointF *p)
 {
+//	Vector2d epoCoordinates(p->x(), p->y());
+//	Vector2d fitsCoordinates;
 	Vector2d coordinate;
-	if (degree = 1)
+		
+	if (degree == 1)
 	{
 		coordinate(0) = xcoeff[0] * p->x() + xcoeff[1] * p->y() + xcoeff[2];
 		coordinate(1) = ycoeff[0] * p->x() + ycoeff[1] * p->y() + ycoeff[2];
 	}
-	else
+	else if (degree == 2)
 	{
+		qDebug() << "Degree is 2";
 		coordinate(0) = xcoeff[0] * pow(p->x(), 2) + xcoeff[1] * pow(p->y(), 2) + xcoeff[2] * p->x() + xcoeff[3] * p->y() + xcoeff[4];
 		coordinate(1) = ycoeff[0] * pow(p->x(), 2) + ycoeff[1] * pow(p->y(), 2) + ycoeff[2] * p->x() + ycoeff[3] * p->y() + ycoeff[4];
+	} else if (degree == 3)
+	{
+		qDebug() << "Degree is 3";
+		coordinate(0) = xcoeff[0] * pow(p->x(), 3) + xcoeff[1] * pow(p->y(), 3) + xcoeff[2] * pow(p->x(), 2) + xcoeff[3] * pow(p->y(), 2) + xcoeff[4] * p->x() + xcoeff[5] * p->y() + xcoeff[6];
+		coordinate(1) = ycoeff[0] * pow(p->x(), 3) + ycoeff[1] * pow(p->y(), 3) + ycoeff[2] * pow(p->x(), 2) + ycoeff[3] * pow(p->y(), 2) + ycoeff[4] * p->x() + ycoeff[5] * p->y() + ycoeff[6];
 	}
 	
 	return coordinate;

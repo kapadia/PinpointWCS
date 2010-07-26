@@ -54,6 +54,7 @@ private:
 	VectorXd yvector;
 	VectorXd xcoeff;
 	VectorXd ycoeff;
+	VectorXd base;
 	double rms_x, rms_y;
 };
 
