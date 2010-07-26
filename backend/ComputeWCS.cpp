@@ -52,7 +52,7 @@ void ComputeWCS::xi_eta()
 void ComputeWCS::computeSums()
 {
 	// Dynamically initialize matrix and vectors
-	initializeMatrixVectors(1);
+	initializeMatrixVectors(2);
 	
 	int ii;	
 	if (degree == 1)
@@ -88,27 +88,38 @@ void ComputeWCS::computeSums()
 			QPointF point1 = dataModel->at(ii).first; 
 			QPointF point2 = dataModel->at(ii).second;
 			
-			/*
-			matrix(0, 0) += 
-			matrix(0, 1) = matrix(1, 0) +=
-			matrix(0, 2) = matrix(2, 0) +=
-			matrix(0, 3) = matrix(3, 0) += 
-			matrix(0, 4) = matrix(4, 0) +=
+			matrix(0, 0) += pow(point2.x(), 4);
+			matrix(0, 1) = matrix(1, 0) += pow(point2.y(), 2) * pow(point2.x(), 2);
+			matrix(0, 2) = matrix(2, 0) += pow(point2.x(), 3);
+			matrix(0, 3) = matrix(3, 0) += point2.y() * pow(point2.x(), 2);
+			matrix(0, 4) = matrix(4, 0) += pow(point2.x(), 2);
 			
-			matrix(1, 1) += 
-			matrix(1, 2) = matrix(2, 1) +=
-			matrix(1, 3) = matrix(3, 1) += 
-			matrix(1, 4) = matrix(4, 1) +=
+			matrix(1, 1) += pow(point2.y(), 4);
+			matrix(1, 2) = matrix(2, 1) += point2.x() * pow(point2.y(), 2);
+			matrix(1, 3) = matrix(3, 1) += pow(point2.y(), 3);
+			matrix(1, 4) = matrix(4, 1) += pow(point2.y(), 2);
 			
-			matrix(2, 2) +=
-			matrix(2, 3) = matrix(3, 2) +=
-			matrix(2, 4) = matrix(4, 2) +=
+			matrix(2, 2) += pow(point2.x(), 2);
+			matrix(2, 3) = matrix(3, 2) += point2.y() * point2.x();
+			matrix(2, 4) = matrix(4, 2) += point2.x();
 			
-			matrix(3, 3) +=
-			matrix(3, 4) = matrix(4, 3) +=
+			matrix(3, 3) += pow(point2.y(), 2);
+			matrix(3, 4) = matrix(4, 3) += point2.y();
 			
-			matrix(4, 4) +=
-			 */
+			matrix(4, 4) += 1;
+			
+			xvector(0) += point1.x() * pow(point2.x(), 2);
+			xvector(1) += point1.x() * pow(point2.y(), 2);
+			xvector(2) += point1.x() * point2.x();
+			xvector(3) += point1.x() * point2.y();
+			xvector(4) += point1.x();
+			
+			yvector(0) += point1.y() * pow(point2.x(), 2);
+			yvector(1) += point1.y() * pow(point2.y(), 2);
+			yvector(2) += point1.y() * point2.x();
+			yvector(3) += point1.y() * point2.y();
+			yvector(4) += point1.y(); 
+	
 		}
 	}
 	else if (degree == 3)
@@ -210,6 +221,16 @@ Vector2d ComputeWCS::fitsToEpo(QPointF *p)
 Vector2d ComputeWCS::epoToFits(QPointF *p)
 {
 	Vector2d coordinate;
-	coordinate << xcoeff[0] * p->x() + xcoeff[1] * p->y() + xcoeff[2], ycoeff[0] * p->x() + ycoeff[1] * p->y() + ycoeff[2];
+	if (degree = 1)
+	{
+		coordinate(0) = xcoeff[0] * p->x() + xcoeff[1] * p->y() + xcoeff[2];
+		coordinate(1) = ycoeff[0] * p->x() + ycoeff[1] * p->y() + ycoeff[2];
+	}
+	else
+	{
+		coordinate(0) = xcoeff[0] * pow(p->x(), 2) + xcoeff[1] * pow(p->y(), 2) + xcoeff[2] * p->x() + xcoeff[3] * p->y() + xcoeff[4];
+		coordinate(1) = ycoeff[0] * pow(p->x(), 2) + ycoeff[1] * pow(p->y(), 2) + ycoeff[2] * p->x() + ycoeff[3] * p->y() + ycoeff[4];
+	}
+	
 	return coordinate;
 }
