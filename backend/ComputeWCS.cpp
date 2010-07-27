@@ -35,7 +35,7 @@ ComputeWCS::~ComputeWCS()
 void ComputeWCS::initializeMatrixVectors(int d)
 {
 	degree = d;
-	int size = 2*degree+1;
+	int size = 3*degree;
 	
 	basis = VectorXd::Zero(size);
 	matrix = MatrixXd::Zero(size, size);
@@ -66,7 +66,7 @@ void ComputeWCS::xi_eta()
 void ComputeWCS::computeSums()
 {
 	// Dynamically initialize matrix and vectors
-	initializeMatrixVectors(1);
+	initializeMatrixVectors(2);
 	
 	int ii;	
 	if (degree == 1)
@@ -94,7 +94,7 @@ void ComputeWCS::computeSums()
 			QPointF point2 = dataModel->at(ii).second;
 			
 			// Set the base
-			basis << pow(point2.x(), 2), pow(point2.y(), 2), point2.x(), point2.y(), 1;
+			basis << pow(point2.x(), 2), pow(point2.y(), 2), point2.x() * point2.y(), point2.x(), point2.y(), 1;
 			
 			// Generate matrix and vectors
 			matrix += basis * basis.transpose();
@@ -207,7 +207,7 @@ void ComputeWCS::computeResiduals()
 
 Vector2d ComputeWCS::fitsToEpo(QPointF *p)
 {
-	return Vector2d(0, 0);
+	return Vector2d(p->x(), p->y());
 }
 
 
@@ -222,12 +222,11 @@ Vector2d ComputeWCS::epoToFits(QPointF *p)
 	}
 	else if (degree == 2)
 	{
-		qDebug() << "Degree is 2";
-		coordinate(0) = xcoeff[0] * pow(p->x(), 2) + xcoeff[1] * pow(p->y(), 2) + xcoeff[2] * p->x() + xcoeff[3] * p->y() + xcoeff[4];
-		coordinate(1) = ycoeff[0] * pow(p->x(), 2) + ycoeff[1] * pow(p->y(), 2) + ycoeff[2] * p->x() + ycoeff[3] * p->y() + ycoeff[4];
-	} else if (degree == 3)
+		coordinate(0) = xcoeff[0] * pow(p->x(), 2) + xcoeff[1] * pow(p->y(), 2) + xcoeff[2] * p->x() * p->y() + xcoeff[3] * p->x() + xcoeff[4] * p->y() + xcoeff[5];
+		coordinate(1) = ycoeff[0] * pow(p->x(), 2) + ycoeff[1] * pow(p->y(), 2) + ycoeff[2] * p->x() * p->y() + ycoeff[3] * p->x() + ycoeff[4] * p->y() + ycoeff[5];
+	} 
+	else if (degree == 3)
 	{
-		qDebug() << "Degree is 3";
 		coordinate(0) = xcoeff[0] * pow(p->x(), 3) + xcoeff[1] * pow(p->y(), 3) + xcoeff[2] * pow(p->x(), 2) + xcoeff[3] * pow(p->y(), 2) + xcoeff[4] * p->x() + xcoeff[5] * p->y() + xcoeff[6];
 		coordinate(1) = ycoeff[0] * pow(p->x(), 3) + ycoeff[1] * pow(p->y(), 3) + ycoeff[2] * pow(p->x(), 2) + ycoeff[3] * pow(p->y(), 2) + ycoeff[4] * p->x() + ycoeff[5] * p->y() + ycoeff[6];
 	}
