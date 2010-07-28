@@ -41,7 +41,7 @@ private:
 	// Methods
 	void initializeMatrixVectors(int d);
 	void plateSolution();
-	void xi_eta();
+	Vector2d xi_eta(double xpix, double ypix);
 	void computeSums();
 	void computeResiduals();
 	Vector2d fitsToEpo(QPointF *p);

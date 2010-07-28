@@ -60,13 +60,36 @@ void ComputeWCS::computeTargetWCS()
 	
 }
 
-void ComputeWCS::xi_eta()
-{}
+Vector2d ComputeWCS::xi_eta(double xpix, double ypix)
+{
+	// Initialize some variables
+	Vector2d pixel(xpix, ypix);
+	Vector2d crpix(referenceWCS->xrefpix, referenceWCS->yrefpix);
+	Vector2d cdelt(referenceWCS->cdelt[0], referenceWCS->cdelt[1]);
+	Matrix2d pc;
+	pc << referenceWCS->pc[0], referenceWCS->pc[1], referenceWCS->pc[2], referenceWCS->pc[3];
+	
+	// Compute intermediate pixel coordinates
+	Vector2d intermediate = pc * (pixel - crpix);
+	
+	// Compute intermediate world coordinates
+	intermediate = intermediate.cwise() * cdelt;
+	
+	if (referenceWCS->coorflip == 1)
+	{
+		// Coordinate axes flipped, need to make some adjustments
+		Matrix2d f1;
+		f1 << 0, 1, 1, 0;
+		return f1*intermediate;
+	}
+	
+	return intermediate;
+}
 
 void ComputeWCS::computeSums()
 {
 	// Dynamically initialize matrix and vectors
-	initializeMatrixVectors(2);
+	initializeMatrixVectors(1);
 	
 	int ii;	
 	if (degree == 1)
@@ -94,7 +117,8 @@ void ComputeWCS::computeSums()
 			QPointF point2 = dataModel->at(ii).second;
 			
 			// Set the base
-			basis << pow(point2.x(), 2), pow(point2.y(), 2), point2.x() * point2.y(), point2.x(), point2.y(), 1;
+			basis << 1, point2.x(), point2.y(), point2.x()*point2.y(), pow(point2.x(), 2), pow(point2.y(), 2);
+//			basis << pow(point2.x(), 2), pow(point2.y(), 2), point2.x() * point2.y(), point2.x(), point2.y(), 1;
 			
 			// Generate matrix and vectors
 			matrix += basis * basis.transpose();
@@ -222,8 +246,8 @@ Vector2d ComputeWCS::epoToFits(QPointF *p)
 	}
 	else if (degree == 2)
 	{
-		coordinate(0) = xcoeff[0] * pow(p->x(), 2) + xcoeff[1] * pow(p->y(), 2) + xcoeff[2] * p->x() * p->y() + xcoeff[3] * p->x() + xcoeff[4] * p->y() + xcoeff[5];
-		coordinate(1) = ycoeff[0] * pow(p->x(), 2) + ycoeff[1] * pow(p->y(), 2) + ycoeff[2] * p->x() * p->y() + ycoeff[3] * p->x() + ycoeff[4] * p->y() + ycoeff[5];
+		coordinate(0) = xcoeff[0] + xcoeff[1] * p->x() + xcoeff[2] * p->y() + xcoeff[3] * p->x() * p->y() + xcoeff[4] * pow(p->x(), 2) + xcoeff[5] * pow(p->y(), 2);
+		coordinate(1) = ycoeff[0] + ycoeff[1] * p->x() + ycoeff[2] * p->y() + ycoeff[3] * p->x() * p->y() + ycoeff[4] * pow(p->x(), 2) + ycoeff[5] * pow(p->y(), 2);
 	} 
 	else if (degree == 3)
 	{
