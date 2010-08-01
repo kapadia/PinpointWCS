@@ -26,13 +26,14 @@
 #include <Eigen/Core>
 #include "wcs.h"
 
+#define _USE_MATH_DEFINES
 USING_PART_OF_NAMESPACE_EIGEN
 
 class ComputeWCS
 {
 public:
 	// Methods
-	ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *refWCS);
+	ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *refWCS, double w, double h);
 	~ComputeWCS();
 	
 	void computeTargetWCS();
@@ -46,6 +47,7 @@ private:
 	void computeResiduals();
 	Vector2d fitsToEpo(QPointF *p);
 	Vector2d epoToFits(QPointF *p);
+	Vector2d epoToFits(double x, double y);
 
 	// Attributes
 	QList< QPair<QPointF, QPointF> > *dataModel;
@@ -59,6 +61,13 @@ private:
 	double rms_x, rms_y;
 	struct WorldCoor *referenceWCS;
 	struct WorldCoor *targetWCS;
+	
+	// EPO Attributes
+	double width;
+	double height;
+	double crpix1;
+	double crpix2;
+	double *crval;
 };
 
 #endif

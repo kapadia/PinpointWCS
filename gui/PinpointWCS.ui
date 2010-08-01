@@ -176,9 +176,17 @@
     </widget>
     <addaction name="menuPixel_Mapping"/>
    </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="actionAstronomy_Visualization_Metadata"/>
+    <addaction name="actionFITS_Image"/>
+   </widget>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuAdvanced"/>
+   <addaction name="menuExport"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionCoordinates">
@@ -251,13 +259,41 @@
    </property>
   </action>
   <action name="actionQuadratic">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Quadratic</string>
    </property>
   </action>
   <action name="actionCubic">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Cubic</string>
+   </property>
+  </action>
+  <action name="actionAstronomy_Visualization_Metadata">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Astronomy Visualization Metadata</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+X</string>
+   </property>
+  </action>
+  <action name="actionFITS_Image">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>FITS Image</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F</string>
    </property>
   </action>
  </widget>

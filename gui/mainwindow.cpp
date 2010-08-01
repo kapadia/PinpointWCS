@@ -17,7 +17,6 @@
  *
  */
 
-#include <iostream>
 #include <string>
 #include <QDebug>
 
@@ -96,7 +95,7 @@ bool MainWindow::loadImages()
 		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		
 		// Initialize the ComputeWCS object
-		computewcs = new ComputeWCS(&(dataModel->listOfCoordinatePairs), fitsImage->wcs);
+		computewcs = new ComputeWCS(&(dataModel->listOfCoordinatePairs), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
 		
 		// Set up the table view
 		tableView = new QTableView;
@@ -166,6 +165,9 @@ bool MainWindow::loadImages()
 		
 		// Connect more signals -- communicate between data model and ComputeWCS object
 		connect(dataModel, SIGNAL(compute()), this, SLOT(testSlot()));
+		
+		// Testing export slot
+		connect(dataModel, SIGNAL(compute()), this, SLOT(enableExport()));
 		
 		return true;
 	}
@@ -353,4 +355,10 @@ void MainWindow::updateEpoCoordinates(QPointF pos)
 	if (epoImage->wcsExists)
 		world = epoImage->pix2sky(pos);
 	epoCoordPanel->updateCoordinates(pos, world);
+}
+
+void MainWindow::enableExport()
+{
+	ui.actionAstronomy_Visualization_Metadata->setEnabled(true);
+	ui.actionFITS_Image->setEnabled(true);
 }

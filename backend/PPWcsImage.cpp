@@ -44,7 +44,7 @@ double* PPWcsImage::pix2sky(QPointF pos)
 	
 	xpix = pos.x();
 	ypix = pos.y();
-	pix2wcs(wcs, xpix, ypix, &world[0], &world[1]);	
+	pix2wcs(wcs, xpix, ypix, &world[0], &world[1]);
 	
 	// Perhaps the transformationStatus needs to be checked ...
 	return world;

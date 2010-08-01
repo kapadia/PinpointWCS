@@ -58,9 +58,15 @@ void GraphicsView::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Space)
 		setDragMode(ScrollHandDrag);
-	else if(event->key() == Qt::Key_R)
+	else if(event->modifiers() == Qt::NoModifier && event->key() == Qt::Key_R)
 	{
-		rotate(10);
+		rotate(5);
+		qDebug() << transform().determinant();
+	}
+	else if(event->modifiers() == Qt::ControlModifier && event->key() == Qt::Key_R)
+	{
+		rotate(-5);
+		qDebug() << transform().determinant();
 	}
 }
 
@@ -92,7 +98,7 @@ void GraphicsView::scaleView(qreal scaleFactor)
 	qreal factor = matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
 	if (factor < 0.07 || factor > 100)
 		return;
-	
+	qDebug() << transform().determinant();
 	scale(scaleFactor, scaleFactor);
 }
 

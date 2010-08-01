@@ -17,16 +17,20 @@
  *
  */
 
+
 #include <math.h>
 #include <Eigen/LU>
 #include <QDebug>
 #include "ComputeWCS.h"
+#include "math.h"
 
 
-ComputeWCS::ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *refWCS)
+ComputeWCS::ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *refWCS, double w, double h)
 {
 	dataModel = m;
 	referenceWCS = refWCS;
+	width = w;
+	height = h;
 }
 
 ComputeWCS::~ComputeWCS()
@@ -39,10 +43,10 @@ void ComputeWCS::initializeMatrixVectors(int d)
 	
 	basis = VectorXd::Zero(size);
 	matrix = MatrixXd::Zero(size, size);
-	xcoeff = VectorXd::Zero(size);
-	ycoeff = VectorXd::Zero(size);
 	xvector = VectorXd::Zero(size);
 	yvector = VectorXd::Zero(size);
+	xcoeff = VectorXd::Zero(size);
+	ycoeff = VectorXd::Zero(size);
 }
 
 void ComputeWCS::computeTargetWCS()
@@ -56,6 +60,18 @@ void ComputeWCS::computeTargetWCS()
 	// Compute residuals
 	computeResiduals();
 	
+	// Declare the CRPIX for the EPO image to be the center pixel
+	// Maybe this can eventually be set by the user
+	crpix1 = width / 2.;
+	crpix2 = height / 2.;
+	
+	// Determine corresponding pixel in the FITS image
+	Vector2d ref0 = epoToFits(crpix1, crpix2);
+	
+	// Determine the celestial coordinates for ref0
+	crval = (double*) malloc( 2*sizeof(double) );
+	
+	pix2wcs(referenceWCS, ref0(0), ref0(1), &crval[0], &crval[1]);
 	
 	
 }
@@ -75,6 +91,9 @@ Vector2d ComputeWCS::xi_eta(double xpix, double ypix)
 	// Compute intermediate world coordinates
 	intermediate = intermediate.cwise() * cdelt;
 	
+	// Convert degrees to radians
+	intermediate = (180. / M_PI) * intermediate;
+	
 	if (referenceWCS->coorflip == 1)
 	{
 		// Coordinate axes flipped, need to make some adjustments
@@ -82,6 +101,7 @@ Vector2d ComputeWCS::xi_eta(double xpix, double ypix)
 		f1 << 0, 1, 1, 0;
 		return f1*intermediate;
 	}
+	std::cout << intermediate;
 	
 	return intermediate;
 }
@@ -96,8 +116,9 @@ void ComputeWCS::computeSums()
 	{
 		for (ii=0; ii < dataModel->size(); ii++)
 		{
-			QPointF point1 = dataModel->at(ii).first; 
+			QPointF point1 = dataModel->at(ii).first;
 			QPointF point2 = dataModel->at(ii).second;
+			point1.setY(referenceWCS->nypix - point1.y());
 			
 			// Set the base
 			basis << point2.x(), point2.y(), 1;
@@ -113,8 +134,9 @@ void ComputeWCS::computeSums()
 		// Quadratic mapping
 		for (ii=0; ii < dataModel->size(); ii++)
 		{
-			QPointF point1 = dataModel->at(ii).first; 
+			QPointF point1 = dataModel->at(ii).first;
 			QPointF point2 = dataModel->at(ii).second;
+			point1.setY(referenceWCS->nypix - point1.y());
 			
 			// Set the base
 			basis << 1, point2.x(), point2.y(), point2.x()*point2.y(), pow(point2.x(), 2), pow(point2.y(), 2);
@@ -166,8 +188,9 @@ void ComputeWCS::computeSums()
 		// Cubic mapping
 		for (ii=0; ii < dataModel->size(); ii++)
 		{
-			QPointF point1 = dataModel->at(ii).first; 
+			QPointF point1 = dataModel->at(ii).first;
 			QPointF point2 = dataModel->at(ii).second;
+			point1.setY(referenceWCS->nypix - point1.y());
 			
 			// Set the base
 			basis << pow(point2.x(), 3), pow(point2.y(), 3), pow(point2.x(), 2), pow(point2.y(), 2), point2.x(), point2.y(), 1;
@@ -179,9 +202,9 @@ void ComputeWCS::computeSums()
 		}
 	}
 	
-//	std::cout << matrix << std::endl;
-//	std::cout << xvector << std::endl;
-//	std::cout << yvector << std::endl;
+//	std::cout << "matrix:" << matrix << "\n" << std::endl;
+//	std::cout << "x vector:" << xvector << "\n" << std::endl;
+//	std::cout << "y vector:" << yvector << "\n" << std::endl;
 }
 
 
@@ -192,8 +215,8 @@ void ComputeWCS::plateSolution()
 	matrix.lu().solve(yvector, &ycoeff);
 	
 	// Print to standard output
-//	std::cout << xcoeff << std::endl;
-//	std::cout << ycoeff << std::endl;
+//	std::cout << "xcoeff:\n" << xcoeff << "\n" << std::endl;
+//	std::cout << "ycoeff:\n" << ycoeff << "\n" << std::endl;
 }
 
 
@@ -211,6 +234,7 @@ void ComputeWCS::computeResiduals()
 		// Store the coordinate pairs
 		QPointF point1 = dataModel->at(ii).first;
 		QPointF point2 = dataModel->at(ii).second;
+		point1.setY(referenceWCS->nypix - point1.y());
 		
 		// Map EPO coordinates to FITS coordinates
 		Vector2d fit = epoToFits(&point2);
@@ -249,10 +273,24 @@ Vector2d ComputeWCS::epoToFits(QPointF *p)
 		coordinate(0) = xcoeff[0] + xcoeff[1] * p->x() + xcoeff[2] * p->y() + xcoeff[3] * p->x() * p->y() + xcoeff[4] * pow(p->x(), 2) + xcoeff[5] * pow(p->y(), 2);
 		coordinate(1) = ycoeff[0] + ycoeff[1] * p->x() + ycoeff[2] * p->y() + ycoeff[3] * p->x() * p->y() + ycoeff[4] * pow(p->x(), 2) + ycoeff[5] * pow(p->y(), 2);
 	} 
-	else if (degree == 3)
+	
+	return coordinate;
+}
+
+
+Vector2d ComputeWCS::epoToFits(double x, double y)
+{
+	Vector2d coordinate;
+	
+	if (degree == 1)
 	{
-		coordinate(0) = xcoeff[0] * pow(p->x(), 3) + xcoeff[1] * pow(p->y(), 3) + xcoeff[2] * pow(p->x(), 2) + xcoeff[3] * pow(p->y(), 2) + xcoeff[4] * p->x() + xcoeff[5] * p->y() + xcoeff[6];
-		coordinate(1) = ycoeff[0] * pow(p->x(), 3) + ycoeff[1] * pow(p->y(), 3) + ycoeff[2] * pow(p->x(), 2) + ycoeff[3] * pow(p->y(), 2) + ycoeff[4] * p->x() + ycoeff[5] * p->y() + ycoeff[6];
+		coordinate(0) = xcoeff[0] * x + xcoeff[1] * y + xcoeff[2];
+		coordinate(1) = ycoeff[0] * x + ycoeff[1] * y + ycoeff[2];
+	}
+	else if (degree == 2)
+	{
+		coordinate(0) = xcoeff[0] + xcoeff[1] * x + xcoeff[2] * y + xcoeff[3] * x * y + xcoeff[4] * pow(x, 2) + xcoeff[5] * pow(y, 2);
+		coordinate(1) = ycoeff[0] + ycoeff[1] * x + ycoeff[2] * y + ycoeff[3] * x * y + ycoeff[4] * pow(x, 2) + ycoeff[5] * pow(y, 2);
 	}
 	
 	return coordinate;

@@ -53,7 +53,11 @@ QRectF CoordMarker::boundingRect() const
 void CoordMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {	
 	QPen pen;
-	pen.setWidthF(1);	
+	
+	// Compute width based on zoom factor of graphics view
+	double x = scene()->views().at(0)->transform().determinant();
+	
+	pen.setWidthF((-4./3.9)*(x-4.)+1);	
 	// Set selected state style
 	if (option->state & QStyle::State_Selected)
 	{

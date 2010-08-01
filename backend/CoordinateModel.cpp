@@ -225,7 +225,7 @@ QList< QPair<QPointF, QPointF> > CoordinateModel::getList()
 
 
 void CoordinateModel::emitDataChanged(const QModelIndex &index1, const QModelIndex &index2){
-	qDebug() << listOfCoordinatePairs;
+//	qDebug() << listOfCoordinatePairs;
     emit dataChanged(index1, index2);
 }
 

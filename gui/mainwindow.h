@@ -95,6 +95,7 @@ private slots:
 	void updateFitsCoordinates(QPointF pos);
 	void updateEpoCoordinates(QPointF pos);
 	void itemMoved(CoordMarker *movedItem, const QPointF &moveStartPosition);
+	void enableExport();
 	
 	// Testing this slot ...
 	void testSlot();
