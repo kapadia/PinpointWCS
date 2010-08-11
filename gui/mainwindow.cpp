@@ -374,15 +374,10 @@ void MainWindow::updateCoordPanelProperties()
 void MainWindow::updateFitsCoordinates(QPointF pos)
 {
 	double *world;
-	
-	int M = fitsImage->M;
-	long height = fitsImage->naxisn[1];
-	float x = pos.x();
-	float y = pos.y();
-	
+		
 	// Unbin and transform to FITS pixel coordintes
-	QPointF unbinnedPos = QPointF(M*(x-1)+2, height-(M*(y-1)+2));
-	world = fitsImage->pix2sky(unbinnedPos);
+	QPointF unbinnedPos = fitsImage->fpix2pix(pos);
+	world = fitsImage->pix2sky(unbinnedPos);	
 	fitsCoordPanel->updateCoordinates(pos, world);
 }
 

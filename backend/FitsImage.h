@@ -48,10 +48,12 @@ public:
 	~FitsImage();
 	float minpixel, maxpixel, difference;
 	float vmin, vmax, lowerLimit, upperLimit;
-	long naxisn[2];
 	bool downsampled;
 	int M;
 	float* imagedata;
+	
+	// Public Methods
+	QPointF fpix2pix(QPointF fpix);
 	
 public slots:
 	void setStretch(int s);
@@ -79,6 +81,7 @@ private:
 	long numelements;
 	long* fpixel;
 	int bitpix;
+	long naxisn[2];
 	float* renderdata;
 	float lowerPercentile;
 	float upperPercentile;

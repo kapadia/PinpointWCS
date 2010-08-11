@@ -265,9 +265,8 @@ bool FitsImage::verifyWCS()
 
 void FitsImage::calculateExtremals()
 {
-	minpixel = imagedata[0];
-	maxpixel = imagedata[0];
 	int i;
+	// Determine min and max
 	for (i=0; i<numelements; i++)
 	{
 		if (imagedata[i] < minpixel)
@@ -297,8 +296,8 @@ void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* new
                 for (I=0; I<S; I++) {
                     if (i*S + I >= W)
                         break;
-                    sum += (*arr)[(j*S + J)*W + (i*S + I)];
-                    N++;
+					sum += (*arr)[(j*S + J)*W + (i*S + I)];
+					N++;
                 }
             }
             (*arr)[j * (*newW) + i] = sum / (float)N;
@@ -312,11 +311,22 @@ bool FitsImage::calculatePercentile(float lp, float up)
 {		
 	// Set some variables and parameters
 	int ii;
-	int nth = floor(numelements/(numelements*0.004));
 	float* sample = NULL;
+	long samplesize;
+	int nth;
+	if (downsampled)
+	{
+		// Determine sample size
+		nth = floor(numelements/(numelements*0.004));
+		samplesize = numelements / nth + 1;		
+	}
+	else
+	{
+		samplesize = numelements;
+		nth = 1;
+	}
 	
-	// Determine the sample size and allocate memory
-	long samplesize = numelements / nth + 1;
+	// Allocate memory for sample
 	sample = (float *) malloc(samplesize * sizeof(float));
 	if (!sample)
 	{
@@ -560,4 +570,16 @@ void FitsImage::invert()
 	pixmap = new QPixmap(QPixmap::fromImage(image, Qt::DiffuseDither));
 	inverted = !inverted;
 	emit pixmapChanged(pixmap);
+}
+
+QPointF FitsImage::fpix2pix(QPointF fpix)
+{
+	float x, y;
+	x = fpix.x();
+	y = fpix.y();
+	
+	// Transformation takes into account pixel difference between
+	// FITS and other images, and a 1/2 pixel difference between
+	// FITS and QGraphicsView coordinates
+	return QPointF(M*(x-1)+2-0.5, naxisn[1]-(M*(y-1))-0.5);
 }
