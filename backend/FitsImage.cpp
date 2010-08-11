@@ -574,12 +574,18 @@ void FitsImage::invert()
 
 QPointF FitsImage::fpix2pix(QPointF fpix)
 {
-	float x, y;
+	float x, y, xf, yf;
 	x = fpix.x();
 	y = fpix.y();
+	xf = M*(x-1)+2-0.5;
+	yf = naxisn[1]-(M*(y-1))-0.5;
+	
+	// Get the intensity of the pixel value (use for later)
+	int index = naxisn[0]*(floor(yf+0.5)-1) + (floor(xf+0.5)-1);
+	qDebug() << "Pixel value: " << imagedata[index];
 	
 	// Transformation takes into account pixel difference between
 	// FITS and other images, and a 1/2 pixel difference between
 	// FITS and QGraphicsView coordinates
-	return QPointF(M*(x-1)+2-0.5, naxisn[1]-(M*(y-1))-0.5);
+	return QPointF(xf, yf);
 }
