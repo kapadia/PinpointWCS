@@ -42,6 +42,7 @@ double* PPWcsImage::pix2sky(QPointF pos)
 	if (!wcs)
 		return world;
 	
+	qDebug() << pos;
 	xpix = pos.x();
 	ypix = pos.y();
 	pix2wcs(wcs, xpix, ypix, &world[0], &world[1]);

@@ -24,6 +24,10 @@
 namespace PinpointWCSUtils
 {
 	float computeQuantile(float *arr, long arraysize, double q);
+	
+	// Functions for centroid fitting
+	bool cen3(float f0, float f1, float f2, float *xcen);
+	bool cen3x3(float *image, float *xcen, float *ycen);
 };
 
 #endif

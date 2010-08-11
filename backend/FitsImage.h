@@ -51,6 +51,7 @@ public:
 	long naxisn[2];
 	bool downsampled;
 	int M;
+	float* imagedata;
 	
 public slots:
 	void setStretch(int s);
@@ -78,7 +79,6 @@ private:
 	long numelements;
 	long* fpixel;
 	int bitpix;
-	float* imagedata;
 	float* renderdata;
 	float lowerPercentile;
 	float upperPercentile;

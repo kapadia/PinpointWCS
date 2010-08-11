@@ -150,6 +150,11 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		
 		// FITS data retrieved!!!
 		
+		// Check that pixel values are not NAN
+		for (int iii=0; iii<numelements; iii++)
+			if (isnan(imagedata[iii]))
+				imagedata[iii] = 0;
+		
 		// Set some default parameters (or only one for now)
 		inverted = false;
 		

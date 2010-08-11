@@ -23,6 +23,7 @@
 #include "mainwindow.h"
 #include "FitsImage.h"
 #include "Commands.h"
+#include "PinpointWCSUtils.h"
 
 MainWindow::MainWindow()
 {
@@ -195,6 +196,41 @@ bool MainWindow::loadFitsImage(QString& filename)
 
 void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 {
+	//
+	// TESTING CENTROID FITTING
+	//
+	/*
+	float *image;
+	image = (float *) malloc(9 * sizeof(float));
+	
+	// Convert QPoint to index
+	int row = floor(pos.x() + 0.5);
+	int col = floor(pos.y() + 0.5);
+	int width = fitsImage->naxisn[0];
+	long index = row * width + col;
+	
+	// Copy elements to 3x3 array
+	image[0] = fitsImage->imagedata[index-width-1];
+	image[1] = fitsImage->imagedata[index-width];
+	image[2] = fitsImage->imagedata[index-width+1];
+
+	image[3] = fitsImage->imagedata[index-1];
+	image[4] = fitsImage->imagedata[index];
+	image[5] = fitsImage->imagedata[index+1];
+	
+	image[6] = fitsImage->imagedata[index+width-1];
+	image[7] = fitsImage->imagedata[index+width];
+	image[8] = fitsImage->imagedata[index+width+1];
+	
+	float xcen;
+	float ycen;
+	PinpointWCSUtils::cen3x3(image, &xcen, &ycen);
+	qDebug() << "Centroid:";
+	qDebug() << xcen;
+	qDebug() << ycen;
+	pos += QPointF(xcen, ycen);
+	free(image);
+	 */
 	dataModel->setData(scene, QModelIndex(), pos, Qt::EditRole);
 }
 
@@ -343,8 +379,9 @@ void MainWindow::updateFitsCoordinates(QPointF pos)
 	long height = fitsImage->naxisn[1];
 	float x = pos.x();
 	float y = pos.y();
-	QPointF unbinnedPos = QPointF(M*(x-1)+1, height + M*(1-y)-1);
-
+	
+	// Unbin and transform to FITS pixel coordintes
+	QPointF unbinnedPos = QPointF(M*(x-1)+2, height-(M*(y-1)+2));
 	world = fitsImage->pix2sky(unbinnedPos);
 	fitsCoordPanel->updateCoordinates(pos, world);
 }

@@ -56,8 +56,7 @@ void CoordMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 	
 	// Compute width based on zoom factor of graphics view
 	double x = scene()->views().at(0)->transform().determinant();
-	
-	pen.setWidthF((-4./3.9)*(x-4.)+1);	
+	pen.setWidthF(std::max((-0.75/4.5)*(x-1)+1.25, 0.2));
 	// Set selected state style
 	if (option->state & QStyle::State_Selected)
 	{

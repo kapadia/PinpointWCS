@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
+#include <math.h>
 
 #include "PinpointWCSUtils.h"
 
@@ -116,7 +117,73 @@ namespace PinpointWCSUtils {
 			iter++;
 		}  // while
 		
-	} // function
+	} // computeQuantile function
+	
+	
+	bool cen3(float f0, float f1, float f2, float *xcen)
+	{
+		float a, b;
+		
+		a = 0.5 * (f2 - 2*f1 + f0);
+		if (a == 0.0)
+			return false;
+		
+		b = f1 - a - f0;
+		*xcen = -0.5 * b / a;
+		if ((*xcen < 0.0) || (*xcen > 2.0))
+			return false;
+		
+		return true;
+	} // cen3 function
+	
+	
+	bool cen3x3(float *image, float *xcen, float *ycen)
+	{
+		float mx0, mx1, mx2;
+		float my0, my1, my2;
+		float bx, by, mx , my;
+		int badcen = 0;
+		
+		badcen += cen3(image[0 + 3*0], image[1 + 3*0], image[2 + 3*0], &mx0);
+		badcen += cen3(image[0 + 3*1], image[1 + 3*1], image[2 + 3*1], &mx1);
+		badcen += cen3(image[0 + 3*2], image[1 + 3*2], image[2 + 3*2], &mx2);
+		
+		badcen += cen3(image[0 + 3*0], image[0 + 3*1], image[0 + 3*2], &my0);
+		badcen += cen3(image[1 + 3*0], image[1 + 3*1], image[1 + 3*2], &my1);
+		badcen += cen3(image[2 + 3*0], image[2 + 3*1], image[2 + 3*2], &my2);
+		
+		/* are we not okay? */
+		if (badcen != 6) {
+			return false;
+		}
+		
+		/* x = (y-1) mx + bx */
+		bx = (mx0 + mx1 + mx2) / 3.;
+		mx = (mx2 - mx0) / 2.;
+		
+		/* y = (x-1) my + by */
+		by = (my0 + my1 + my2) / 3.;
+		my = (my2 - my0) / 2.;
+		
+		/* find intersection */
+		(*xcen) = (mx * (by - my - 1.) + bx) / (1. + mx * my);
+		(*ycen) = ((*xcen) - 1.) * my + by;
+		
+		printf("%f\n", *xcen);
+		printf("%f\n", *ycen);
+		
+		/* check that we are in the box */
+		if (((*xcen) < 0.0) || ((*xcen) > 2.0) ||
+			((*ycen) < 0.0) || ((*ycen) > 2.0)){
+			return false;
+		}
+		
+        /* check for nan's and inf's */
+		if (!isnormal(*xcen) || !isnormal(*ycen))
+			return false;
+		
+		return true;
+	} // cen3x3 function
 	
 }  // namespace
 
