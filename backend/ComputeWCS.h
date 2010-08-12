@@ -43,11 +43,13 @@ private:
 	void initializeMatrixVectors(int d);
 	void plateSolution();
 	Vector2d xi_eta(double xpix, double ypix);
+	Vector2d xi_eta(Vector2d pixel);
 	void computeSums();
 	void computeResiduals();
 	Vector2d fitsToEpo(QPointF *p);
 	Vector2d epoToFits(QPointF *p);
 	Vector2d epoToFits(double x, double y);
+	Vector2d epoToFits(Vector2d p);
 
 	// Attributes
 	QList< QPair<QPointF, QPointF> > *dataModel;
@@ -65,9 +67,15 @@ private:
 	// EPO Attributes
 	double width;
 	double height;
-	double crpix1;
-	double crpix2;
-	double *crval;
+	Vector2d crpix;
+	Vector2d crval;
+	Matrix2d cdmatrix;
+	double scale;
+	double orientation;
+	
+	// Common calculation variables
+	Matrix2d flip;
+	Vector2d v;
 };
 
 #endif

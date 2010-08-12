@@ -582,7 +582,7 @@ QPointF FitsImage::fpix2pix(QPointF fpix)
 	
 	// Get the intensity of the pixel value (use for later)
 	int index = naxisn[0]*(floor(yf+0.5)-1) + (floor(xf+0.5)-1);
-	qDebug() << "Pixel value: " << imagedata[index];
+//	qDebug() << "Pixel value: " << imagedata[index];
 	
 	// Transformation takes into account pixel difference between
 	// FITS and other images, and a 1/2 pixel difference between

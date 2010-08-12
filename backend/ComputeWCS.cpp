@@ -31,6 +31,12 @@ ComputeWCS::ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *re
 	referenceWCS = refWCS;
 	width = w;
 	height = h;
+	
+	// Flip matrix
+	flip << 0, 1, 1, 0;
+	
+	// Vector to be used to compute offsets
+	v << 1000.0, 0;
 }
 
 ComputeWCS::~ComputeWCS()
@@ -62,46 +68,95 @@ void ComputeWCS::computeTargetWCS()
 	
 	// Declare the CRPIX for the EPO image to be the center pixel
 	// Maybe this can eventually be set by the user
-	crpix1 = width / 2.;
-	crpix2 = height / 2.;
+	crpix << width / 2., height / 2.;
 	
 	// Determine corresponding pixel in the FITS image
-	Vector2d ref0 = epoToFits(crpix1, crpix2);
+	Vector2d ref0 = epoToFits(crpix);
+	std::cout << "ref0:\t" << ref0 << std::endl;
+	Vector2d xieta_0 = xi_eta(ref0);
+	std::cout << "xieta_0:\t" << xieta_0 << std::endl;
 	
 	// Determine the celestial coordinates for ref0
-	crval = (double*) malloc( 2*sizeof(double) );
+	pix2wcs(referenceWCS, ref0[0], ref0[1], &crval[0], &crval[1]);
+
+	// Coordinate axis flipped, need to make adjustment
+	if (referenceWCS->coorflip == 1)
+		crval = flip*crval;
 	
-	pix2wcs(referenceWCS, ref0(0), ref0(1), &crval[0], &crval[1]);
+	// Compute offset in x direction
+	Vector2d ref_x = epoToFits(crpix + v);
+	Vector2d xieta_x = xi_eta(ref_x);
 	
+	// Compute offset in y direction
+	Vector2d ref_y = epoToFits(crpix + flip*v);
+	Vector2d xieta_y = xi_eta(ref_y);
 	
+	// Compute the cd matrix
+	cdmatrix(0) = xieta_x(0) - xieta_0(0);
+	cdmatrix(1) = xieta_0(0) - xieta_y(0);
+	cdmatrix(2) = xieta_x(1) - xieta_0(1);
+	cdmatrix(3) = xieta_0(1) - xieta_y(1);
+	
+	// Calculate the scale in units of arcseconds
+	scale = 3600 * sqrt(pow(xieta_y(0) - xieta_0(0), 2) + pow(xieta_y(1) - xieta_0(1), 2));
+	
+	// Calculate the orientation
+	orientation = atan2(xieta_y(0) - xieta_0(0), -(xieta_y(1) - xieta_0(1))) * (180. / M_PI);
+	
+	std::cout.precision(15);
+	std::cout << "EPO WCS:" << std::endl;
+	std::cout << "Reference Pixel:\t" << crpix << std::endl;
+	std::cout << "Reference Value:\t" << crval << std::endl;
+	std::cout << "CD Matrix:\t" << cdmatrix << std::endl;
+	std::cout << "Scale:\t" << scale << std::endl;
+	std::cout << "Orientation:\t" << orientation << std::endl;
 }
 
 Vector2d ComputeWCS::xi_eta(double xpix, double ypix)
 {
 	// Initialize some variables
 	Vector2d pixel(xpix, ypix);
-	Vector2d crpix(referenceWCS->xrefpix, referenceWCS->yrefpix);
-	Vector2d cdelt(referenceWCS->cdelt[0], referenceWCS->cdelt[1]);
-	Matrix2d pc;
-	pc << referenceWCS->pc[0], referenceWCS->pc[1], referenceWCS->pc[2], referenceWCS->pc[3];
+	Vector2d ref_crpix(referenceWCS->xrefpix, referenceWCS->yrefpix);
+	Vector2d ref_cdelt(referenceWCS->cdelt[0], referenceWCS->cdelt[1]);
+	Matrix2d ref_pc;
+	ref_pc << referenceWCS->pc[0], referenceWCS->pc[1], referenceWCS->pc[2], referenceWCS->pc[3];
 	
 	// Compute intermediate pixel coordinates
-	Vector2d intermediate = pc * (pixel - crpix);
+	Vector2d intermediate = ref_pc * (pixel - ref_crpix);
 	
 	// Compute intermediate world coordinates
-	intermediate = intermediate.cwise() * cdelt;
+	intermediate = intermediate.cwise() * ref_cdelt;
 	
 	// Convert degrees to radians
 	intermediate = (180. / M_PI) * intermediate;
-	
+
+	// Coordinate axes flipped, need to make adjustment
 	if (referenceWCS->coorflip == 1)
-	{
-		// Coordinate axes flipped, need to make some adjustments
-		Matrix2d f1;
-		f1 << 0, 1, 1, 0;
-		return f1*intermediate;
-	}
-	std::cout << intermediate;
+		return flip*intermediate;
+	
+	return intermediate;
+}
+
+Vector2d ComputeWCS::xi_eta(Vector2d pixel)
+{
+	// Initialize some variables
+	Vector2d ref_crpix(referenceWCS->xrefpix, referenceWCS->yrefpix);
+	Vector2d ref_cdelt(referenceWCS->cdelt[0], referenceWCS->cdelt[1]);
+	Matrix2d ref_pc;
+	ref_pc << referenceWCS->pc[0], referenceWCS->pc[1], referenceWCS->pc[2], referenceWCS->pc[3];
+	
+	// Compute intermediate pixel coordinates
+	Vector2d intermediate = ref_pc * (pixel - ref_crpix);
+	
+	// Compute intermediate world coordinates
+	intermediate = intermediate.cwise() * ref_cdelt;
+	
+	// Convert degrees to radians
+	intermediate = (180. / M_PI) * intermediate;
+
+	// Coordinate axes flipped, need to make some adjustments
+	if (referenceWCS->coorflip == 1)
+		return flip*intermediate;
 	
 	return intermediate;
 }
@@ -291,6 +346,24 @@ Vector2d ComputeWCS::epoToFits(double x, double y)
 	{
 		coordinate(0) = xcoeff[0] + xcoeff[1] * x + xcoeff[2] * y + xcoeff[3] * x * y + xcoeff[4] * pow(x, 2) + xcoeff[5] * pow(y, 2);
 		coordinate(1) = ycoeff[0] + ycoeff[1] * x + ycoeff[2] * y + ycoeff[3] * x * y + ycoeff[4] * pow(x, 2) + ycoeff[5] * pow(y, 2);
+	}
+	
+	return coordinate;
+}
+
+Vector2d ComputeWCS::epoToFits(Vector2d p)
+{
+	Vector2d coordinate;
+	
+	if (degree == 1)
+	{
+		coordinate(0) = xcoeff[0] * p[0] + xcoeff[1] * p[1] + xcoeff[2];
+		coordinate(1) = ycoeff[0] * p[0] + ycoeff[1] * p[1] + ycoeff[2];
+	}
+	else if (degree == 2)
+	{
+		coordinate(0) = xcoeff[0] + xcoeff[1] * p[0] + xcoeff[2] * p[1] + xcoeff[3] * p[0] * p[1] + xcoeff[4] * pow(p[0], 2) + xcoeff[5] * pow(p[1], 2);
+		coordinate(1) = ycoeff[0] + ycoeff[1] * p[0] + ycoeff[2] * p[1] + ycoeff[3] * p[0] * p[1] + ycoeff[4] * pow(p[0], 2) + ycoeff[5] * pow(p[1], 2);
 	}
 	
 	return coordinate;

@@ -90,7 +90,7 @@ void GraphicsView::leaveEvent(QEvent *event)
 
 void GraphicsView::wheelEvent(QWheelEvent *event)
 {
-	scaleView(pow((double)2, -event->delta() / 240.0));
+	scaleView(pow((double)2, event->delta() / 240.0));
 }
 
 void GraphicsView::scaleView(qreal scaleFactor)
