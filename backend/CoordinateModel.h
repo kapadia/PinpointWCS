@@ -28,6 +28,7 @@
 #include <QVariant>
 #include "GraphicsScene.h"
 #include "Commands.h"
+#include "ComputeWCS.h"
 
 
 class CoordinateModel : public QAbstractTableModel
@@ -61,7 +62,6 @@ protected:
 	void computeMapping();
 	QPointF *p1;
 	QPointF *p2;
-//	QList< QPair<QPointF, QPointF> > listOfCoordinatePairs;
 	
 signals:
 	void compute();

@@ -29,6 +29,7 @@ ComputeWCS::ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *re
 {
 	dataModel = m;
 	referenceWCS = refWCS;
+	epoWCS = false;
 	width = w;
 	height = h;
 	
@@ -57,107 +58,90 @@ void ComputeWCS::initializeMatrixVectors(int d)
 
 void ComputeWCS::computeTargetWCS()
 {
-	// Compute matrix and vectors
-	computeSums();
-	
-	// Solve matrix equation for mapping
-	plateSolution();
-	
-	// Compute residuals
-	computeResiduals();
-	
-	// Declare the CRPIX for the EPO image to be the center pixel
-	// Maybe this can eventually be set by the user
-	crpix << width / 2., height / 2.;
-	
-	// Determine corresponding pixel in the FITS image
-	Vector2d ref0 = epoToFits(crpix);
-	std::cout << "ref0:\t" << ref0 << std::endl;
-	Vector2d xieta_0 = xi_eta(ref0);
-	std::cout << "xieta_0:\t" << xieta_0 << std::endl;
-	
-	// Determine the celestial coordinates for ref0
-	pix2wcs(referenceWCS, ref0[0], ref0[1], &crval[0], &crval[1]);
+	// Check if enough points have been selected
+	if (dataModel->size() >= 3 and dataModel->last().second != QPointF(-1, -1))
+	{
+		// Compute matrix and vectors
+		computeSums();
+		
+		// Solve matrix equation for mapping
+		plateSolution();
+		
+		// Compute residuals
+		computeResiduals();
+		
+		// Declare the CRPIX for the EPO image to be the center pixel
+		// Maybe this can eventually be set by the user
+		crpix << width / 2., height / 2.;
+		
+		// Determine corresponding pixel in the FITS image
+		Vector2d ref0 = epoToFits(crpix);
+		std::cout << "ref0:\t" << ref0 << std::endl;
+		Vector2d xieta_0 = xi_eta(ref0);
+		std::cout << "xieta_0:\t" << xieta_0 << std::endl;
+		
+		// Determine the celestial coordinates for ref0
+		pix2wcs(referenceWCS, ref0[0], ref0[1], &crval[0], &crval[1]);
 
-	// Coordinate axis flipped, need to make adjustment
-	if (referenceWCS->coorflip == 1)
-		crval = flip*crval;
+		// Coordinate axis flipped, need to make adjustment
+		if (referenceWCS->coorflip == 1)
+			crval = flip*crval;
+		
+		// Compute offset in x direction
+		Vector2d ref_x = epoToFits(crpix + v);
+		Vector2d xieta_x = xi_eta(ref_x);
+		
+		// Compute offset in y direction
+		Vector2d ref_y = epoToFits(crpix + flip*v);
+		Vector2d xieta_y = xi_eta(ref_y);
+		
+		// Compute the cd matrix
+		cdmatrix(0) = (xieta_x(0) - xieta_0(0)) / v(0);
+		cdmatrix(1) = (xieta_0(0) - xieta_y(0)) / v(0);
+		cdmatrix(2) = (xieta_x(1) - xieta_0(1)) / v(0);
+		cdmatrix(3) = (xieta_0(1) - xieta_y(1)) / v(0);
+		
+		// Calculate the scale in units of arcseconds
+	//	scale = 3600 * sqrt(pow(xieta_y(0) - xieta_0(0), 2) + pow(xieta_y(1) - xieta_0(1), 2)) / v(0);
+		scale = sqrt(pow(xieta_y(0) - xieta_0(0), 2) + pow(xieta_y(1) - xieta_0(1), 2)) / v(0);
+		
+		// Calculate the orientation
+		orientation = atan2(xieta_y(0) - xieta_0(0), -(xieta_y(1) - xieta_0(1))) * (180. / M_PI);
+		
+		// EPO WCS calculated!!
+		epoWCS = true;
+		
+		std::cout.precision(15);
+		std::cout << "EPO WCS:" << std::endl;
+		std::cout << "Reference Pixel:\t" << crpix << std::endl;
+		std::cout << "Reference Value:\t" << crval << std::endl;
+		std::cout << "CD Matrix:\t" << cdmatrix << std::endl;
+		std::cout << "Scale:\t" << scale << std::endl;
+		std::cout << "Orientation:\t" << orientation << std::endl;
+		
+		return;
+	}
 	
-	// Compute offset in x direction
-	Vector2d ref_x = epoToFits(crpix + v);
-	Vector2d xieta_x = xi_eta(ref_x);
-	
-	// Compute offset in y direction
-	Vector2d ref_y = epoToFits(crpix + flip*v);
-	Vector2d xieta_y = xi_eta(ref_y);
-	
-	// Compute the cd matrix
-	cdmatrix(0) = xieta_x(0) - xieta_0(0);
-	cdmatrix(1) = xieta_0(0) - xieta_y(0);
-	cdmatrix(2) = xieta_x(1) - xieta_0(1);
-	cdmatrix(3) = xieta_0(1) - xieta_y(1);
-	
-	// Calculate the scale in units of arcseconds
-	scale = 3600 * sqrt(pow(xieta_y(0) - xieta_0(0), 2) + pow(xieta_y(1) - xieta_0(1), 2));
-	
-	// Calculate the orientation
-	orientation = atan2(xieta_y(0) - xieta_0(0), -(xieta_y(1) - xieta_0(1))) * (180. / M_PI);
-	
-	std::cout.precision(15);
-	std::cout << "EPO WCS:" << std::endl;
-	std::cout << "Reference Pixel:\t" << crpix << std::endl;
-	std::cout << "Reference Value:\t" << crval << std::endl;
-	std::cout << "CD Matrix:\t" << cdmatrix << std::endl;
-	std::cout << "Scale:\t" << scale << std::endl;
-	std::cout << "Orientation:\t" << orientation << std::endl;
+	epoWCS = false;
 }
 
 Vector2d ComputeWCS::xi_eta(double xpix, double ypix)
 {
-	// Initialize some variables
-	Vector2d pixel(xpix, ypix);
-	Vector2d ref_crpix(referenceWCS->xrefpix, referenceWCS->yrefpix);
-	Vector2d ref_cdelt(referenceWCS->cdelt[0], referenceWCS->cdelt[1]);
-	Matrix2d ref_pc;
-	ref_pc << referenceWCS->pc[0], referenceWCS->pc[1], referenceWCS->pc[2], referenceWCS->pc[3];
+	const double pix[2] = {xpix, ypix};
+	double interworld[2];
+	linrev(pix, &(referenceWCS->lin), interworld);
 	
-	// Compute intermediate pixel coordinates
-	Vector2d intermediate = ref_pc * (pixel - ref_crpix);
-	
-	// Compute intermediate world coordinates
-	intermediate = intermediate.cwise() * ref_cdelt;
-	
-	// Convert degrees to radians
-	intermediate = (180. / M_PI) * intermediate;
-
-	// Coordinate axes flipped, need to make adjustment
-	if (referenceWCS->coorflip == 1)
-		return flip*intermediate;
-	
+	Vector2d intermediate(interworld[0], interworld[1]);
 	return intermediate;
 }
 
 Vector2d ComputeWCS::xi_eta(Vector2d pixel)
 {
-	// Initialize some variables
-	Vector2d ref_crpix(referenceWCS->xrefpix, referenceWCS->yrefpix);
-	Vector2d ref_cdelt(referenceWCS->cdelt[0], referenceWCS->cdelt[1]);
-	Matrix2d ref_pc;
-	ref_pc << referenceWCS->pc[0], referenceWCS->pc[1], referenceWCS->pc[2], referenceWCS->pc[3];
+	const double pix[2] = {pixel(0), pixel(1)};
+	double interworld[2];
+	linrev(pix, &(referenceWCS->lin), interworld);
 	
-	// Compute intermediate pixel coordinates
-	Vector2d intermediate = ref_pc * (pixel - ref_crpix);
-	
-	// Compute intermediate world coordinates
-	intermediate = intermediate.cwise() * ref_cdelt;
-	
-	// Convert degrees to radians
-	intermediate = (180. / M_PI) * intermediate;
-
-	// Coordinate axes flipped, need to make some adjustments
-	if (referenceWCS->coorflip == 1)
-		return flip*intermediate;
-	
+	Vector2d intermediate(interworld[0], interworld[1]);
 	return intermediate;
 }
 

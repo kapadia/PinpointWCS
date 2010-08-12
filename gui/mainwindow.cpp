@@ -384,13 +384,22 @@ void MainWindow::updateFitsCoordinates(QPointF pos)
 void MainWindow::updateEpoCoordinates(QPointF pos)
 {
 	double *world = NULL;
-	if (epoImage->wcsExists)
+//	if (epoImage->wcsExists)
+	if (computewcs->epoWCS)
 		world = epoImage->pix2sky(pos);
 	epoCoordPanel->updateCoordinates(pos, world);
 }
 
 void MainWindow::enableExport()
 {
-	ui.actionAstronomy_Visualization_Metadata->setEnabled(true);
-	ui.actionFITS_Image->setEnabled(true);
+	if (computewcs->epoWCS)
+	{
+		ui.actionAstronomy_Visualization_Metadata->setEnabled(true);
+		ui.actionFITS_Image->setEnabled(true);
+	}
+	else
+	{
+		ui.actionAstronomy_Visualization_Metadata->setEnabled(false);
+		ui.actionFITS_Image->setEnabled(false);
+	}
 }

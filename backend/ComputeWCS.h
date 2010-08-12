@@ -38,6 +38,9 @@ public:
 	
 	void computeTargetWCS();
 	
+	// Public Attributes
+	bool epoWCS;
+	
 private:
 	// Methods
 	void initializeMatrixVectors(int d);
