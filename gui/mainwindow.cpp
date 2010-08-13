@@ -247,6 +247,8 @@ void MainWindow::testSlot()
 {
 	qDebug() << "Test Slot";
 	computewcs->computeTargetWCS();
+	if (computewcs->epoWCS)
+		epoImage->wcs = computewcs->initTargetWCS();
 }
 
 

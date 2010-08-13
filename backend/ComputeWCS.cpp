@@ -125,6 +125,21 @@ void ComputeWCS::computeTargetWCS()
 	epoWCS = false;
 }
 
+struct WorldCoor* ComputeWCS::initTargetWCS()
+{
+	struct WorldCoor *targetWCS;
+	double *cd;
+	cd = (double *) malloc(4 * sizeof(double));
+	cd[0] = cdmatrix(0);
+	cd[1] = cdmatrix(1);
+	cd[2] = cdmatrix(2);
+	cd[3] = cdmatrix(3);
+	
+	targetWCS = wcskinit(width, height, "RA--", "DEC-", crpix(0), crpix(1), crval(0), crval(1), cd, referenceWCS->cdelt[0], referenceWCS->cdelt[1], referenceWCS->rot, referenceWCS->equinox, referenceWCS->epoch);
+	return targetWCS;
+}
+
+
 Vector2d ComputeWCS::xi_eta(double xpix, double ypix)
 {
 	const double pix[2] = {xpix, ypix};

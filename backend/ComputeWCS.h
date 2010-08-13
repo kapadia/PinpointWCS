@@ -37,6 +37,7 @@ public:
 	~ComputeWCS();
 	
 	void computeTargetWCS();
+	struct WorldCoor* initTargetWCS();
 	
 	// Public Attributes
 	bool epoWCS;
@@ -65,7 +66,6 @@ private:
 	VectorXd basis;
 	double rms_x, rms_y;
 	struct WorldCoor *referenceWCS;
-	struct WorldCoor *targetWCS;
 	
 	// EPO Attributes
 	double width;
