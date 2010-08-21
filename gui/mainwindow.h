@@ -32,6 +32,7 @@
 #include "FitsToolbar.h"
 #include "CoordinateModel.h"
 #include "ComputeWCS.h"
+#include "ExportWCS.h"
 
  
 class MainWindow : public QMainWindow
@@ -67,6 +68,7 @@ private:
 	
 	// Other attributes
 	ComputeWCS *computewcs;
+	ExportWCS *exportwcs;
 	
 	// State Machines Attributes
 	QStateMachine *WcsInfoPanelMachine;
@@ -98,7 +100,7 @@ private slots:
 	void enableExport();
 	void computeWCS();
 	
-	// Testing this slot ...
+	// A slot for testing ...
 	void testSlot();
 };
 
