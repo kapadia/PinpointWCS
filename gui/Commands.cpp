@@ -51,7 +51,7 @@ void AddCommand::undo()
 		QModelIndex index2 = dataModel->index(numrows-1, 1);
 		dataModel->emitDataChanged(index1, index2);
 		
-		// Testing signal to ComputeWCS object
+		// Call function that sends signal to ComputeWCS object
 		dataModel->computeMapping();
 	}
 	else
@@ -102,7 +102,7 @@ void AddCommand::redo()
 		marker->row = numrows-1;
 		dataModel->emitDataChanged(index1, index2);
 		
-		// Testing signal to ComputeWCS object
+		// Call function that sends signal to ComputeWCS object
 		dataModel->computeMapping();
 	}
 	
@@ -161,7 +161,7 @@ void MoveCommand::undo()
 		dataModel->emitDataChanged(index1, index2);
 	}
 	
-	// Testing signal to ComputeWCS object
+	// Call function that sends signal to ComputeWCS object
 	dataModel->computeMapping();
 	
 	// Move marker to old position
@@ -194,7 +194,7 @@ void MoveCommand::redo()
 		dataModel->emitDataChanged(index1, index2);
 	}
 	
-	// Testing signal to ComputeWCS object
+	// Call function that sends signal to ComputeWCS object
 	dataModel->computeMapping();
 	
 	// Move the marker to the new position

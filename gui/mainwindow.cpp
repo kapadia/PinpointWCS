@@ -99,6 +99,7 @@ bool MainWindow::loadImages()
 		computewcs = new ComputeWCS(&(dataModel->listOfCoordinatePairs), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
 		
 		// Set up the table view
+		// TODO: IMPROVE THE APPEARENCE OF THE TABLE, ENABLE EDITING
 		tableView = new QTableView;
 		tableView->setModel(dataModel);
 		tableView->show();
@@ -165,7 +166,7 @@ bool MainWindow::loadImages()
 		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
 		
 		// Connect more signals -- communicate between data model and ComputeWCS object
-		connect(dataModel, SIGNAL(compute()), this, SLOT(testSlot()));
+		connect(dataModel, SIGNAL(compute()), this, SLOT(computeWCS()));
 		
 		// Testing export slot
 		connect(dataModel, SIGNAL(compute()), this, SLOT(enableExport()));
@@ -243,12 +244,19 @@ void MainWindow::itemMoved(CoordMarker *movedItem, const QPointF &oldPosition)
 }
 
 
+void MainWindow::computeWCS()
+{
+	computewcs->computeTargetWCS();
+	if (computewcs->epoWCS)
+	{
+		epoImage->wcs = computewcs->initTargetWCS();
+		epoWcsInfoPanel->loadWCS(*(epoImage->wcs));
+	}
+}
+
 void MainWindow::testSlot()
 {
 	qDebug() << "Test Slot";
-	computewcs->computeTargetWCS();
-	if (computewcs->epoWCS)
-		epoImage->wcs = computewcs->initTargetWCS();
 }
 
 
