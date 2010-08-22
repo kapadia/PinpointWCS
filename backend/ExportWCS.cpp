@@ -17,6 +17,8 @@
  *
  */
 
+#include <iostream>
+#include <QDebug>
 #include <QImage>
 #include "ExportWCS.h"
 #include "fitsio.h"
@@ -85,17 +87,11 @@ bool ExportWCS::exportFITS(struct WorldCoor *wcs)
 	
 	// Initialize variables for the FITS header
 	char xtension[] = "IMAGE";
-	char origin[] = "Chandra X-ray Center's PinpointWCS";
+	char origin[] = "PinpointWCS by the Chandra X-ray Center";
 	char wcsname[] = "Primary WCS";
-	float equinox = wcs->equinox;
 	char ctype1[] = "RA---TAN";
 	char ctype2[] = "DEC--TAN";
-	float crpix1 = wcs->xrefpix;
-	float crval1 = wcs->xref;
 	char cunit[] = "deg";
-	float crpix2 = wcs->yrefpix;
-	float crval2 = wcs->yref;
-	double cd[4] = {1.0, 0.0, 1.0, 0.0};
 	
 	// TSTRING, TLOGICAL (== int), TBYTE, TSHORT, TUSHORT, TINT, TUINT, TLONG, TLONGLONG, TULONG, TFLOAT, TDOUBLE
 	if (fits_update_key(fptr, TSTRING, "XTENSION", &xtension, NULL, &status))
@@ -106,15 +102,38 @@ bool ExportWCS::exportFITS(struct WorldCoor *wcs)
 		return false;
 	if (fits_update_key(fptr, TSTRING, "WCSNAME", &wcsname, NULL, &status))
 		return false;
-	if (fits_update_key(fptr, TFLOAT, "EQUINOX", &equinox, NULL, &status))
+	
+	QString equinox;
+	equinox.sprintf("%.1f", wcs->equinox);
+	qDebug() << "EQUINOX: " << equinox;
+	if (fits_update_key(fptr, TFLOAT, "EQUINOX", &(equinox.toStdString()), NULL, &status))
 		return false;
 	if (fits_update_key(fptr, TSTRING, "RADESYS", &(wcs->radecsys), NULL, &status))
 		return false;
 	if (fits_update_key(fptr, TSTRING, "CTYPE1", &ctype1, NULL, &status))
 		return false;
+	if (fits_update_key(fptr, TFLOAT, "CRPIX1", &(wcs->xrefpix), NULL, &status))
+		return false;
+	if (fits_update_key(fptr, TFLOAT, "CRVAL1", &(wcs->xref), NULL, &status))
+		return false;
+	if (fits_update_key(fptr, TSTRING, "CUNIT1", &cunit, NULL, &status))
+		return false;
 	if (fits_update_key(fptr, TSTRING, "CTYPE2", &ctype2, NULL, &status))
 		return false;
-	
+	if (fits_update_key(fptr, TFLOAT, "CRPIX2", &(wcs->yrefpix), NULL, &status))
+		return false;
+	if (fits_update_key(fptr, TFLOAT, "CRVAL2", &(wcs->yref), NULL, &status))
+		return false;
+	if (fits_update_key(fptr, TSTRING, "CUNIT2", &cunit, NULL, &status))
+		return false;
+	if (fits_update_key(fptr, TFLOAT, "CD1_1", &wcs->cd[0], NULL, &status))
+		return false;
+	if (fits_update_key(fptr, TFLOAT, "CD1_2", &(wcs->cd[1]), NULL, &status))
+		return false;
+	if (fits_update_key(fptr, TFLOAT, "CD2_1", &(wcs->cd[2]), NULL, &status))
+		return false;
+	if (fits_update_key(fptr, TFLOAT, "CD2_2", &(wcs->cd[3]), NULL, &status))
+		return false;	
 	
 	// Write comments
 	if (fits_write_comment(fptr, "World Coordinate System computed using PinpointWCS by the Chandra X-ray Center.  PinpointWCS is being developed by Amit Kapadia (CfA) akapadia@cfa.harvard.edu.", &status))

@@ -108,7 +108,7 @@ bool MainWindow::loadImages()
 		exportwcs = new ExportWCS(epoImage->pixmap);
 		
 		// TODO: TEST FITS EXPORT
-		exportwcs->exportFITS(epoImage->wcs);
+		exportwcs->exportFITS(fitsImage->wcs);
 		
 		// Flip the stacked widgets
 		ui.stackedWidget_1->setCurrentIndex(1);
