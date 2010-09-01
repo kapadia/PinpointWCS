@@ -22,6 +22,8 @@
 #include <QImage>
 #include "ExportWCS.h"
 #include "fitsio.h"
+#include <string>
+
 
 ExportWCS::ExportWCS(QPixmap *p)
 {
@@ -103,38 +105,57 @@ bool ExportWCS::exportFITS(struct WorldCoor *wcs)
 	if (fits_update_key(fptr, TSTRING, "WCSNAME", &wcsname, NULL, &status))
 		return false;
 	
+	// Initialize QStrings for some numeric values
 	QString equinox;
+	QString crpix1;
+	QString crval1;
+	QString crpix2;
+	QString crval2;
+	QString cd11;
+	QString cd12;
+	QString cd21;
+	QString cd22;
+	
+	// Format values to specific digits
 	equinox.sprintf("%.1f", wcs->equinox);
-	qDebug() << "EQUINOX: " << equinox;
-	if (fits_update_key(fptr, TFLOAT, "EQUINOX", &(equinox.toStdString()), NULL, &status))
+	crpix1.sprintf("%.11f", wcs->xrefpix);
+	crval1.sprintf("%.11f", wcs->xref);
+	crpix2.sprintf("%.11f", wcs->yrefpix);
+	crval2.sprintf("%.11f", wcs->yref);
+	cd11.sprintf("%.11f", wcs->cd[0]);
+	cd12.sprintf("%.11f", wcs->cd[1]);
+	cd21.sprintf("%.11f", wcs->cd[2]);
+	cd22.sprintf("%.11f", wcs->cd[3]);
+
+	if (fits_update_key(fptr, TSTRING, "EQUINOX", (void*) equinox.toStdString().c_str(), NULL, &status))
 		return false;
 	if (fits_update_key(fptr, TSTRING, "RADESYS", &(wcs->radecsys), NULL, &status))
 		return false;
 	if (fits_update_key(fptr, TSTRING, "CTYPE1", &ctype1, NULL, &status))
 		return false;
-	if (fits_update_key(fptr, TFLOAT, "CRPIX1", &(wcs->xrefpix), NULL, &status))
+	if (fits_update_key(fptr, TSTRING, "CRPIX1", (void*) crpix1.toStdString().c_str(), NULL, &status))
 		return false;
-	if (fits_update_key(fptr, TFLOAT, "CRVAL1", &(wcs->xref), NULL, &status))
+	if (fits_update_key(fptr, TSTRING, "CRVAL1", (void*) crval1.toStdString().c_str(), NULL, &status))
 		return false;
 	if (fits_update_key(fptr, TSTRING, "CUNIT1", &cunit, NULL, &status))
 		return false;
 	if (fits_update_key(fptr, TSTRING, "CTYPE2", &ctype2, NULL, &status))
 		return false;
-	if (fits_update_key(fptr, TFLOAT, "CRPIX2", &(wcs->yrefpix), NULL, &status))
+	if (fits_update_key(fptr, TSTRING, "CRPIX2", (void*) crpix2.toStdString().c_str(), NULL, &status))
 		return false;
-	if (fits_update_key(fptr, TFLOAT, "CRVAL2", &(wcs->yref), NULL, &status))
+	if (fits_update_key(fptr, TSTRING, "CRVAL2", (void*) crval2.toStdString().c_str(), NULL, &status))
 		return false;
 	if (fits_update_key(fptr, TSTRING, "CUNIT2", &cunit, NULL, &status))
 		return false;
-	if (fits_update_key(fptr, TFLOAT, "CD1_1", &wcs->cd[0], NULL, &status))
+	if (fits_update_key(fptr, TSTRING, "CD1_1", (void*) cd11.toStdString().c_str(), NULL, &status))
 		return false;
-	if (fits_update_key(fptr, TFLOAT, "CD1_2", &(wcs->cd[1]), NULL, &status))
+	if (fits_update_key(fptr, TSTRING, "CD1_2", (void*) cd21.toStdString().c_str(), NULL, &status))
 		return false;
-	if (fits_update_key(fptr, TFLOAT, "CD2_1", &(wcs->cd[2]), NULL, &status))
+	if (fits_update_key(fptr, TSTRING, "CD2_1", (void*) cd12.toStdString().c_str(), NULL, &status))
 		return false;
-	if (fits_update_key(fptr, TFLOAT, "CD2_2", &(wcs->cd[3]), NULL, &status))
+	if (fits_update_key(fptr, TSTRING, "CD2_2", (void*) cd22.toStdString().c_str(), NULL, &status))
 		return false;	
-	
+
 	// Write comments
 	if (fits_write_comment(fptr, "World Coordinate System computed using PinpointWCS by the Chandra X-ray Center.  PinpointWCS is being developed by Amit Kapadia (CfA) akapadia@cfa.harvard.edu.", &status))
 		return false;
