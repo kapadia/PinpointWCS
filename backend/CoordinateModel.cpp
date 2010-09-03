@@ -47,7 +47,7 @@ int CoordinateModel::rowCount(const QModelIndex &parent) const
 
 int CoordinateModel::columnCount(const QModelIndex &parent) const
 {
-    return 2;
+    return 4;
 }
 
 QVariant CoordinateModel::data(const QModelIndex &index, int role) const
@@ -61,17 +61,47 @@ QVariant CoordinateModel::data(const QModelIndex &index, int role) const
 	if (role == Qt::DisplayRole)
 	{
 		QPair<QPointF, QPointF> pair = listOfCoordinatePairs.at(index.row());
-		
 		QString formattedData;
 		
 		if (index.column() == 0)
-			return formattedData.sprintf("%.2f, %.2f", pair.first.x(), pair.first.y());
+			return pair.first.x();
+		else if (index.column() == 1)
+			return pair.first.y();
+		else if (index.column() == 2)
+		{
+			if (pair.second.x() == -1)
+				return formattedData.sprintf("%s", "-");
+			else
+				return pair.second.x();
+		}
 		else
 		{
-			if (pair.second.x() == -1 && pair.second.y() == -1)
-				return formattedData.sprintf("%s, %s", "-", "-");
-			return formattedData.sprintf("%.2f, %.2f", pair.second.x(), pair.second.y());
+			if (pair.second.y() == -1)
+				return formattedData.sprintf("%s", "-");
+			else
+				return pair.second.y();
 		}
+		
+		/*
+		if (index.column() == 0)
+			return formattedData.sprintf("%.3f", pair.first.x());
+		else if (index.column() == 1)
+			return formattedData.sprintf("%.3f", pair.first.y());
+		else if (index.column() == 2)
+		{
+			if (pair.second.x() == -1)
+				return formattedData.sprintf("%s", "-");
+			else
+				return formattedData.sprintf("%.3f", pair.second.x());
+		}
+		else
+		{
+			if (pair.second.y() == -1)
+				return formattedData.sprintf("%s", "-");
+			else
+				return formattedData.sprintf("%.3f", pair.second.y());
+		}
+		 */
 	}
 	
 	return QVariant();
@@ -85,11 +115,13 @@ QVariant CoordinateModel::headerData(int section, Qt::Orientation orientation, i
     if (orientation == Qt::Horizontal) {
         switch (section) {
             case 0:
-                return tr("FITS Coordinates");
-                
+                return tr("FITS X");
             case 1:
-                return tr("EPO Coordinates");
-                
+                return tr("FITS Y");
+			case 2:
+				return tr("EPO X");
+			case 3:
+				return tr("EPO Y");
             default:
                 return QVariant();
         }

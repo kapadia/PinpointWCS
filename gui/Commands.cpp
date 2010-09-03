@@ -42,13 +42,17 @@ void AddCommand::undo()
 	// Determine the number of rows in the data model
 	int numrows = dataModel->rowCount(QModelIndex());
 	
+	// Initialize some indices
+	QModelIndex index1;
+	QModelIndex index2;
+	
 	// Remove datum from model
 	if (scene->reference)
 	{
 		// Datum coming from FITS scene, so remove a row
 		dataModel->removeRows(numrows-1, 1, QModelIndex());
-		QModelIndex index1 = dataModel->index(numrows-1, 0);
-		QModelIndex index2 = dataModel->index(numrows-1, 1);
+		index1 = dataModel->index(numrows-1, 0);
+		index2 = dataModel->index(numrows-1, 1);
 		dataModel->emitDataChanged(index1, index2);
 		
 		// Call function that sends signal to ComputeWCS object
@@ -59,11 +63,13 @@ void AddCommand::undo()
 		// Clear only the index (0, 1)
 		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(numrows-1);
 		p.second = QPointF(-1, -1);
-		QModelIndex index1 = dataModel->index(numrows-1, 0);
-		QModelIndex index2 = dataModel->index(numrows-1, 1);
+		index1 = dataModel->index(numrows-1, 0);
+		index2 = dataModel->index(numrows-1, 1);
 		dataModel->listOfCoordinatePairs.replace(numrows-1, p);
-		dataModel->emitDataChanged(index1, index2);
 	}
+	
+	dataModel->emitDataChanged(index1, index2);
+	dataModel->computeMapping();
 	
 	// Remove marker from scene and adjust some parameters
 	scene->removeItem(marker);
@@ -76,6 +82,10 @@ void AddCommand::redo()
 	// Determine the number of rows in the data model
 	int numrows = dataModel->rowCount(QModelIndex());
 	
+	// Initialize some indices
+	QModelIndex index1;
+	QModelIndex index2;
+	
 	if (scene->reference)
 	{
 		// Insert a row
@@ -85,10 +95,11 @@ void AddCommand::redo()
 		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(numrows);
 		
 		p.first = initialPosition.toPointF();
-		QModelIndex index = dataModel->index(numrows, 0);
+		index1 = dataModel->index(numrows, 0);
+		index2 = dataModel->index(numrows, 1);
+		
 		dataModel->listOfCoordinatePairs.replace(numrows, p);
 		marker->row = numrows;
-		dataModel->emitDataChanged(index, index);
 	}
 	else
 	{
@@ -96,15 +107,14 @@ void AddCommand::redo()
 		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(numrows-1);
 		
 		p.second = initialPosition.toPointF();
-		QModelIndex index1 = dataModel->index(numrows-1, 0);
-		QModelIndex index2 = dataModel->index(numrows-1, 1);
+		index1 = dataModel->index(numrows-1, 0);
+		index2 = dataModel->index(numrows-1, 1);
 		dataModel->listOfCoordinatePairs.replace(numrows-1, p);
 		marker->row = numrows-1;
-		dataModel->emitDataChanged(index1, index2);
-		
-		// Call function that sends signal to ComputeWCS object
-		dataModel->computeMapping();
 	}
+	
+	dataModel->emitDataChanged(index1, index2);
+	dataModel->computeMapping();
 	
 	// Add marker to scene and adjust some parameters
 	scene->addItem(marker);
@@ -142,6 +152,10 @@ void MoveCommand::undo()
 	GraphicsScene *scene = qobject_cast<GraphicsScene*> (marker->scene());
 	int row = marker->row;
 	
+	// Initialize some indices
+	QModelIndex index1;
+	QModelIndex index2;
+	
 	// Get data from model
 	QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
 	
@@ -149,19 +163,18 @@ void MoveCommand::undo()
 	{
 		p.first = oldPos.toPointF();
 		dataModel->listOfCoordinatePairs.replace(row, p);
-		QModelIndex index = dataModel->index(row, 0);
-		dataModel->emitDataChanged(index, index);
+		index1 = dataModel->index(row, 0);
+		index2 = dataModel->index(row, 1);
 	}
 	else
 	{
 		p.second = oldPos.toPointF();
 		dataModel->listOfCoordinatePairs.replace(row, p);
-		QModelIndex index1 = dataModel->index(row, 0);
-		QModelIndex index2 = dataModel->index(row, 1);
-		dataModel->emitDataChanged(index1, index2);
+		index1 = dataModel->index(row, 2);
+		index2 = dataModel->index(row, 3);
 	}
 	
-	// Call function that sends signal to ComputeWCS object
+	dataModel->emitDataChanged(index1, index2);
 	dataModel->computeMapping();
 	
 	// Move marker to old position
@@ -175,6 +188,10 @@ void MoveCommand::redo()
 	GraphicsScene *scene = qobject_cast<GraphicsScene*> (marker->scene());
 	int row = marker->row;
 	
+	// Initialize some indices
+	QModelIndex index1;
+	QModelIndex index2;
+	
 	// Get data from model
 	QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
 	
@@ -182,19 +199,18 @@ void MoveCommand::redo()
 	{
 		p.first = newPos.toPointF();
 		dataModel->listOfCoordinatePairs.replace(row, p);
-		QModelIndex index = dataModel->index(row, 0);
-		dataModel->emitDataChanged(index, index);
+		index1 = dataModel->index(row, 0);
+		index2 = dataModel->index(row, 1);
 	}
 	else
 	{
 		p.second = newPos.toPointF();
 		dataModel->listOfCoordinatePairs.replace(row, p);
-		QModelIndex index1 = dataModel->index(row, 0);
-		QModelIndex index2 = dataModel->index(row, 1);
-		dataModel->emitDataChanged(index1, index2);
+		index1 = dataModel->index(row, 2);
+		index2 = dataModel->index(row, 3);
 	}
 	
-	// Call function that sends signal to ComputeWCS object
+	dataModel->emitDataChanged(index1, index2);
 	dataModel->computeMapping();
 	
 	// Move the marker to the new position

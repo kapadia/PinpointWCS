@@ -125,6 +125,26 @@ void WcsInfoPanel::loadWCS(struct WorldCoor wcs)
 	ui.cd_22_input->setText(cd22);
 }
 
+
+void WcsInfoPanel::clear()
+{
+	ui.radesys_input->setText("-");
+	ui.equinox_input->setText("-");
+	ui.ctype1_input->setText("-");
+	ui.ctype2_input->setText("-");
+	ui.naxis1_input->setText("-");
+	ui.naxis2_input->setText("-");
+	ui.crval1_input->setText("-");
+	ui.crval2_input->setText("-");
+	ui.crpix1_input->setText("-");
+	ui.crpix2_input->setText("-");
+	ui.cd_11_input->setText("-");
+	ui.cd_12_input->setText("-");
+	ui.cd_21_input->setText("-");
+	ui.cd_22_input->setText("-");
+}
+
+
 void WcsInfoPanel::parentResized(QSize sz)
 {
 	resize(sz.width(), 55);

@@ -258,6 +258,10 @@ void MainWindow::computeWCS()
 		epoImage->wcs = computewcs->initTargetWCS();
 		epoWcsInfoPanel->loadWCS(*(epoImage->wcs));
 	}
+	else
+	{
+		epoWcsInfoPanel->clear();
+	}
 }
 
 void MainWindow::testSlot()

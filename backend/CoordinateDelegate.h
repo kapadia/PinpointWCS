@@ -17,34 +17,22 @@
  *
  */
 
-#ifndef WCS_INFO_PANEL_H
-#define WCS_INFO_PANEL_H
+#ifndef COORDINATE_DELEGATE_H
+#define COORDINATE_DELEGATE_H
 
-#include <QtGui>
-#include "Ui_WcsInfoPanel.h"
-#include "wcs.h"
-#include "fitsfile.h"
+#include <QItemDelegate>
 
-
-class WcsInfoPanel : public QFrame
-	{
-		Q_OBJECT
-		
-	public:
-		WcsInfoPanel(QWidget *parent = 0);
-		~WcsInfoPanel();
-		Ui::WcsInfoPanel ui;
-		void loadWCS(struct WorldCoor wcs);
-		void clear();
-		
-	public slots:
-		void parentResized(QSize sz);
-		
-	private:
-		// Attributes
-
-		// Methods
-		void updateFontSize(QFont font);
-	};
+class CoordinateDelegate : public QItemDelegate
+{
+	Q_OBJECT
+	
+public:
+	CoordinateDelegate(QObject *parent = 0);
+	QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	void setEditorData(QWidget *editor, const QModelIndex &index) const;
+	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+};
 
 #endif
