@@ -183,8 +183,22 @@
     <addaction name="actionAstronomy_Visualization_Metadata"/>
     <addaction name="actionFITS_Image"/>
    </widget>
+   <widget class="QMenu" name="menuImage">
+    <property name="title">
+     <string>Image</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionLinear_Stretch"/>
+    <addaction name="actionLogarithm_Stretch"/>
+    <addaction name="actionSquare_Root_Stretch"/>
+    <addaction name="actionHyperbolic_Sine_Stretch"/>
+    <addaction name="actionPower_Stretch"/>
+    <addaction name="separator"/>
+    <addaction name="actionInvert"/>
+   </widget>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
+   <addaction name="menuImage"/>
    <addaction name="menuAdvanced"/>
    <addaction name="menuExport"/>
   </widget>
@@ -203,7 +217,7 @@
     <string>Coordinates</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+I</string>
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionInfo">
@@ -294,6 +308,90 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+F</string>
+   </property>
+  </action>
+  <action name="actionLinear_Stretch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Linear Stretch</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
+   </property>
+  </action>
+  <action name="actionLogarithm_Stretch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Logarithm Stretch</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
+   </property>
+  </action>
+  <action name="actionSquare_Root_Stretch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Square Root Stretch</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+3</string>
+   </property>
+  </action>
+  <action name="actionHyperbolic_Sine_Stretch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Hyperbolic Sine Stretch</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+4</string>
+   </property>
+  </action>
+  <action name="actionPower_Stretch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Power Stretch</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+5</string>
+   </property>
+  </action>
+  <action name="actionInvert">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Invert</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
  </widget>

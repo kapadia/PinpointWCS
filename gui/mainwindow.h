@@ -31,6 +31,7 @@
 #include "CoordinatePanel.h"
 #include "FitsToolbar.h"
 #include "CoordinateModel.h"
+#include "CoordinateTableDialog.h"
 #include "CoordinateDelegate.h"
 #include "ComputeWCS.h"
 #include "ExportWCS.h"
@@ -65,9 +66,12 @@ private:
 	QAction *undoAction;
 	QAction *redoAction;
 	
+	// QAction Attributes
+	QActionGroup *stretchActionGroup;
+	
 	// Model, View, and Delegate Attributes
 	CoordinateModel *dataModel;
-	QTableView *tableView;
+	CoordinateTableDialog *coordinateTableDialog;
 	CoordinateDelegate *tableDelegate;
 	
 	// Compute and Export Attributes
@@ -96,6 +100,7 @@ private slots:
 	bool loadImages();
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
+	void stretch(QAction *action);
 	void addMarker(GraphicsScene *scene, QPointF pos);
 	void updateCoordPanelProperties();
 	void updateFitsCoordinates(QPointF pos);

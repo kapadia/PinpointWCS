@@ -21,8 +21,9 @@
 #define COORDINATE_TABLE
 
 #include <QtGui>
+#include "ui_CoordinateTableDialog.h"
 
-class CoordinateTableDialog : public QFrame
+class CoordinateTableDialog : public QDialog
 {
 	
 	Q_OBJECT

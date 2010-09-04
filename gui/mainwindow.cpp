@@ -40,7 +40,7 @@ MainWindow::MainWindow()
 	redoAction->setShortcut(QKeySequence::Redo);
 	ui.menuEdit->addAction(undoAction);
 	ui.menuEdit->addAction(redoAction);
-	
+		
 	// Initialize the WcsInfoPanels
 	fitsWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_1);
 	epoWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_2);
@@ -56,10 +56,7 @@ MainWindow::MainWindow()
 	// Initialize the FitsToolbar
 	fitsToolbar = new FitsToolbar(ui.graphicsView_1);
 	fitsToolbar->hide();
-	
-	// Initialize the CoordinateTable
-	
-	
+		
 	// Set up the DropSites to accept the correct extensions
 	ui.dropLabel_1->setFileExtensions(false);
 	ui.dropLabel_2->setFileExtensions(true);
@@ -98,13 +95,13 @@ bool MainWindow::loadImages()
 		disconnect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		
-		// Set up the table view
+		// Initialize the CoordinateTableDialog
 		// TODO: IMPROVE THE APPEARENCE OF THE TABLE, ENABLE EDITING
-		tableView = new QTableView;
 		tableDelegate = new CoordinateDelegate(this);
-		tableView->setModel(dataModel);
-		tableView->setItemDelegate(tableDelegate);
-		tableView->show();
+		coordinateTableDialog = new CoordinateTableDialog(this);
+		coordinateTableDialog->ui.coordinateTable->setModel(dataModel);
+		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
+		coordinateTableDialog->show();
 		
 		// Initialize the ComputeWCS object
 		computewcs = new ComputeWCS(&(dataModel->listOfCoordinatePairs), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
@@ -119,10 +116,27 @@ bool MainWindow::loadImages()
 		ui.stackedWidget_1->setCurrentIndex(1);
 		ui.stackedWidget_2->setCurrentIndex(1);
 		
-		// Enable some menu items
+		// Enable View Menu items
 		ui.actionInfo->setEnabled(true);
 		ui.actionCoordinates->setEnabled(true);
 		ui.actionImageAdjustments->setEnabled(true);
+		
+		// Enable Image Menu items
+		ui.actionLinear_Stretch->setEnabled(true);
+		ui.actionLogarithm_Stretch->setEnabled(true);
+		ui.actionSquare_Root_Stretch->setEnabled(true);
+		ui.actionHyperbolic_Sine_Stretch->setEnabled(true);
+		ui.actionPower_Stretch->setEnabled(true);
+		ui.actionInvert->setEnabled(true);
+		
+		// Create a QActionGroup from the stretch menu items
+		QActionGroup *stretchActionGroup = new QActionGroup(this);
+		stretchActionGroup->addAction(ui.actionLinear_Stretch);
+		stretchActionGroup->addAction(ui.actionLogarithm_Stretch);
+		stretchActionGroup->addAction(ui.actionSquare_Root_Stretch);
+		stretchActionGroup->addAction(ui.actionHyperbolic_Sine_Stretch);
+		stretchActionGroup->addAction(ui.actionPower_Stretch);
+		stretchActionGroup->setExclusive(true);
 		
 		// Set up the WcsInfoPanel for each image
 		fitsWcsInfoPanel->parentResized(ui.graphicsView_1->size());
@@ -145,6 +159,7 @@ bool MainWindow::loadImages()
 		fitsToolbar->parentResized(ui.graphicsView_1->size());
 		buildImageAdjustmentMachine();
 		fitsToolbar->show();
+		
 		
 		// Connect some signals -- used for resizing panels
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
@@ -169,11 +184,11 @@ bool MainWindow::loadImages()
 		connect(fitsScene, SIGNAL(itemMoved(CoordMarker*, QPointF)), this, SLOT(itemMoved(CoordMarker*, QPointF)));
 		connect(epoScene, SIGNAL(itemMoved(CoordMarker*, QPointF)), this, SLOT(itemMoved(CoordMarker*, QPointF)));
 		
-		// Connect even more signals -- ComboBox and Sliders for FitsImage and GraphicsScene
-		connect(fitsToolbar->ui.stretchComboBox, SIGNAL(currentIndexChanged(int)), fitsImage, SLOT(setStretch(int)));
+		// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
+		connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
+		connect(ui.actionInvert, SIGNAL(triggered(bool)), fitsImage, SLOT(invert()));
 		connect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
 		connect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
-		connect(fitsToolbar->ui.invertCheckBox, SIGNAL(stateChanged(int)), fitsImage, SLOT(invert()));
 		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
 		
 		// Connect more signals -- communicate between data model and ComputeWCS object
@@ -186,6 +201,24 @@ bool MainWindow::loadImages()
 	}
 	return false;
 }
+
+
+
+void MainWindow::stretch(QAction *action)
+{
+	if (action == ui.actionLinear_Stretch)
+		fitsImage->setStretch(0);
+	else if (action == ui.actionLogarithm_Stretch)
+		fitsImage->setStretch(1);
+	else if (action == ui.actionSquare_Root_Stretch)
+		fitsImage->setStretch(2);
+	else if (action == ui.actionHyperbolic_Sine_Stretch)
+		fitsImage->setStretch(3);
+	else if (action == ui.actionPower_Stretch)
+		fitsImage->setStretch(4);		
+}
+
+
 
 bool MainWindow::loadEpoImage(QString& filename)
 {

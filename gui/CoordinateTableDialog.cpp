@@ -20,10 +20,11 @@
 #include "CoordinateTableDialog.h"
 
 CoordinateTableDialog::CoordinateTableDialog(QWidget *parent)
-: QFrame(parent)
+: QDialog(parent)
 {
 	// Set up user interface from the Designer file
 	qDebug() << "Initializing CoordinateTableDialog ...";
+	ui = Ui::CoordinateTableDialog();
     ui.setupUi(this);
 /*
 	// Set up frame style

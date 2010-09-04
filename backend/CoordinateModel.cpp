@@ -229,6 +229,8 @@ bool CoordinateModel::setData(GraphicsScene *scene, const QModelIndex &index, co
 	return false;
 }
 
+
+
 bool CoordinateModel::updateData(CoordMarker *item, const QVariant &value, int role)
 {
 	if (role == Qt::EditRole)

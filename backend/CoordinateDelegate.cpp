@@ -25,13 +25,11 @@ CoordinateDelegate::CoordinateDelegate(QObject *parent)
 : QItemDelegate(parent) {}
 
 
-QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem&, const QModelIndex &index) const
+QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	QDoubleSpinBox *spinbox = new QDoubleSpinBox;
-	spinbox->setRange(0, 20000);
-	spinbox->setSingleStep(1);
-	spinbox->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-	return spinbox;
+	QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
+	editor->setRange(0, 10000);
+	return editor;
 	/*
 	if (index.column() <= 3)
 	{
@@ -41,6 +39,7 @@ QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 		spinbox->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 		return spinbox;
 	}
+	return QItemDelegate::createEditor(parent, option, index);
 	 */
 }
 
@@ -51,27 +50,29 @@ void CoordinateDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
 void CoordinateDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-	// Cast the editor as a double spinbox
-	QDoubleSpinBox *edit = qobject_cast<QDoubleSpinBox*>(editor);
+
+	// Cast the model as a CoordinateModel
 	const CoordinateModel *model = qobject_cast<const CoordinateModel*> (index.model());
 	double value = model->data(index, Qt::DisplayRole).toDouble();
-	if (index.column() <= 3)
-		edit->setValue(value);
-	else
-		QItemDelegate::setEditorData(editor, index);
+	
+	// Cast the editor as a double spin box
+	QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
+	spinBox->setValue(value);
 }
 
 void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{	
-	const CoordinateModel *m = qobject_cast<const CoordinateModel*> (index.model());
+{		
+	// Cast the editor as a double spin box
+	QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
+	spinBox->interpretText();
+
+	// Get the value from the editor
+	double value = spinBox->value();
 	
-	if (index.column() <= 3)
-	{
-		// FIXME: Find a way to call setData without having to pass the scene
-//		m.setData(index, QVariant(editor.value()));
-	}
-	else
-		QItemDelegate::setModelData(editor, model, index);
+	// Cast the model as a CoordinateModel and set the data
+	//const CoordinateModel *m = qobject_cast<const CoordinateModel*> (index.model());
+	// FIXME: Need to call setData() from the data model without knowledge of the parent graphics scene
+	//m->setData();
 }
 
 QSize CoordinateDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
