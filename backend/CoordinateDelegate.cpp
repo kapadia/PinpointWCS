@@ -62,11 +62,12 @@ void CoordinateDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 }
 
 void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
+{	
 	const CoordinateModel *m = qobject_cast<const CoordinateModel*> (index.model());
 	
 	if (index.column() <= 3)
 	{
+		// FIXME: Find a way to call setData without having to pass the scene
 //		m.setData(index, QVariant(editor.value()));
 	}
 	else

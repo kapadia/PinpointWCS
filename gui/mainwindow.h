@@ -31,6 +31,7 @@
 #include "CoordinatePanel.h"
 #include "FitsToolbar.h"
 #include "CoordinateModel.h"
+#include "CoordinateDelegate.h"
 #include "ComputeWCS.h"
 #include "ExportWCS.h"
 
@@ -40,12 +41,12 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	// Methods
+	// Constructor and Deconstructor
 	MainWindow();
 	~MainWindow();
 
 private:
-	// Ui Attributes
+	// User Interface Attributes
 	Ui::MainWindow ui;
 	GraphicsScene *fitsScene;
 	GraphicsScene *epoScene;
@@ -59,14 +60,17 @@ private:
 	FitsImage *fitsImage;
 	EpoImage *epoImage;
 	
-	// Undo/Redo and Model/View Attributes
+	// Undo and Redo Attributes
 	QUndoStack *undoStack;
 	QAction *undoAction;
 	QAction *redoAction;
+	
+	// Model, View, and Delegate Attributes
 	CoordinateModel *dataModel;
 	QTableView *tableView;
+	CoordinateDelegate *tableDelegate;
 	
-	// Other attributes
+	// Compute and Export Attributes
 	ComputeWCS *computewcs;
 	ExportWCS *exportwcs;
 	
@@ -83,7 +87,7 @@ private:
 	QState *imageAdjustmentPanelOn;
 	QState *imageAdjustmentPanelOff;
 	
-	// Methods
+	// State Machine Methods
 	void buildWcsInfoPanelMachine();
 	void buildCoordPanelMachine();
 	void buildImageAdjustmentMachine();

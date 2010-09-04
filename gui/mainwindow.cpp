@@ -57,6 +57,9 @@ MainWindow::MainWindow()
 	fitsToolbar = new FitsToolbar(ui.graphicsView_1);
 	fitsToolbar->hide();
 	
+	// Initialize the CoordinateTable
+	
+	
 	// Set up the DropSites to accept the correct extensions
 	ui.dropLabel_1->setFileExtensions(false);
 	ui.dropLabel_2->setFileExtensions(true);
@@ -98,7 +101,9 @@ bool MainWindow::loadImages()
 		// Set up the table view
 		// TODO: IMPROVE THE APPEARENCE OF THE TABLE, ENABLE EDITING
 		tableView = new QTableView;
+		tableDelegate = new CoordinateDelegate(this);
 		tableView->setModel(dataModel);
+		tableView->setItemDelegate(tableDelegate);
 		tableView->show();
 		
 		// Initialize the ComputeWCS object
