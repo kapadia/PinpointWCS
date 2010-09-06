@@ -22,7 +22,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
-#include "CoordMarker.h"
+#include "CoordinateMarker.h"
 
 class GraphicsScene : public QGraphicsScene
 {
@@ -33,7 +33,7 @@ public:
 	~GraphicsScene();
 	float markerRadius;
 	bool reference;
-//	void itemChange(CoordMarker *m);
+//	void itemChange(CoordinateMarker *m);
 		
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -51,8 +51,8 @@ signals:
 	void mousePositionChanged(QPointF pos);
 	void sceneDoubleClicked(GraphicsScene *scene, QPointF pos);
 	void toggleNeighborScene(bool sendSignal = false);
-    void itemMoved(CoordMarker *movedItem, const QPointF &movedFromPosition);
-	void markerChange(CoordMarker *m);
+    void itemMoved(CoordinateMarker *movedItem, const QPointF &movedFromPosition);
+	void markerChange(CoordinateMarker *m);
 
 public slots:
 	void updatePixmap(QPixmap *pm);

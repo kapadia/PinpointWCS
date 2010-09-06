@@ -109,7 +109,7 @@ bool MainWindow::loadImages()
 		// Initialize ExportWCS object
 		exportwcs = new ExportWCS(epoImage->pixmap);
 		
-		// TODO: TEST FITS EXPORT
+		// TODO: Testing FITS export ...
 //		exportwcs->exportFITS(fitsImage->wcs);
 		
 		// Flip the stacked widgets
@@ -181,8 +181,8 @@ bool MainWindow::loadImages()
 		
 		connect(fitsScene, SIGNAL(toggleNeighborScene(bool)), epoScene, SLOT(toggleClickable(bool)));
 		connect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
-		connect(fitsScene, SIGNAL(itemMoved(CoordMarker*, QPointF)), this, SLOT(itemMoved(CoordMarker*, QPointF)));
-		connect(epoScene, SIGNAL(itemMoved(CoordMarker*, QPointF)), this, SLOT(itemMoved(CoordMarker*, QPointF)));
+		connect(fitsScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
+		connect(epoScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
 		
 		// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
 		connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
@@ -203,7 +203,6 @@ bool MainWindow::loadImages()
 }
 
 
-
 void MainWindow::stretch(QAction *action)
 {
 	if (action == ui.actionLinear_Stretch)
@@ -217,7 +216,6 @@ void MainWindow::stretch(QAction *action)
 	else if (action == ui.actionPower_Stretch)
 		fitsImage->setStretch(4);		
 }
-
 
 
 bool MainWindow::loadEpoImage(QString& filename)
@@ -281,7 +279,7 @@ void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 
 
 
-void MainWindow::itemMoved(CoordMarker *movedItem, const QPointF &oldPosition)
+void MainWindow::itemMoved(CoordinateMarker *movedItem, const QPointF &oldPosition)
 {
 	qDebug() << "itemMoved";
 	dataModel->updateData(movedItem, oldPosition, Qt::EditRole);

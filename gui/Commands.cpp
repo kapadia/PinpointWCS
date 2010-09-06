@@ -29,8 +29,8 @@ AddCommand::AddCommand(GraphicsScene *graphicsScene, const QVariant &value, Coor
 	initialPosition = value;
 	dataModel = model;
 	
-	// Instantiate a CoordMarker object
-	marker = new CoordMarker(scene->markerRadius);
+	// Instantiate a CoordinateMarker object
+	marker = new CoordinateMarker(scene->markerRadius);
 }
 
 
@@ -125,7 +125,7 @@ void AddCommand::redo()
 }
 
 
-MoveCommand::MoveCommand(CoordMarker *item, const QVariant &value, CoordinateModel *model)
+MoveCommand::MoveCommand(CoordinateMarker *item, const QVariant &value, CoordinateModel *model)
 : QUndoCommand()
 {
 	marker = item;
@@ -137,7 +137,7 @@ MoveCommand::MoveCommand(CoordMarker *item, const QVariant &value, CoordinateMod
 bool MoveCommand::mergeWith(const QUndoCommand *command)
 {
 	const MoveCommand *moveCommand = static_cast<const MoveCommand *>(command);
-	CoordMarker *item = moveCommand->marker;
+	CoordinateMarker *item = moveCommand->marker;
 	
 	if (marker != item)
 		return false;

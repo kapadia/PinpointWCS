@@ -18,13 +18,13 @@
  */
 
 #include <QtGui>
-#include <CoordMarker.h>
+#include <CoordinateMarker.h>
 #include "GraphicsScene.h"
 
-CoordMarker::CoordMarker(float r, QGraphicsItem *parent)
+CoordinateMarker::CoordinateMarker(float r, QGraphicsItem *parent)
 : QGraphicsItem(parent)
 {
-	qDebug() << "Initializing CoordMarker object ...";
+	qDebug() << "Initializing CoordinateMarker object ...";
 	radius = r;
 	row = NULL;
 	setZValue(2);
@@ -42,15 +42,15 @@ CoordMarker::CoordMarker(float r, QGraphicsItem *parent)
 	
 }
 
-CoordMarker::~CoordMarker() {}
+CoordinateMarker::~CoordinateMarker() {}
 
-QRectF CoordMarker::boundingRect() const
+QRectF CoordinateMarker::boundingRect() const
 {
 	float length = radius/30. + radius;
 	return QRectF(-1*length, -1*length, 2*length, 2*length);
 }
 
-void CoordMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {	
 	QPen pen;
 	
@@ -78,24 +78,24 @@ void CoordMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 	painter->drawEllipse(-radius/2, -radius/2, radius, radius);
 }
 
-void CoordMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void CoordinateMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mousePressEvent(event);
     update();
 }
 
-void CoordMarker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void CoordinateMarker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsItem::mouseMoveEvent(event);
 }
 
-void CoordMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void CoordinateMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
     update();
 }
 
-QVariant CoordMarker::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant CoordinateMarker::itemChange(GraphicsItemChange change, const QVariant &value)
 {
 	/*
 	if (change == QGraphicsItem::ItemPositionHasChanged)

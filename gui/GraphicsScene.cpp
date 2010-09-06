@@ -20,7 +20,7 @@
 #include <iostream>
 #include <QtGui>
 #include "GraphicsScene.h"
-#include "CoordMarker.h";
+#include "CoordinateMarker.h";
 
 GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 : QGraphicsScene(parent)
@@ -85,7 +85,7 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (movingItem != 0 && event->button() == Qt::LeftButton) {
         if (oldPos != movingItem->pos())
-            emit itemMoved(qgraphicsitem_cast<CoordMarker *>(movingItem), oldPos);
+            emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(movingItem), oldPos);
         movingItem = 0;
     }
 	
@@ -105,7 +105,7 @@ void GraphicsScene::updatePixmap(QPixmap *pm)
 }
 
 /*
-void GraphicsScene::itemChange(CoordMarker *m)
+void GraphicsScene::itemChange(CoordinateMarker *m)
 {
 	emit markerChange(m);
 }

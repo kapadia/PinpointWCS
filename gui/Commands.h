@@ -23,7 +23,7 @@
 #include <QUndoCommand>
 #include <QVariant>
 #include "GraphicsScene.h"
-#include "CoordMarker.h"
+#include "CoordinateMarker.h"
 #include "CoordinateModel.h"
 
 class CoordinateModel;
@@ -38,7 +38,7 @@ public:
 	void redo();
 	
 private:
-	CoordMarker *marker;
+	CoordinateMarker *marker;
 	GraphicsScene *scene;
 	QVariant initialPosition;
 	CoordinateModel *dataModel;
@@ -51,14 +51,14 @@ class MoveCommand : public QUndoCommand
 public:
 	enum { Id = 1234 };
 	
-	MoveCommand(CoordMarker *item, const QVariant &value, CoordinateModel *model);
+	MoveCommand(CoordinateMarker *item, const QVariant &value, CoordinateModel *model);
 	void undo();
 	void redo();
 	bool mergeWith(const QUndoCommand *command);
 	int id() const { return Id; }
 	
 private:
-	CoordMarker *marker;
+	CoordinateMarker *marker;
 	QVariant oldPos;
 	QVariant newPos;
 	CoordinateModel *dataModel;
@@ -77,7 +77,7 @@ private:
  void redo();
  
  private:
- CoordMarker *marker;
+ CoordinateMarker *marker;
  GraphicsScene *scene;
  QPointF initialPosition;
  //	CoordinateModel *model;

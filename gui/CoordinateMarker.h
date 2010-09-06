@@ -17,19 +17,19 @@
  *
  */
 
-#ifndef COORDMARKER_H
-#define COORDMARKER_H
+#ifndef COORDINATE_MARKER_H
+#define COORDINATE_MARKER_H
 
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QModelIndex>
 
-class CoordMarker : public QGraphicsItem
+class CoordinateMarker : public QGraphicsItem
 {
 	
 public:
-	CoordMarker(float r, QGraphicsItem *parent = 0);
-	~CoordMarker();
+	CoordinateMarker(float r, QGraphicsItem *parent = 0);
+	~CoordinateMarker();
 	int row;
 	
 	// Required methods to implement

@@ -26,7 +26,7 @@
 #include "FitsImage.h"
 #include "EpoImage.h"
 #include "GraphicsScene.h"
-#include "CoordMarker.h"
+#include "CoordinateMarker.h"
 #include "WcsInfoPanel.h"
 #include "CoordinatePanel.h"
 #include "FitsToolbar.h"
@@ -105,7 +105,7 @@ private slots:
 	void updateCoordPanelProperties();
 	void updateFitsCoordinates(QPointF pos);
 	void updateEpoCoordinates(QPointF pos);
-	void itemMoved(CoordMarker *movedItem, const QPointF &moveStartPosition);
+	void itemMoved(CoordinateMarker *movedItem, const QPointF &moveStartPosition);
 	void enableExport();
 	void computeWCS();
 	

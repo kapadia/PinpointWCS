@@ -81,27 +81,6 @@ QVariant CoordinateModel::data(const QModelIndex &index, int role) const
 			else
 				return pair.second.y();
 		}
-		
-		/*
-		if (index.column() == 0)
-			return formattedData.sprintf("%.3f", pair.first.x());
-		else if (index.column() == 1)
-			return formattedData.sprintf("%.3f", pair.first.y());
-		else if (index.column() == 2)
-		{
-			if (pair.second.x() == -1)
-				return formattedData.sprintf("%s", "-");
-			else
-				return formattedData.sprintf("%.3f", pair.second.x());
-		}
-		else
-		{
-			if (pair.second.y() == -1)
-				return formattedData.sprintf("%s", "-");
-			else
-				return formattedData.sprintf("%.3f", pair.second.y());
-		}
-		 */
 	}
 	
 	return QVariant();
@@ -129,65 +108,6 @@ QVariant CoordinateModel::headerData(int section, Qt::Orientation orientation, i
     return QVariant();
 }
 
-/*
-QVariant CoordinateModel::data(const QModelIndex &index, int role) const
-{	
-    if (!index.isValid())
-        return QVariant();
-    
-    if (index.row() >= listOfCoordinatePairs.size() || index.row() < 0)
-        return QVariant();
-    
-    if (role == Qt::DisplayRole) {
-        QPair<QPointF, QPointF> pair = listOfCoordinatePairs.at(index.row());
-		
-        if (index.column() == 0)
-		{
-            return pair.first.x();
-		}
-        else if (index.column() == 1)
-		{
-            return pair.first.y();
-		}
-		else if (index.column() == 2)
-		{
-			return pair.second.x();
-		}
-		else if (index.column() == 3)
-		{
-			return pair.second.y();
-		}
-
-    }
-    return QVariant();
-}
- 
-QVariant CoordinateModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole)
-        return QVariant();
-    
-    if (orientation == Qt::Horizontal) {
-        switch (section) {
-            case 0:
-                return tr("FITS X");
-                
-            case 1:
-                return tr("FITS Y");
-				
-			case 2:
-				return tr("EPO X");
-				
-			case 3:
-				return tr("EPO Y");
-                
-            default:
-                return QVariant();
-        }
-    }
-    return QVariant();
-}
-*/
 
 bool CoordinateModel::insertRows(int position, int rows, const QModelIndex &index)
 {
@@ -231,7 +151,7 @@ bool CoordinateModel::setData(GraphicsScene *scene, const QModelIndex &index, co
 
 
 
-bool CoordinateModel::updateData(CoordMarker *item, const QVariant &value, int role)
+bool CoordinateModel::updateData(CoordinateMarker *item, const QVariant &value, int role)
 {
 	if (role == Qt::EditRole)
 	{
