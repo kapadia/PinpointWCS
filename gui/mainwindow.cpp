@@ -33,9 +33,13 @@ MainWindow::MainWindow()
 	// Initialize the data model
 	dataModel = new CoordinateModel();
 	
+	// TODO: Testing new data model
+	dataModel2 = new CoordinateModel2();
+	
 	// Initialize the undo stack
-	undoAction = dataModel->undoStack->createUndoAction(this, tr("&Undo"));
-	redoAction = dataModel->undoStack->createRedoAction(this, tr("&Redo"));
+	// TODO: Testing new data model
+	undoAction = dataModel2->undoStack->createUndoAction(this, tr("&Undo"));
+	redoAction = dataModel2->undoStack->createRedoAction(this, tr("&Redo"));
 	undoAction->setShortcut(QKeySequence::Undo);
 	redoAction->setShortcut(QKeySequence::Redo);
 	ui.menuEdit->addAction(undoAction);
@@ -102,6 +106,13 @@ bool MainWindow::loadImages()
 		coordinateTableDialog->ui.coordinateTable->setModel(dataModel);
 		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
 		coordinateTableDialog->show();
+		
+		// TODO: Testing new data model
+		tableDelegate2 = new CoordinateDelegate(this);
+		coordinateTableDialog2 = new CoordinateTableDialog(this);
+		coordinateTableDialog2->ui.coordinateTable->setModel(dataModel2);
+		coordinateTableDialog2->ui.coordinateTable->setItemDelegate(tableDelegate2);
+		coordinateTableDialog2->show();
 		
 		// Initialize the ComputeWCS object
 		computewcs = new ComputeWCS(&(dataModel->listOfCoordinatePairs), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
@@ -274,7 +285,10 @@ void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 	pos += QPointF(xcen, ycen);
 	free(image);
 	 */
-	dataModel->setData(scene, QModelIndex(), pos, Qt::EditRole);
+//	dataModel->setData(scene, QModelIndex(), pos, Qt::EditRole);
+	
+	// TODO: Testing new data model
+	dataModel2->setData(scene, QModelIndex(), pos, Qt::EditRole);
 }
 
 

@@ -74,6 +74,11 @@ private:
 	CoordinateTableDialog *coordinateTableDialog;
 	CoordinateDelegate *tableDelegate;
 	
+	// Testing new model
+	CoordinateModel2 *dataModel2;
+	CoordinateTableDialog *coordinateTableDialog2;
+	CoordinateDelegate *tableDelegate2;
+	
 	// Compute and Export Attributes
 	ComputeWCS *computewcs;
 	ExportWCS *exportwcs;

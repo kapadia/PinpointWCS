@@ -21,6 +21,27 @@
 #include <CoordinateMarker.h>
 #include "GraphicsScene.h"
 
+CoordinateMarker::CoordinateMarker(QGraphicsItem *parent)
+: QGraphicsItem(parent)
+{
+	qDebug() << "Initializing CoordinateMarker object ...";
+	radius = 1;
+	row = NULL;
+	setZValue(2);
+	setOpacity(100.0);
+	setSelected(true);
+	setFocus();
+	setEnabled(true);
+	
+	// Set some flags
+	setFlag(QGraphicsItem::ItemIsSelectable, true);
+	setFlag(QGraphicsItem::ItemIsMovable, true);
+	setFlag(QGraphicsItem::ItemIsFocusable, true);
+	setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+	setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
+}
+
+
 CoordinateMarker::CoordinateMarker(float r, QGraphicsItem *parent)
 : QGraphicsItem(parent)
 {
@@ -57,6 +78,7 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	// Compute width based on zoom factor of graphics view
 	double x = scene()->views().at(0)->transform().determinant();
 	pen.setWidthF(std::max((-0.75/4.5)*(x-1)+1.25, 0.2));
+	
 	// Set selected state style
 	if (option->state & QStyle::State_Selected)
 	{

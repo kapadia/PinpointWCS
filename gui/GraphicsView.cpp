@@ -98,7 +98,10 @@ void GraphicsView::scaleView(qreal scaleFactor)
 	qreal factor = matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
 	if (factor < 0.07 || factor > 100)
 		return;
-	qDebug() << transform().determinant();
+	
+	qDebug() << transform().m11();
+	qDebug() << transform().m22();
+	
 	scale(scaleFactor, scaleFactor);
 }
 

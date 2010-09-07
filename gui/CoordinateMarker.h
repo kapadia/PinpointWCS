@@ -28,6 +28,7 @@ class CoordinateMarker : public QGraphicsItem
 {
 	
 public:
+	CoordinateMarker(QGraphicsItem *parent = 0);
 	CoordinateMarker(float r, QGraphicsItem *parent = 0);
 	~CoordinateMarker();
 	int row;
