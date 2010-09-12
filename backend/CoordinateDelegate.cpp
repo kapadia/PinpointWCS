@@ -20,6 +20,8 @@
 #include "CoordinateDelegate.h"
 #include <QDoubleSpinBox>
 #include "CoordinateModel.h"
+#include "CoordinateMarker.h"
+#include <QDebug>
 
 CoordinateDelegate::CoordinateDelegate(QObject *parent)
 : QItemDelegate(parent) {}
@@ -52,8 +54,9 @@ void CoordinateDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 {
 
 	// Cast the model as a CoordinateModel
-	const CoordinateModel *model = qobject_cast<const CoordinateModel*> (index.model());
-	double value = model->data(index, Qt::DisplayRole).toDouble();
+	const CoordinateModel2 *model = qobject_cast<const CoordinateModel2*> (index.model());
+	QVariant var = model->data(index, Qt::DisplayRole);
+	double value = var.toDouble();
 	
 	// Cast the editor as a double spin box
 	QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
@@ -70,9 +73,40 @@ void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 	double value = spinBox->value();
 	
 	// Cast the model as a CoordinateModel and set the data
-	//const CoordinateModel *m = qobject_cast<const CoordinateModel*> (index.model());
-	// FIXME: Need to call setData() from the data model without knowledge of the parent graphics scene
-	//m->setData();
+	CoordinateModel2 *m = qobject_cast<CoordinateModel2*>(model);
+	
+	// FIXME: Testing the index variable
+	qDebug() << index.row() << "\t" << index.column();
+	
+	// Use the QModelIndex to locate the corresponding CoordinateMarker in the data model
+	QList< QPair<CoordinateMarker*, CoordinateMarker*> > l = m->listOfMarkerPairs;
+	QPair<CoordinateMarker*, CoordinateMarker*> p = l.at(index.row());
+	CoordinateMarker *marker;
+	QPointF oldPosition;
+	
+	switch (index.column()) {
+		case 0:
+			marker = p.first;
+			oldPosition = p.first->pos();
+			p.first->setX(value);
+			break;
+		case 1:
+			marker = p.first;
+			oldPosition = p.first->pos();
+			p.first->setY(value);
+			break;
+		case 2:
+			marker = p.second;
+			oldPosition = p.second->pos();
+			p.second->setX(value);		
+			break;
+		case 3:
+			marker = p.second;
+			oldPosition = p.second->pos();
+			p.second->setY(value);
+			break;
+	}
+//	m->updateData(marker, oldPosition, Qt::EditRole);
 }
 
 QSize CoordinateDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

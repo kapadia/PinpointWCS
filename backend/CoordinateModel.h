@@ -30,6 +30,7 @@
 #include "CoordinateMarker.h"
 #include "Commands.h"
 #include "ComputeWCS.h"
+#include "CoordinateDelegate.h"
 
 
 class CoordinateModel : public QAbstractTableModel
@@ -84,6 +85,7 @@ class CoordinateModel2 : public QAbstractTableModel
 	
 	friend class AddCommand2;
 	friend class MoveCommand2;
+	friend class CoordinateDelegate;
 	
 public:	
 	CoordinateModel2(QObject *parent=0);

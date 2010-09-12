@@ -296,7 +296,9 @@ void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 void MainWindow::itemMoved(CoordinateMarker *movedItem, const QPointF &oldPosition)
 {
 	qDebug() << "itemMoved";
-	dataModel->updateData(movedItem, oldPosition, Qt::EditRole);
+	// TODO: Testing new data model
+	dataModel2->updateData(movedItem, oldPosition, Qt::EditRole);
+//	dataModel->updateData(movedItem, oldPosition, Qt::EditRole);
 }
 
 
