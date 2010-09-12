@@ -21,6 +21,7 @@
 #include <QDoubleSpinBox>
 #include "CoordinateModel.h"
 #include "CoordinateMarker.h"
+#include "GraphicsScene.h"
 #include <QDebug>
 
 CoordinateDelegate::CoordinateDelegate(QObject *parent)
@@ -30,6 +31,38 @@ CoordinateDelegate::CoordinateDelegate(QObject *parent)
 QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
+	const CoordinateModel2 *model = qobject_cast<const CoordinateModel2*> (index.model());
+	QList< QPair<CoordinateMarker*, CoordinateMarker*> > l = model->listOfMarkerPairs;
+	QPair<CoordinateMarker*, CoordinateMarker*> p = l.at(index.row());
+	CoordinateMarker *marker;
+	GraphicsScene *s;
+	double maxValue;
+	
+	if (index.column() == 0)
+	{
+		marker = p.first;
+//		maxValue = marker->scene()->width();
+	}
+	else if (index.column() == 1)
+	{
+		marker = p.first;
+//		s = qobject_cast<GraphicsScene*> (marker->scene());
+//		maxValue = s->height();
+	}
+	else if (index.column() == 2)
+	{
+		marker = p.second;
+//		s = qobject_cast<GraphicsScene*> (marker->scene());
+//		maxValue = s->width();
+	}
+	else
+	{
+		marker = p.second;
+//		s = qobject_cast<GraphicsScene*> (marker->scene());
+//		maxValue = s->height();
+	}
+	marker->setSelected(true);
+	qDebug() << marker;
 	editor->setRange(0, 10000);
 	return editor;
 	/*
@@ -87,25 +120,31 @@ void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 	switch (index.column()) {
 		case 0:
 			marker = p.first;
+			marker->setSelected(true);
 			oldPosition = p.first->pos();
 			p.first->setX(value);
 			break;
 		case 1:
 			marker = p.first;
+			marker->setSelected(true);
 			oldPosition = p.first->pos();
 			p.first->setY(value);
 			break;
 		case 2:
 			marker = p.second;
+			marker->setSelected(true);
 			oldPosition = p.second->pos();
-			p.second->setX(value);		
+			p.second->setX(value);	
 			break;
 		case 3:
 			marker = p.second;
+			marker->setSelected(true);
 			oldPosition = p.second->pos();
 			p.second->setY(value);
 			break;
 	}
+
+	
 //	m->updateData(marker, oldPosition, Qt::EditRole);
 }
 

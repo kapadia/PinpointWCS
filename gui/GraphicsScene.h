@@ -34,6 +34,7 @@ public:
 	float markerRadius;
 	bool reference;
 //	void itemChange(CoordinateMarker *m);
+	void signalitemMoved(CoordinateMarker *m, const QPointF &oldPos);
 		
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);

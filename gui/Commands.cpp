@@ -335,6 +335,7 @@ void AddCommand2::redo()
 MoveCommand2::MoveCommand2(CoordinateMarker *item, const QVariant &value, CoordinateModel2 *model)
 : QUndoCommand()
 {
+	qDebug() << "New MoveCommand2";
 	marker = item;
 	newPos = marker->scenePos();
 	oldPos = value;

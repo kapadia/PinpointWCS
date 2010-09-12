@@ -58,9 +58,8 @@ CoordinateMarker::CoordinateMarker(float r, QGraphicsItem *parent)
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
 	setFlag(QGraphicsItem::ItemIsMovable, true);
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
-	setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 	setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
-	
+	setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
 CoordinateMarker::~CoordinateMarker() {}

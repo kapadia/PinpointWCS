@@ -104,6 +104,12 @@ void GraphicsScene::updatePixmap(QPixmap *pm)
 	pixmap->setPixmap(*pm);
 }
 
+void GraphicsScene::signalitemMoved(CoordinateMarker *m, const QPointF &oldPos)
+{
+	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(m), oldPos);
+}
+
+
 /*
 void GraphicsScene::itemChange(CoordinateMarker *m)
 {
