@@ -70,9 +70,9 @@ private:
 	QActionGroup *stretchActionGroup;
 	
 	// Model, View, and Delegate Attributes
-	CoordinateModel *dataModel;
-	CoordinateTableDialog *coordinateTableDialog;
-	CoordinateDelegate *tableDelegate;
+//	CoordinateModel *dataModel;
+//	CoordinateTableDialog *coordinateTableDialog;
+//	CoordinateDelegate *tableDelegate;
 	
 	// Testing new model
 	CoordinateModel2 *dataModel2;

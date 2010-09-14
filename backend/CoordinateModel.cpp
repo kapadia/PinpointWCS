@@ -21,7 +21,7 @@
 #include <QDebug>
 #include "CoordinateModel.h"
 
-
+/*
 CoordinateModel::CoordinateModel(QObject *parent)
 : QAbstractTableModel(parent)
 {
@@ -188,6 +188,8 @@ void CoordinateModel::computeMapping()
 	emit compute();
 }
 
+*/ 
+ 
 /****************************************************************************/
 /****************************************************************************/
 /****************************************************************************/

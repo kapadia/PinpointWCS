@@ -20,7 +20,6 @@
 #include "CoordinateDelegate.h"
 #include <QDoubleSpinBox>
 #include "CoordinateModel.h"
-#include "CoordinateMarker.h"
 #include "GraphicsScene.h"
 #include <QDebug>
 
@@ -31,6 +30,7 @@ CoordinateDelegate::CoordinateDelegate(QObject *parent)
 QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
+	/*
 	const CoordinateModel2 *model = qobject_cast<const CoordinateModel2*> (index.model());
 	QList< QPair<CoordinateMarker*, CoordinateMarker*> > l = model->listOfMarkerPairs;
 	QPair<CoordinateMarker*, CoordinateMarker*> p = l.at(index.row());
@@ -61,21 +61,9 @@ QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 //		s = qobject_cast<GraphicsScene*> (marker->scene());
 //		maxValue = s->height();
 	}
-	marker->setSelected(true);
-	qDebug() << marker;
+	 */
 	editor->setRange(0, 10000);
 	return editor;
-	/*
-	if (index.column() <= 3)
-	{
-		QDoubleSpinBox *spinbox = new QDoubleSpinBox;
-		spinbox->setRange(0, 20000);
-		spinbox->setSingleStep(1);
-		spinbox->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-		return spinbox;
-	}
-	return QItemDelegate::createEditor(parent, option, index);
-	 */
 }
 
 void CoordinateDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -98,6 +86,7 @@ void CoordinateDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 
 void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {		
+	
 	// Cast the editor as a double spin box
 	QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
 	spinBox->interpretText();
@@ -116,36 +105,37 @@ void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 	QPair<CoordinateMarker*, CoordinateMarker*> p = l.at(index.row());
 	CoordinateMarker *marker;
 	QPointF oldPosition;
+	QPointF newPosition;
 	
 	switch (index.column()) {
 		case 0:
 			marker = p.first;
-			marker->setSelected(true);
-			oldPosition = p.first->pos();
-			p.first->setX(value);
+			oldPosition = marker->pos();
+			newPosition = QPointF(oldPosition);
+			newPosition.setX(value);
 			break;
 		case 1:
 			marker = p.first;
-			marker->setSelected(true);
-			oldPosition = p.first->pos();
-			p.first->setY(value);
+			oldPosition = marker->pos();
+			newPosition = QPointF(oldPosition);
+			newPosition.setY(value);
 			break;
 		case 2:
 			marker = p.second;
-			marker->setSelected(true);
-			oldPosition = p.second->pos();
-			p.second->setX(value);	
+			oldPosition = marker->pos();
+			newPosition = QPointF(oldPosition);
+			newPosition.setX(value);
 			break;
 		case 3:
 			marker = p.second;
-			marker->setSelected(true);
-			oldPosition = p.second->pos();
-			p.second->setY(value);
+			oldPosition = marker->pos();
+			newPosition = QPointF(oldPosition);
+			newPosition.setY(value);
 			break;
 	}
-
-	
-//	m->updateData(marker, oldPosition, Qt::EditRole);
+	marker->setPos(newPosition);
+//	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(movingItem), oldPos);
+	emit itemMoved(marker, oldPosition);
 }
 
 QSize CoordinateDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

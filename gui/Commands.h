@@ -26,6 +26,7 @@
 #include "CoordinateMarker.h"
 #include "CoordinateModel.h"
 
+/*
 class CoordinateModel;
 
 class AddCommand : public QUndoCommand
@@ -63,6 +64,8 @@ private:
 	QVariant newPos;
 	CoordinateModel *dataModel;
 };
+
+*/
 
 /****************************************************************************/
 /****************************************************************************/

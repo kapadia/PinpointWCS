@@ -21,6 +21,7 @@
 #define COORDINATE_DELEGATE_H
 
 #include <QItemDelegate>
+#include "CoordinateMarker.h"
 
 class CoordinateDelegate : public QItemDelegate
 {
@@ -33,6 +34,10 @@ public:
 	void setEditorData(QWidget *editor, const QModelIndex &index) const;
 	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	
+signals:
+	void itemMoved(CoordinateMarker *movedItem, const QPointF &movedFromPosition) const;
+	
 };
 
 #endif

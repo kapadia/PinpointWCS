@@ -31,7 +31,7 @@ MainWindow::MainWindow()
     ui.setupUi(this);
 	
 	// Initialize the data model
-	dataModel = new CoordinateModel();
+//	dataModel = new CoordinateModel();
 	
 	// TODO: Testing new data model
 	dataModel2 = new CoordinateModel2();
@@ -101,11 +101,11 @@ bool MainWindow::loadImages()
 		
 		// Initialize the CoordinateTableDialog
 		// TODO: IMPROVE THE APPEARENCE OF THE TABLE, ENABLE EDITING
-		tableDelegate = new CoordinateDelegate(this);
-		coordinateTableDialog = new CoordinateTableDialog(this);
-		coordinateTableDialog->ui.coordinateTable->setModel(dataModel);
-		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
-		coordinateTableDialog->show();
+//		tableDelegate = new CoordinateDelegate(this);
+//		coordinateTableDialog = new CoordinateTableDialog(this);
+//		coordinateTableDialog->ui.coordinateTable->setModel(dataModel);
+//		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
+//		coordinateTableDialog->show();
 		
 		// TODO: Testing new data model
 		tableDelegate2 = new CoordinateDelegate(this);
@@ -115,7 +115,7 @@ bool MainWindow::loadImages()
 		coordinateTableDialog2->show();
 		
 		// Initialize the ComputeWCS object
-		computewcs = new ComputeWCS(&(dataModel->listOfCoordinatePairs), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
+//		computewcs = new ComputeWCS(&(dataModel2->listOfCoordinatePairs), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
 		
 		// Initialize ExportWCS object
 		exportwcs = new ExportWCS(epoImage->pixmap);
@@ -194,6 +194,8 @@ bool MainWindow::loadImages()
 		connect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
 		connect(fitsScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
 		connect(epoScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
+		// TODO: Testing new data model
+		connect(tableDelegate2, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
 		
 		// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
 		connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
@@ -203,10 +205,10 @@ bool MainWindow::loadImages()
 		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
 		
 		// Connect more signals -- communicate between data model and ComputeWCS object
-		connect(dataModel, SIGNAL(compute()), this, SLOT(computeWCS()));
+//		connect(dataModel, SIGNAL(compute()), this, SLOT(computeWCS()));
 		
 		// Testing export slot
-		connect(dataModel, SIGNAL(compute()), this, SLOT(enableExport()));
+//		connect(dataModel, SIGNAL(compute()), this, SLOT(enableExport()));
 		
 		return true;
 	}

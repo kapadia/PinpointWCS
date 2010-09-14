@@ -32,7 +32,7 @@
 #include "ComputeWCS.h"
 #include "CoordinateDelegate.h"
 
-
+/*
 class CoordinateModel : public QAbstractTableModel
 {
 	
@@ -69,7 +69,7 @@ signals:
 	void compute();
 
 };
-
+*/
 
 /****************************************************************************/
 /****************************************************************************/

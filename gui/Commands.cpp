@@ -20,7 +20,7 @@
 #include <QtGui>
 #include "Commands.h"
 
-
+/*
 AddCommand::AddCommand(GraphicsScene *graphicsScene, const QVariant &value, CoordinateModel *model)
 : QUndoCommand()
 {
@@ -217,7 +217,7 @@ void MoveCommand::redo()
 	marker->setPos(newPos.toPointF());
 }
 
-
+*/
 
 /****************************************************************************/
 /****************************************************************************/
