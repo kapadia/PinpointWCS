@@ -1,5 +1,9 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
+	<file>gui/images/bad.png</file>
+	<file>gui/images/good.png</file>
+	<file>gui/images/logo.png</file>
+	<file>gui/images/logo.icns</file>
 	<file>gui/style.qss</file>
 	<file>gui/images/spindown.png</file>
 	<file>gui/images/spindown-pressed.png</file>
