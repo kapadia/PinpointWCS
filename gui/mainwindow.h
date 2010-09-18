@@ -35,7 +35,7 @@
 #include "CoordinateDelegate.h"
 #include "ComputeWCS.h"
 #include "ExportWCS.h"
-
+#include "AboutDialog.h"
  
 class MainWindow : public QMainWindow
 {
@@ -95,6 +95,9 @@ private:
 	QStateMachine *imageAdjustmentMachine;
 	QState *imageAdjustmentPanelOn;
 	QState *imageAdjustmentPanelOff;
+	
+	// Dialogs
+	AboutDialog *aboutDialog;
 	
 	// State Machine Methods
 	void buildWcsInfoPanelMachine();

@@ -196,11 +196,18 @@
     <addaction name="separator"/>
     <addaction name="actionInvert"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout_PinpointWCS"/>
+   </widget>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuImage"/>
    <addaction name="menuAdvanced"/>
    <addaction name="menuExport"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionCoordinates">
@@ -392,6 +399,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionAbout_PinpointWCS">
+   <property name="text">
+    <string>About PinpointWCS</string>
    </property>
   </action>
  </widget>

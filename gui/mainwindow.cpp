@@ -69,9 +69,13 @@ MainWindow::MainWindow()
 //	QLabel *msg = new QLabel(QString("PinpointWCS from the Chandra X-ray Observatory"));
 //	ui.statusbar->addWidget(msg);
 	
+	// Initialize dialogs
+	aboutDialog = new AboutDialog(this);
+	
 	// Connect signals and slots
 	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
+	connect(ui.actionAbout_PinpointWCS, SIGNAL(triggered(bool)), aboutDialog, SLOT(exec()));
 }
 
 
