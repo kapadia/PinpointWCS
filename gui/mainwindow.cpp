@@ -78,7 +78,7 @@ MainWindow::MainWindow()
 	connect(ui.actionAbout_PinpointWCS, SIGNAL(triggered(bool)), aboutDialog, SLOT(exec()));
 	
 	// TODO: Testing SIMBAD interface
-//	pingSimbad(QUrl("http://www.google.com"));
+	pingSimbad();
 }
 
 
@@ -486,13 +486,43 @@ void MainWindow::enableExport()
 }
 
 
-void MainWindow::pingSimbad(QUrl url)
+void MainWindow::pingSimbad()
 {
 	qDebug() << "Pinging SIMBAD ...";
+	
+	// Generate URL
+	QUrl q("http://simbad.u-strasbg.fr/simbad/sim-coo");
+	q.addQueryItem("Coord", "210.801871+54.348181");
+	q.addQueryItem("Radius", "1536.5808");
+	q.addQueryItem("Radius.unit", "arcsec");
+	q.addQueryItem("CooFrame", "ICRS");
+	q.addQueryItem("CooEpoch", "2000");
+	q.addQueryItem("CooEqui", "2000");
+	q.addQueryItem("output.format", "VOTable");	
+	q.addQueryItem("output.max", "2");
+	q.addQueryItem("obj.cooN", "off");
+	q.addQueryItem("list.cooN", "off");
+	q.addQueryItem("obj.pmsel", "off");
+	q.addQueryItem("obj.plxsel", "off");
+	q.addQueryItem("obj.rvsel", "off");
+	q.addQueryItem("obj.spsel", "off");
+	q.addQueryItem("list.spsel", "off");
+	q.addQueryItem("obj.mtsel", "off");
+	q.addQueryItem("obj.sizesel", "off");
+	q.addQueryItem("obj.fluxsel", "off");
+	q.addQueryItem("list.fluxsel", "off");
+	q.addQueryItem("list.idsel", "on");
+	q.addQueryItem("obj.bibsel", "off");
+	q.addQueryItem("list.bibsel", "off");
+	q.addQueryItem("obj.messel", "off");
+	q.addQueryItem("list.messel", "off");
+	q.addQueryItem("obj.notesel", "off");
+	q.addQueryItem("list.notesel", "off");
+	
+	qDebug() << q;
 	manager = new QNetworkAccessManager(this);
 	connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(retreiveSIMBAD(QNetworkReply*)));
-//	manager->get(QNetworkRequest(QUrl("http://qt.nokia.com")));
-	manager->get(QNetworkRequest(QUrl("http://simbad.u-strasbg.fr/simbad/sim-coo?output.format=VOTABLE&Coord=12%2030%20%2b10%2020&Radius=10&Radius.unit=arcmin")));
+	manager->get(QNetworkRequest(q));
 }
 
 void MainWindow::retreiveSIMBAD(QNetworkReply* reply)

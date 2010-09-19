@@ -106,7 +106,7 @@ private:
 	void buildImageAdjustmentMachine();
 	
 	// TODO: Testing SIMBAD interface
-	void pingSimbad(QUrl url);
+	void pingSimbad();
 	QNetworkAccessManager *manager;
 	
 private slots:
