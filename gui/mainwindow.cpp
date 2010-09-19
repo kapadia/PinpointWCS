@@ -76,6 +76,9 @@ MainWindow::MainWindow()
 	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 	connect(ui.actionAbout_PinpointWCS, SIGNAL(triggered(bool)), aboutDialog, SLOT(exec()));
+	
+	// TODO: Testing SIMBAD interface
+//	pingSimbad(QUrl("http://www.google.com"));
 }
 
 
@@ -480,4 +483,21 @@ void MainWindow::enableExport()
 		ui.actionAstronomy_Visualization_Metadata->setEnabled(false);
 		ui.actionFITS_Image->setEnabled(false);
 	}
+}
+
+
+void MainWindow::pingSimbad(QUrl url)
+{
+	qDebug() << "Pinging SIMBAD ...";
+	manager = new QNetworkAccessManager(this);
+	connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(retreiveSIMBAD(QNetworkReply*)));
+//	manager->get(QNetworkRequest(QUrl("http://qt.nokia.com")));
+	manager->get(QNetworkRequest(QUrl("http://simbad.u-strasbg.fr/simbad/sim-coo?output.format=VOTABLE&Coord=12%2030%20%2b10%2020&Radius=10&Radius.unit=arcmin")));
+}
+
+void MainWindow::retreiveSIMBAD(QNetworkReply* reply)
+{
+	qDebug() << "Retreiving from SIMBAD ...";
+	QByteArray response(reply->readAll());
+	qDebug() << response;
 }

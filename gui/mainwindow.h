@@ -21,6 +21,7 @@
 #define MAINWINDOW_H
 
 #include <QtGui>
+#include <QtNetwork>
 
 #include "ui_PinpointWCS.h"
 #include "FitsImage.h"
@@ -104,6 +105,10 @@ private:
 	void buildCoordPanelMachine();
 	void buildImageAdjustmentMachine();
 	
+	// TODO: Testing SIMBAD interface
+	void pingSimbad(QUrl url);
+	QNetworkAccessManager *manager;
+	
 private slots:
 	bool loadImages();
 	bool loadEpoImage(QString& filename);
@@ -116,6 +121,9 @@ private slots:
 	void itemMoved(CoordinateMarker *movedItem, const QPointF &moveStartPosition);
 	void enableExport();
 	void computeWCS();
+	
+	// TODO: Testing SIMBAD interface
+	void retreiveSIMBAD(QNetworkReply* reply);
 	
 	// A slot for testing ...
 	void testSlot();
