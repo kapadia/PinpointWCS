@@ -31,10 +31,8 @@ class GraphicsScene : public QGraphicsScene
 public:
 	GraphicsScene(QPixmap pix, bool ref, QObject *parent = 0);
 	~GraphicsScene();
-	float markerRadius;
 	bool reference;
-//	void itemChange(CoordinateMarker *m);
-	void signalitemMoved(CoordinateMarker *m, const QPointF &oldPos);
+	void signalItemMoved(CoordinateMarker *m, const QPointF &oldPos);
 		
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
@@ -52,7 +50,7 @@ signals:
 	void mousePositionChanged(QPointF pos);
 	void sceneDoubleClicked(GraphicsScene *scene, QPointF pos);
 	void toggleNeighborScene(bool sendSignal = false);
-    void itemMoved(CoordinateMarker *movedItem, const QPointF &movedFromPosition);
+    void itemMoved(GraphicsScene* scene, const QPointF &newPosition, const QPointF &movedFromPosition);
 	void markerChange(CoordinateMarker *m);
 
 public slots:

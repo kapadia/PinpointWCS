@@ -17,24 +17,24 @@
  *
  */
 
-#include <QUndoCommand>
 #include <QDebug>
+#include <QUndoCommand>
 #include "CoordinateModel.h"
 
-/*
+
 CoordinateModel::CoordinateModel(QObject *parent)
 : QAbstractTableModel(parent)
 {
 	undoStack = new QUndoStack(this);
-	p1 = new QPointF(-1, -1);
-	p2 = new QPointF(-1, -1);
+	p = new QPointF(-1, -1);
 }
 
 
-CoordinateModel::CoordinateModel(QList< QPair<QPointF, QPointF> > pairs, QObject *parent)
+CoordinateModel::CoordinateModel(QList<QPointF> r, QList<QPointF> e, QObject *parent)
 : QAbstractTableModel(parent)
 {
-    listOfCoordinatePairs = pairs;
+	refCoords = r;
+	epoCoords = e;
 }
 
 CoordinateModel::~CoordinateModel()
@@ -42,7 +42,7 @@ CoordinateModel::~CoordinateModel()
 
 int CoordinateModel::rowCount(const QModelIndex &parent) const
 {
-    return listOfCoordinatePairs.size();
+    return refCoords.size();
 }
 
 int CoordinateModel::columnCount(const QModelIndex &parent) const
@@ -55,31 +55,33 @@ QVariant CoordinateModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
     
-    if (index.row() >= listOfCoordinatePairs.size() || index.row() < 0)
+    if (index.row() >= refCoords.size() || index.row() < 0)
         return QVariant();
 	
 	if (role == Qt::DisplayRole)
 	{
-		QPair<QPointF, QPointF> pair = listOfCoordinatePairs.at(index.row());
+		// Set some variables
 		QString formattedData;
+		QPointF refCoord = refCoords.at(index.row());
+		QPointF epoCoord = epoCoords.at(index.row());
 		
 		if (index.column() == 0)
-			return pair.first.x();
+			return refCoord.x();
 		else if (index.column() == 1)
-			return pair.first.y();
+			return refCoord.y();
 		else if (index.column() == 2)
 		{
-			if (pair.second.x() == -1)
+			if (epoCoord.x() == -1)
 				return formattedData.sprintf("%s", "-");
 			else
-				return pair.second.x();
+				return epoCoord.x();
 		}
 		else
 		{
-			if (pair.second.y() == -1)
+			if (epoCoord.y() == -1)
 				return formattedData.sprintf("%s", "-");
 			else
-				return pair.second.y();
+				return epoCoord.y();
 		}
 	}
 	
@@ -114,8 +116,8 @@ bool CoordinateModel::insertRows(int position, int rows, const QModelIndex &inde
     beginInsertRows(QModelIndex(), position, position+rows-1);
 
     for (int row=0; row < rows; row++) {
-        QPair<QPointF, QPointF> pair(*p1, *p2);
-        listOfCoordinatePairs.insert(position, pair);
+		refCoords.insert(position, *p);
+		epoCoords.insert(position, *p);
     }
 
     endInsertRows();
@@ -129,7 +131,8 @@ bool CoordinateModel::removeRows(int position, int rows, const QModelIndex &inde
     beginRemoveRows(QModelIndex(), position, position+rows-1);
     
     for (int row=0; row < rows; ++row) {
-        listOfCoordinatePairs.removeAt(position);
+		refCoords.removeAt(position);
+		epoCoords.removeAt(position);
     }
 	
     endRemoveRows();
@@ -151,11 +154,11 @@ bool CoordinateModel::setData(GraphicsScene *scene, const QModelIndex &index, co
 
 
 
-bool CoordinateModel::updateData(CoordinateMarker *item, const QVariant &value, int role)
+bool CoordinateModel::updateData(GraphicsScene *scene, const QVariant &newValue, const QVariant &oldValue, int role)
 {
 	if (role == Qt::EditRole)
 	{
-		MoveCommand *m = new MoveCommand(item, value, this);
+		MoveCommand *m = new MoveCommand(scene, newValue, oldValue, this);
 		undoStack->push(m);
 		return true;
 	}
@@ -172,14 +175,7 @@ Qt::ItemFlags CoordinateModel::flags(const QModelIndex &index) const
 }
 
 
-QList< QPair<QPointF, QPointF> > CoordinateModel::getList()
-{
-    return listOfCoordinatePairs;
-}
-
-
 void CoordinateModel::emitDataChanged(const QModelIndex &index1, const QModelIndex &index2){
-//	qDebug() << listOfCoordinatePairs;
     emit dataChanged(index1, index2);
 }
 
@@ -188,7 +184,6 @@ void CoordinateModel::computeMapping()
 	emit compute();
 }
 
-*/ 
  
 /****************************************************************************/
 /****************************************************************************/

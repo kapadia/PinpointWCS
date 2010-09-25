@@ -17,10 +17,8 @@
  *
  */
 
-#include <iostream>
 #include <QtGui>
 #include "GraphicsScene.h"
-#include "CoordinateMarker.h";
 
 GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 : QGraphicsScene(parent)
@@ -33,22 +31,15 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 		clickable = true;
 	else
 		clickable = false;
-	
-	// Determine marker radius
-	if (width() > height())
-		markerRadius = width()*0.025;
-	else
-	{
-		markerRadius = height()*0.025;
-	}
-	qDebug() << "Finished Initializing Scene";
 }
+
 
 GraphicsScene::~GraphicsScene() {}
 
 
 void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
+	// Broadcast the position of the mouse
 	emit mousePositionChanged(event->scenePos());
 	QGraphicsScene::mouseMoveEvent(event);
 }
@@ -56,15 +47,11 @@ void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
  
 void GraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
+	// Broadcast the event for the other GraphicsScene and the data model
 	if (clickable)
-	{
-		// Get scene position
-		QPointF pos = event->scenePos();
-		
-		// Broadcast the event for AddCommand and the other GraphicsScene
-		emit sceneDoubleClicked(this, pos);
-	}
+		emit sceneDoubleClicked(this, event->scenePos());
 }
+
 
 void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -85,7 +72,7 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (movingItem != 0 && event->button() == Qt::LeftButton) {
         if (oldPos != movingItem->pos())
-            emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(movingItem), oldPos);
+            emit itemMoved(this, movingItem->pos(), oldPos);
         movingItem = 0;
     }
 	
@@ -94,25 +81,22 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void GraphicsScene::toggleClickable(bool sendSignal)
 {
+	// Toggle the clickable variable for both GraphicsScenes
 	clickable = !clickable;
 	if (sendSignal)
 		emit toggleNeighborScene(false);
 }
 
+
 void GraphicsScene::updatePixmap(QPixmap *pm)
 {
+	// Update the pixmap
 	pixmap->setPixmap(*pm);
 }
 
-void GraphicsScene::signalitemMoved(CoordinateMarker *m, const QPointF &oldPos)
-{
-	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(m), oldPos);
-}
 
-
-/*
-void GraphicsScene::itemChange(CoordinateMarker *m)
+void GraphicsScene::signalItemMoved(CoordinateMarker *m, const QPointF &oldPos)
 {
-	emit markerChange(m);
+	// Broadcast the item moved and its old position
+	emit itemMoved(this, m->pos(), oldPos);
 }
-*/

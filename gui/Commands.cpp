@@ -18,9 +18,10 @@
  */
 
 #include <QtGui>
+#include <QTransform>
 #include "Commands.h"
 
-/*
+
 AddCommand::AddCommand(GraphicsScene *graphicsScene, const QVariant &value, CoordinateModel *model)
 : QUndoCommand()
 {
@@ -28,116 +29,123 @@ AddCommand::AddCommand(GraphicsScene *graphicsScene, const QVariant &value, Coor
 	scene = graphicsScene;
 	initialPosition = value;
 	dataModel = model;
-	
-	// Instantiate a CoordinateMarker object
-	marker = new CoordinateMarker(scene->markerRadius);
 }
 
 
 AddCommand::~AddCommand()
 {}
 
-void AddCommand::undo()
-{
-	// Determine the number of rows in the data model
-	int numrows = dataModel->rowCount(QModelIndex());
-	
+void AddCommand::redo()
+{	
 	// Initialize some indices
 	QModelIndex index1;
 	QModelIndex index2;
+	QPointF coord;
+	
+	// Determine the number of rows in the data model
+	int numrows = dataModel->rowCount(QModelIndex());
+	
+	if (scene->reference)
+	{
+		// Insert a single row
+		dataModel->insertRows(numrows, 1, QModelIndex());
+		
+		// Access the data
+		coord = dataModel->refCoords.value(numrows);
+		
+		// Set the reference coordinate and indices
+		coord = initialPosition.toPointF();
+		index1 = dataModel->index(numrows, 0);
+		index2 = dataModel->index(numrows, 1);
+		
+		// Update the data
+		dataModel->refCoords.replace(numrows, coord);
+	}
+	else
+	{
+		// Access the data
+		coord = dataModel->epoCoords.value(numrows-1);
+		
+		// Set the epo coordinate and indices
+		coord = initialPosition.toPointF();
+		index1 = dataModel->index(numrows-1, 0);
+		index2 = dataModel->index(numrows-1, 1);
+		
+		// Update the data
+		dataModel->epoCoords.replace(numrows-1, coord);
+	}
+	
+	// Initialize CoordinateMarker and add to GraphicScene
+	marker = new CoordinateMarker();
+	scene->addItem(marker);
+	marker->setPos(initialPosition.toPointF());
+//	scene->toggleClickable(true);
+//	scene->clearSelection();
+	scene->update();
+	
+	// TODO: Enable ComputeWCS
+	//	dataModel->computeMapping();
+	
+	// Broadcast some info
+	dataModel->emitDataChanged(index1, index2);
+}
+
+
+void AddCommand::undo()
+{
+	// Initialize some indices
+	QModelIndex index1;
+	QModelIndex index2;
+	
+	// Determine the number of rows in the data model
+	int numrows = dataModel->rowCount(QModelIndex());
 	
 	// Remove datum from model
 	if (scene->reference)
 	{
-		// Datum coming from FITS scene, so remove a row
+		// Datum coming from FITS scene; remove an entire row
 		dataModel->removeRows(numrows-1, 1, QModelIndex());
 		index1 = dataModel->index(numrows-1, 0);
 		index2 = dataModel->index(numrows-1, 1);
 		dataModel->emitDataChanged(index1, index2);
-		
-		// Call function that sends signal to ComputeWCS object
-		dataModel->computeMapping();
 	}
 	else
 	{
-		// Clear only the index (0, 1)
-		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(numrows-1);
-		p.second = QPointF(-1, -1);
+		// Access the data
+		QPointF coord = dataModel->epoCoords.value(numrows-1);
+		coord = QPointF(-1, -1);
 		index1 = dataModel->index(numrows-1, 0);
 		index2 = dataModel->index(numrows-1, 1);
-		dataModel->listOfCoordinatePairs.replace(numrows-1, p);
+		dataModel->epoCoords.replace(numrows-1, coord);
 	}
 	
-	dataModel->emitDataChanged(index1, index2);
+	// TODO: Enable ComputeWCS
 	dataModel->computeMapping();
 	
-	// Remove marker from scene and adjust some parameters
+	// Remove CoordinateMarker from GraphicsScene
 	scene->removeItem(marker);
 	scene->toggleClickable(true);
 	scene->update();
-}
-
-void AddCommand::redo()
-{	
-	// Determine the number of rows in the data model
-	int numrows = dataModel->rowCount(QModelIndex());
 	
-	// Initialize some indices
-	QModelIndex index1;
-	QModelIndex index2;
-	
-	if (scene->reference)
-	{
-		// Insert a row
-		dataModel->insertRows(numrows, 1, QModelIndex());
-		
-		// Access the data (remember AddCommand is a friend of CoordinateModel)
-		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(numrows);
-		
-		p.first = initialPosition.toPointF();
-		index1 = dataModel->index(numrows, 0);
-		index2 = dataModel->index(numrows, 1);
-		
-		dataModel->listOfCoordinatePairs.replace(numrows, p);
-		marker->row = numrows;
-	}
-	else
-	{
-		// Access the data (remember AddCommand is a friend of CoordinateModel)
-		QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(numrows-1);
-		
-		p.second = initialPosition.toPointF();
-		index1 = dataModel->index(numrows-1, 0);
-		index2 = dataModel->index(numrows-1, 1);
-		dataModel->listOfCoordinatePairs.replace(numrows-1, p);
-		marker->row = numrows-1;
-	}
-	
+	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
-	dataModel->computeMapping();
-	
-	// Add marker to scene and adjust some parameters
-	scene->addItem(marker);
-	marker->setPos(initialPosition.toPointF());
-	scene->toggleClickable(true);
-	scene->clearSelection();
-	scene->update();
 }
 
 
-MoveCommand::MoveCommand(CoordinateMarker *item, const QVariant &value, CoordinateModel *model)
+
+MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVariant &oldValue, CoordinateModel *model)
 : QUndoCommand()
 {
-	marker = item;
-	newPos = marker->scenePos();
-	oldPos = value;
+	newPos = newValue.toPointF();
+	oldPos = oldValue.toPointF();
+	scene = s;
 	dataModel = model;
 }
 
 bool MoveCommand::mergeWith(const QUndoCommand *command)
 {
 	const MoveCommand *moveCommand = static_cast<const MoveCommand *>(command);
-	CoordinateMarker *item = moveCommand->marker;
+	QGraphicsItem *item = scene->itemAt(newPos);
 	
 	if (marker != item)
 		return false;
@@ -217,7 +225,6 @@ void MoveCommand::redo()
 	marker->setPos(newPos.toPointF());
 }
 
-*/
 
 /****************************************************************************/
 /****************************************************************************/
@@ -235,7 +242,7 @@ AddCommand2::AddCommand2(GraphicsScene *graphicsScene, const QVariant &value, Co
 	dataModel = model;
 	
 	// Instantiate a CoordinateMarker object
-	marker = new CoordinateMarker(scene->markerRadius);
+	marker = new CoordinateMarker();
 }
 
 

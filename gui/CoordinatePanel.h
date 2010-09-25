@@ -21,6 +21,7 @@
 #define COORDINATE_PANEL_H
 
 #include <QtGui>
+#include "PPWcsImage.h"
 #include "ui_CoordinatePanel.h"
 
 class CoordinatePanel : public QFrame
@@ -28,16 +29,17 @@ class CoordinatePanel : public QFrame
 		Q_OBJECT
 		
 	public:
-		CoordinatePanel(QWidget *parent = 0);
+		CoordinatePanel(PPWcsImage *im, QWidget *parent = 0);
 		~CoordinatePanel();
 		Ui::CoordinatePanel ui;
 		
 	public slots:
 		void parentResized(QSize sz);
-		void updateCoordinates(QPointF pos, double *world);
+		void updateCoordinates(QPointF pos);
 		
 	private:
 		// Attributes
+		PPWcsImage *image;
 		
 		// Methods
 		void updateFontSize(QFont font);

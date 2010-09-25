@@ -71,14 +71,9 @@ private:
 	QActionGroup *stretchActionGroup;
 	
 	// Model, View, and Delegate Attributes
-//	CoordinateModel *dataModel;
-//	CoordinateTableDialog *coordinateTableDialog;
-//	CoordinateDelegate *tableDelegate;
-	
-	// Testing new model
-	CoordinateModel2 *dataModel2;
-	CoordinateTableDialog *coordinateTableDialog2;
-	CoordinateDelegate *tableDelegate2;
+	CoordinateModel *dataModel;
+	CoordinateTableDialog *coordinateTableDialog;
+	CoordinateDelegate *tableDelegate;
 	
 	// Compute and Export Attributes
 	ComputeWCS *computewcs;
@@ -105,25 +100,16 @@ private:
 	void buildCoordPanelMachine();
 	void buildImageAdjustmentMachine();
 	
-	// TODO: Testing SIMBAD interface
-	void pingSimbad();
-	QNetworkAccessManager *manager;
-	
 private slots:
-	bool loadImages();
+	bool setupWorkspace();
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
 	void stretch(QAction *action);
 	void addMarker(GraphicsScene *scene, QPointF pos);
 	void updateCoordPanelProperties();
-	void updateFitsCoordinates(QPointF pos);
-	void updateEpoCoordinates(QPointF pos);
 	void itemMoved(CoordinateMarker *movedItem, const QPointF &moveStartPosition);
 	void enableExport();
 	void computeWCS();
-	
-	// TODO: Testing SIMBAD interface
-	void retreiveSIMBAD(QNetworkReply* reply);
 	
 	// A slot for testing ...
 	void testSlot();

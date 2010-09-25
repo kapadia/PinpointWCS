@@ -21,23 +21,24 @@
 #include <QPalette>
 #include "CoordinatePanel.h"
 
-CoordinatePanel::CoordinatePanel(QWidget *parent)
+CoordinatePanel::CoordinatePanel(PPWcsImage *im, QWidget *parent)
 : QFrame(parent)
 {
-	// Set up user interface from the Designer file
-	qDebug() << "Initializing CoordinatePanel ...";
+	// Setup user interface
     ui.setupUi(this);
 	
-	// Set up frame style
+	// Set associated image
+	image = im;
+	
+	// Set frame style
 	setFrameStyle(QFrame::Panel | QFrame::StyledPanel);
 	
-	// Set up colors
+	// Set colors
 	setAutoFillBackground(true);
 	setBackgroundRole(QPalette::Window);
 	QPalette palette;
 	QColor bgcolor = QColor(0, 0, 0, 100);
 	QColor textcolor = QColor(230, 230, 230);
-//	QColor textcolor = QColor(237, 28, 36);
 	palette.setColor(QPalette::Background, bgcolor);
 	palette.setColor(QPalette::WindowText, textcolor);
 	setPalette(palette);
@@ -67,18 +68,26 @@ void CoordinatePanel::parentResized(QSize sz)
 	resize(sz.width(), 30);
 }
 
-void CoordinatePanel::updateCoordinates(QPointF pos, double *world)
+
+void CoordinatePanel::updateCoordinates(QPointF pos)
 {
+	// Initialize variables
 	QString x;
 	QString y;
-	
+	double *world = NULL;
+
+	// Format and display xy coordinates
 	x.sprintf("%.2f", pos.x());
 	y.sprintf("%.2f", pos.y());
 	ui.x_value->setText(x);
 	ui.y_value->setText(y);
 	
-	if (world)
+	
+	// Check if WCS exists
+	if (image->wcs)
 	{
+		world = image->pix2sky(pos);
+		
 		// Initialize some variables for a conversion
 //		int H1, M1, H2, M2;
 //		double S1, S2;

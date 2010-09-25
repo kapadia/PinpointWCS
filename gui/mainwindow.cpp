@@ -27,19 +27,13 @@
 
 MainWindow::MainWindow()
 {
-	// Set up user interface from the Designer file
+	// Set up the user interface
     ui.setupUi(this);
 	
-	// Initialize the data model
-//	dataModel = new CoordinateModel();
-	
-	// TODO: Testing new data model
-	dataModel2 = new CoordinateModel2();
-	
-	// Initialize the undo stack
-	// TODO: Testing new data model
-	undoAction = dataModel2->undoStack->createUndoAction(this, tr("&Undo"));
-	redoAction = dataModel2->undoStack->createRedoAction(this, tr("&Redo"));
+	// Initialize the data model and set up the undostack
+	dataModel = new CoordinateModel();
+	undoAction = dataModel->undoStack->createUndoAction(this, tr("&Undo"));
+	redoAction = dataModel->undoStack->createRedoAction(this, tr("&Redo"));
 	undoAction->setShortcut(QKeySequence::Undo);
 	redoAction->setShortcut(QKeySequence::Redo);
 	ui.menuEdit->addAction(undoAction);
@@ -50,12 +44,6 @@ MainWindow::MainWindow()
 	epoWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_2);
 	fitsWcsInfoPanel->hide();
 	epoWcsInfoPanel->hide();
-	
-	// Initialize the CoordinatePanels
-	fitsCoordPanel = new CoordinatePanel(ui.graphicsView_1);
-	epoCoordPanel = new CoordinatePanel(ui.graphicsView_2);
-	fitsCoordPanel->hide();
-	epoCoordPanel->hide();
 	
 	// Initialize the FitsToolbar
 	fitsToolbar = new FitsToolbar(ui.graphicsView_1);
@@ -73,53 +61,39 @@ MainWindow::MainWindow()
 	aboutDialog = new AboutDialog(this);
 	
 	// Connect signals and slots
-	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
-	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
+	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
+	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
 	connect(ui.actionAbout_PinpointWCS, SIGNAL(triggered(bool)), aboutDialog, SLOT(exec()));
-	
-	// TODO: Testing SIMBAD interface
-	pingSimbad();
 }
 
 
 MainWindow::~MainWindow() {}
 
-bool MainWindow::loadImages()
+bool MainWindow::setupWorkspace()
 {
-	qDebug() << "Attempting to load files to workspace ...";
+	qDebug() << "Attempting to setup workspace ...";
 	if (ui.dropLabel_1->ready and ui.dropLabel_2->ready) {
-		qDebug() << "Both DropAreas are ready!";
 		
 		// Call loadEpoImage and loadFitsImage
 		if (!loadEpoImage(ui.dropLabel_2->filepath))
-		{
-			qDebug() << "Loading of EPO image failed ...";
 			return false;
-		}
 		if (!loadFitsImage(ui.dropLabel_1->filepath))
-		{
-			qDebug() << "Loading of FITS image failed ...";
 			return false;
-		}
 		
 		// Disconnect dropLabels from signal
 		disconnect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
 		
-		// Initialize the CoordinateTableDialog
-		// TODO: IMPROVE THE APPEARENCE OF THE TABLE, ENABLE EDITING
-//		tableDelegate = new CoordinateDelegate(this);
-//		coordinateTableDialog = new CoordinateTableDialog(this);
-//		coordinateTableDialog->ui.coordinateTable->setModel(dataModel);
-//		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
-//		coordinateTableDialog->show();
+		// Initialize the CoordinatePanels
+		fitsCoordPanel = new CoordinatePanel(fitsImage, ui.graphicsView_1);
+		epoCoordPanel = new CoordinatePanel(epoImage, ui.graphicsView_2);
 		
-		// TODO: Testing new data model
-		tableDelegate2 = new CoordinateDelegate(this);
-		coordinateTableDialog2 = new CoordinateTableDialog(this);
-		coordinateTableDialog2->ui.coordinateTable->setModel(dataModel2);
-		coordinateTableDialog2->ui.coordinateTable->setItemDelegate(tableDelegate2);
-		coordinateTableDialog2->show();
+		// Initialize the CoordinateTableDialog
+		tableDelegate = new CoordinateDelegate(this);
+		coordinateTableDialog = new CoordinateTableDialog(this);
+		coordinateTableDialog->ui.coordinateTable->setModel(dataModel);
+		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
+		coordinateTableDialog->show();
 		
 		// Initialize the ComputeWCS object
 //		computewcs = new ComputeWCS(&(dataModel2->listOfCoordinatePairs), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
@@ -178,7 +152,6 @@ bool MainWindow::loadImages()
 		buildImageAdjustmentMachine();
 		fitsToolbar->show();
 		
-		
 		// Connect some signals -- used for resizing panels
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoWcsInfoPanel, SLOT(parentResized(QSize)));		
@@ -186,23 +159,25 @@ bool MainWindow::loadImages()
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoCoordPanel, SLOT(parentResized(QSize)));
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
-		
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsToolbar, SLOT(parentResized(QSize)));
 		
 		// Connect more signals -- used for updating info on panels
-		connect(fitsScene, SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateFitsCoordinates(QPointF)));
-		connect(epoScene, SIGNAL(mousePositionChanged(QPointF)), this, SLOT(updateEpoCoordinates(QPointF)));
+		connect(fitsScene, SIGNAL(mousePositionChanged(QPointF)), fitsCoordPanel, SLOT(updateCoordinates(QPointF)));
+		connect(epoScene, SIGNAL(mousePositionChanged(QPointF)), epoCoordPanel, SLOT(updateCoordinates(QPointF)));
 		
 		// Connect yet more signals -- para comunicación entre los GraphicsScenes
-		connect(fitsScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), this, SLOT(addMarker(GraphicsScene*, QPointF)));
-		connect(epoScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), this, SLOT(addMarker(GraphicsScene*, QPointF)));
+		// TODO: Change the receiver to the data model
+		connect(fitsScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), dataModel, SLOT(setData(GraphicsScene*, QPointF)));
+		connect(epoScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), dataModel, SLOT(setData(GraphicsScene*, QPointF)));
 		
 		connect(fitsScene, SIGNAL(toggleNeighborScene(bool)), epoScene, SLOT(toggleClickable(bool)));
 		connect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
-		connect(fitsScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
-		connect(epoScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
-		// TODO: Testing new data model
-		connect(tableDelegate2, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
+		
+		// TODO: Change the receiver to the data model
+		connect(fitsScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
+		connect(epoScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
+		// TODO: Testing new table delegate
+//		connect(tableDelegate, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
 		
 		// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
 		connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
@@ -294,10 +269,9 @@ void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 	pos += QPointF(xcen, ycen);
 	free(image);
 	 */
-//	dataModel->setData(scene, QModelIndex(), pos, Qt::EditRole);
 	
-	// TODO: Testing new data model
-	dataModel2->setData(scene, QModelIndex(), pos, Qt::EditRole);
+	// TODO: Testing data model
+	dataModel->setData(scene, QModelIndex(), pos, Qt::EditRole);
 }
 
 
@@ -305,9 +279,8 @@ void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 void MainWindow::itemMoved(CoordinateMarker *movedItem, const QPointF &oldPosition)
 {
 	qDebug() << "itemMoved";
-	// TODO: Testing new data model
-	dataModel2->updateData(movedItem, oldPosition, Qt::EditRole);
-//	dataModel->updateData(movedItem, oldPosition, Qt::EditRole);
+	// TODO: Testing data model
+	dataModel->updateData(movedItem, oldPosition, Qt::EditRole);
 }
 
 
@@ -452,24 +425,6 @@ void MainWindow::updateCoordPanelProperties()
 	CoordPanelOff->assignProperty(epoCoordPanel, "pos", QPointF(0, h2));
 }
 
-void MainWindow::updateFitsCoordinates(QPointF pos)
-{
-	double *world;
-		
-	// Unbin and transform to FITS pixel coordintes
-	QPointF unbinnedPos = fitsImage->fpix2pix(pos);
-	world = fitsImage->pix2sky(unbinnedPos);	
-	fitsCoordPanel->updateCoordinates(pos, world);
-}
-
-void MainWindow::updateEpoCoordinates(QPointF pos)
-{
-	double *world = NULL;
-//	if (epoImage->wcsExists)
-	if (computewcs->epoWCS)
-		world = epoImage->pix2sky(pos);
-	epoCoordPanel->updateCoordinates(pos, world);
-}
 
 void MainWindow::enableExport()
 {
@@ -483,51 +438,4 @@ void MainWindow::enableExport()
 		ui.actionAstronomy_Visualization_Metadata->setEnabled(false);
 		ui.actionFITS_Image->setEnabled(false);
 	}
-}
-
-
-void MainWindow::pingSimbad()
-{
-	qDebug() << "Pinging SIMBAD ...";
-	
-	// Generate URL
-	QUrl q("http://simbad.u-strasbg.fr/simbad/sim-coo");
-	q.addQueryItem("Coord", "210.801871+54.348181");
-	q.addQueryItem("Radius", "1536.5808");
-	q.addQueryItem("Radius.unit", "arcsec");
-	q.addQueryItem("CooFrame", "ICRS");
-	q.addQueryItem("CooEpoch", "2000");
-	q.addQueryItem("CooEqui", "2000");
-	q.addQueryItem("output.format", "VOTable");	
-	q.addQueryItem("output.max", "2");
-	q.addQueryItem("obj.cooN", "off");
-	q.addQueryItem("list.cooN", "off");
-	q.addQueryItem("obj.pmsel", "off");
-	q.addQueryItem("obj.plxsel", "off");
-	q.addQueryItem("obj.rvsel", "off");
-	q.addQueryItem("obj.spsel", "off");
-	q.addQueryItem("list.spsel", "off");
-	q.addQueryItem("obj.mtsel", "off");
-	q.addQueryItem("obj.sizesel", "off");
-	q.addQueryItem("obj.fluxsel", "off");
-	q.addQueryItem("list.fluxsel", "off");
-	q.addQueryItem("list.idsel", "on");
-	q.addQueryItem("obj.bibsel", "off");
-	q.addQueryItem("list.bibsel", "off");
-	q.addQueryItem("obj.messel", "off");
-	q.addQueryItem("list.messel", "off");
-	q.addQueryItem("obj.notesel", "off");
-	q.addQueryItem("list.notesel", "off");
-	
-	qDebug() << q;
-	manager = new QNetworkAccessManager(this);
-	connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(retreiveSIMBAD(QNetworkReply*)));
-	manager->get(QNetworkRequest(q));
-}
-
-void MainWindow::retreiveSIMBAD(QNetworkReply* reply)
-{
-	qDebug() << "Retreiving from SIMBAD ...";
-	QByteArray response(reply->readAll());
-	qDebug() << response;
 }

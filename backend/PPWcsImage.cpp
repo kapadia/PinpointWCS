@@ -26,7 +26,6 @@ PPWcsImage::PPWcsImage()
 	
 	// Initialize attributes common to all base classes
 	wcs = NULL;
-	wcsExists = false; // Might be able to get ride of this boolean, depending on how if(wcs) works ...
 }
 
 PPWcsImage::~PPWcsImage() {}

@@ -34,7 +34,6 @@ public:
 	~PPWcsImage();
 	
 	// Attributes
-	bool wcsExists;
 	struct WorldCoor *wcs;
 	QPixmap *pixmap;
 	
