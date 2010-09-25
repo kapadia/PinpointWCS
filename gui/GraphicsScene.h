@@ -50,7 +50,7 @@ signals:
 	void mousePositionChanged(QPointF pos);
 	void sceneDoubleClicked(GraphicsScene *scene, QPointF pos);
 	void toggleNeighborScene(bool sendSignal = false);
-    void itemMoved(GraphicsScene* scene, const QPointF &newPosition, const QPointF &movedFromPosition);
+    void itemMoved(CoordinateMarker *movedItem, const QPointF &movedFromPosition);
 	void markerChange(CoordinateMarker *m);
 
 public slots:

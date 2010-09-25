@@ -41,6 +41,7 @@ void AddCommand::redo()
 	QModelIndex index1;
 	QModelIndex index2;
 	QPointF coord;
+	int row;
 	
 	// Determine the number of rows in the data model
 	int numrows = dataModel->rowCount(QModelIndex());
@@ -57,6 +58,7 @@ void AddCommand::redo()
 		coord = initialPosition.toPointF();
 		index1 = dataModel->index(numrows, 0);
 		index2 = dataModel->index(numrows, 1);
+		row = numrows;
 		
 		// Update the data
 		dataModel->refCoords.replace(numrows, coord);
@@ -70,6 +72,7 @@ void AddCommand::redo()
 		coord = initialPosition.toPointF();
 		index1 = dataModel->index(numrows-1, 0);
 		index2 = dataModel->index(numrows-1, 1);
+		row = numrows-1;
 		
 		// Update the data
 		dataModel->epoCoords.replace(numrows-1, coord);
@@ -79,8 +82,9 @@ void AddCommand::redo()
 	marker = new CoordinateMarker();
 	scene->addItem(marker);
 	marker->setPos(initialPosition.toPointF());
-//	scene->toggleClickable(true);
-//	scene->clearSelection();
+	marker->row = row;
+	scene->toggleClickable(true);
+	scene->clearSelection();
 	scene->update();
 	
 	// TODO: Enable ComputeWCS
@@ -133,19 +137,20 @@ void AddCommand::undo()
 
 
 
-MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVariant &oldValue, CoordinateModel *model)
+MoveCommand::MoveCommand(CoordinateMarker *m, const QVariant &oldValue, CoordinateModel *model)
 : QUndoCommand()
 {
-	newPos = newValue.toPointF();
+	marker = m;
+	newPos = m->scenePos();
 	oldPos = oldValue.toPointF();
-	scene = s;
+	scene = qobject_cast<GraphicsScene*> (marker->scene());
 	dataModel = model;
 }
 
 bool MoveCommand::mergeWith(const QUndoCommand *command)
 {
-	const MoveCommand *moveCommand = static_cast<const MoveCommand *>(command);
-	QGraphicsItem *item = scene->itemAt(newPos);
+	const MoveCommand *moveCommand = static_cast<const MoveCommand*>(command);
+	CoordinateMarker *item = moveCommand->marker;
 	
 	if (marker != item)
 		return false;
@@ -156,73 +161,68 @@ bool MoveCommand::mergeWith(const QUndoCommand *command)
 
 void MoveCommand::undo()
 {
-	// Get the scene
-	GraphicsScene *scene = qobject_cast<GraphicsScene*> (marker->scene());
-	int row = marker->row;
-	
 	// Initialize some indices
 	QModelIndex index1;
 	QModelIndex index2;
 	
-	// Get data from model
-	QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
+	// Get the row of the data
+	int row = marker->row;
 	
 	if (scene->reference)
-	{
-		p.first = oldPos.toPointF();
-		dataModel->listOfCoordinatePairs.replace(row, p);
+	{		
+		dataModel->refCoords.replace(row, oldPos);
 		index1 = dataModel->index(row, 0);
 		index2 = dataModel->index(row, 1);
 	}
 	else
 	{
-		p.second = oldPos.toPointF();
-		dataModel->listOfCoordinatePairs.replace(row, p);
+		dataModel->epoCoords.replace(row, oldPos);
 		index1 = dataModel->index(row, 2);
 		index2 = dataModel->index(row, 3);
 	}
 	
-	dataModel->emitDataChanged(index1, index2);
-	dataModel->computeMapping();
-	
 	// Move marker to old position
-	marker->setPos(oldPos.toPointF());
+	marker->setPos(oldPos);
 	marker->scene()->update();
+	
+	// TODO: Enable ComputeWCS
+//	dataModel->computeMapping();
+	
+	// Broadcast some info
+	dataModel->emitDataChanged(index1, index2);
 }
 
 void MoveCommand::redo()
 {
-	// Get the scene
-	GraphicsScene *scene = qobject_cast<GraphicsScene*> (marker->scene());
-	int row = marker->row;
-	
-	// Initialize some indices
+	// Initialize some variables
 	QModelIndex index1;
 	QModelIndex index2;
 	
-	// Get data from model
-	QPair<QPointF, QPointF> p = dataModel->listOfCoordinatePairs.value(row);
+	// Get the row of the data
+	int row = marker->row;
+	qDebug() << row;
 	
 	if (scene->reference)
 	{
-		p.first = newPos.toPointF();
-		dataModel->listOfCoordinatePairs.replace(row, p);
+		dataModel->refCoords.replace(row, newPos);
 		index1 = dataModel->index(row, 0);
 		index2 = dataModel->index(row, 1);
 	}
 	else
 	{
-		p.second = newPos.toPointF();
-		dataModel->listOfCoordinatePairs.replace(row, p);
+		dataModel->epoCoords.replace(row, newPos);
 		index1 = dataModel->index(row, 2);
 		index2 = dataModel->index(row, 3);
 	}
 	
-	dataModel->emitDataChanged(index1, index2);
+	// TODO: Enable ComputeWCS
 	dataModel->computeMapping();
 	
 	// Move the marker to the new position
-	marker->setPos(newPos.toPointF());
+	marker->setPos(newPos);
+	
+	// Broadcast some info
+	dataModel->emitDataChanged(index1, index2);
 }
 
 

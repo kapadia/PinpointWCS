@@ -140,6 +140,12 @@ bool CoordinateModel::removeRows(int position, int rows, const QModelIndex &inde
 }
 
 
+void CoordinateModel::setData(GraphicsScene *scene, QPointF coord)
+{
+	setData(scene, QModelIndex(), coord, Qt::EditRole);
+}
+
+
 bool CoordinateModel::setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role)
 {
 	if (role == Qt::EditRole)
@@ -153,12 +159,16 @@ bool CoordinateModel::setData(GraphicsScene *scene, const QModelIndex &index, co
 }
 
 
+void CoordinateModel::updateData(CoordinateMarker* marker, QPointF coord)
+{
+	updateData(marker, coord, Qt::EditRole);
+}
 
-bool CoordinateModel::updateData(GraphicsScene *scene, const QVariant &newValue, const QVariant &oldValue, int role)
+bool CoordinateModel::updateData(CoordinateMarker* marker, const QVariant &oldValue, int role)
 {
 	if (role == Qt::EditRole)
 	{
-		MoveCommand *m = new MoveCommand(scene, newValue, oldValue, this);
+		MoveCommand *m = new MoveCommand(marker, oldValue, this);
 		undoStack->push(m);
 		return true;
 	}

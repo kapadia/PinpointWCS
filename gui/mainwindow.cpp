@@ -81,8 +81,8 @@ bool MainWindow::setupWorkspace()
 			return false;
 		
 		// Disconnect dropLabels from signal
-		disconnect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(loadImages()));
-		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(loadImages()));
+		disconnect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
+		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
 		
 		// Initialize the CoordinatePanels
 		fitsCoordPanel = new CoordinatePanel(fitsImage, ui.graphicsView_1);
@@ -174,8 +174,8 @@ bool MainWindow::setupWorkspace()
 		connect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
 		
 		// TODO: Change the receiver to the data model
-		connect(fitsScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
-		connect(epoScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
+		connect(fitsScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
+		connect(epoScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
 		// TODO: Testing new table delegate
 //		connect(tableDelegate, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
 		

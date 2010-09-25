@@ -49,6 +49,8 @@ public:
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
+	bool setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
+	bool updateData(CoordinateMarker *marker, const QVariant &oldValue, int role=Qt::EditRole);
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex());
@@ -60,8 +62,8 @@ public:
 	QList<QPointF> epoCoords;
 
 public slots:
-	bool setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
-	bool updateData(GraphicsScene *scene, const QVariant &newValue, const QVariant &oldValue, int role=Qt::EditRole);
+	void setData(GraphicsScene *s, QPointF coord);
+	void updateData(CoordinateMarker *m, QPointF coord);
 	
 protected:
 	void emitDataChanged(const QModelIndex &index1, const QModelIndex &index2);
