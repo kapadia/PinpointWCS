@@ -107,7 +107,6 @@ private slots:
 	void stretch(QAction *action);
 	void addMarker(GraphicsScene *scene, QPointF pos);
 	void updateCoordPanelProperties();
-	void itemMoved(CoordinateMarker *movedItem, const QPointF &moveStartPosition);
 	void enableExport();
 	void computeWCS();
 	

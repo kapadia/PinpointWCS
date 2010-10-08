@@ -92,6 +92,9 @@ void AddCommand::redo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
+	
+	// FIXME: Testing CoordinateMarker
+	qDebug() << marker;
 }
 
 
@@ -124,7 +127,7 @@ void AddCommand::undo()
 	}
 	
 	// TODO: Enable ComputeWCS
-	dataModel->computeMapping();
+//	dataModel->computeMapping();
 	
 	// Remove CoordinateMarker from GraphicsScene
 	scene->removeItem(marker);
@@ -133,6 +136,9 @@ void AddCommand::undo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
+	
+	// FIXME: Testing CoordinateMarker
+	qDebug() << marker;
 }
 
 
@@ -149,6 +155,7 @@ MoveCommand::MoveCommand(CoordinateMarker *m, const QVariant &oldValue, Coordina
 
 bool MoveCommand::mergeWith(const QUndoCommand *command)
 {
+	qDebug() << "mergeWith";
 	const MoveCommand *moveCommand = static_cast<const MoveCommand*>(command);
 	CoordinateMarker *item = moveCommand->marker;
 	
@@ -161,6 +168,7 @@ bool MoveCommand::mergeWith(const QUndoCommand *command)
 
 void MoveCommand::undo()
 {
+	qDebug() << "MoveCommand undo()";
 	// Initialize some indices
 	QModelIndex index1;
 	QModelIndex index2;
@@ -183,13 +191,17 @@ void MoveCommand::undo()
 	
 	// Move marker to old position
 	marker->setPos(oldPos);
-	marker->scene()->update();
+	marker->show();
+	scene->update();
 	
 	// TODO: Enable ComputeWCS
 //	dataModel->computeMapping();
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
+	
+	// FIXME: Testing CoordinateMarker
+	qDebug() << marker;
 }
 
 void MoveCommand::redo()
@@ -200,7 +212,7 @@ void MoveCommand::redo()
 	
 	// Get the row of the data
 	int row = marker->row;
-	qDebug() << row;
+	qDebug() << "MoveCommand redo()";
 	
 	if (scene->reference)
 	{
@@ -216,13 +228,16 @@ void MoveCommand::redo()
 	}
 	
 	// TODO: Enable ComputeWCS
-	dataModel->computeMapping();
+//	dataModel->computeMapping();
 	
 	// Move the marker to the new position
 	marker->setPos(newPos);
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
+	
+	// FIXME: Testing CoordinateMarker
+	qDebug() << marker;
 }
 
 

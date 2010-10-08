@@ -176,8 +176,6 @@ bool MainWindow::setupWorkspace()
 		// TODO: Change the receiver to the data model
 		connect(fitsScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
 		connect(epoScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
-		// TODO: Testing new table delegate
-//		connect(tableDelegate, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), this, SLOT(itemMoved(CoordinateMarker*, QPointF)));
 		
 		// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
 		connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
@@ -272,15 +270,6 @@ void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
 	
 	// TODO: Testing data model
 	dataModel->setData(scene, QModelIndex(), pos, Qt::EditRole);
-}
-
-
-
-void MainWindow::itemMoved(CoordinateMarker *movedItem, const QPointF &oldPosition)
-{
-	qDebug() << "itemMoved";
-	// TODO: Testing data model
-	dataModel->updateData(movedItem, oldPosition, Qt::EditRole);
 }
 
 
