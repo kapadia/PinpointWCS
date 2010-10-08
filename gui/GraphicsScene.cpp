@@ -72,7 +72,10 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (movingItem != 0 && event->button() == Qt::LeftButton) {
         if (oldPos != movingItem->pos())
-            emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(movingItem), oldPos);
+		{
+			emit itemMoved(this, movingItem->pos(), oldPos);
+//          emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(movingItem), oldPos);
+		}
         movingItem = 0;
     }
 	
@@ -95,8 +98,9 @@ void GraphicsScene::updatePixmap(QPixmap *pm)
 }
 
 
-void GraphicsScene::signalItemMoved(CoordinateMarker *m, const QPointF &oldPos)
+void GraphicsScene::signalItemMoved(CoordinateMarker *m, QPointF oldPos)
 {
 	// Broadcast the item moved and its old position
-	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(m), oldPos);
+//	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(m), oldPos);
+	emit itemMoved(this, m->scenePos(), oldPos);
 }

@@ -143,13 +143,14 @@ void AddCommand::undo()
 
 
 
-MoveCommand::MoveCommand(CoordinateMarker *m, const QVariant &oldValue, CoordinateModel *model)
+MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVariant &oldValue, CoordinateModel *model)
+//MoveCommand::MoveCommand(CoordinateMarker *m, const QVariant &oldValue, CoordinateModel *model)
 : QUndoCommand()
 {
-	marker = m;
-	newPos = m->scenePos();
+	newPos = newValue.toPointF();
 	oldPos = oldValue.toPointF();
-	scene = qobject_cast<GraphicsScene*> (marker->scene());
+	scene = s;
+	marker = qgraphicsitem_cast<CoordinateMarker *>(scene->itemAt(newPos));
 	dataModel = model;
 }
 
@@ -210,7 +211,10 @@ void MoveCommand::redo()
 	QModelIndex index1;
 	QModelIndex index2;
 	
-	// Get the row of the data
+	// If the marker is destroyed by AddCommand::undo(), this code will find the marker using coordinates (shoddy...)
+	if (scene->itemAt(oldPos)->pos() != QPointF(0, 0))
+		marker = qgraphicsitem_cast<CoordinateMarker *>(scene->itemAt(oldPos));
+	
 	int row = marker->row;
 	qDebug() << "MoveCommand redo()";
 	

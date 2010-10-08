@@ -52,7 +52,8 @@ class MoveCommand : public QUndoCommand
 public:
 	enum { Id = 1234 };
 	
-	MoveCommand(CoordinateMarker *m, const QVariant &oldValue, CoordinateModel *model);
+//	MoveCommand(CoordinateMarker *m, const QVariant &oldValue, CoordinateModel *model);
+	MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVariant &oldValue, CoordinateModel *model);
 	void undo();
 	void redo();
 	bool mergeWith(const QUndoCommand *command);

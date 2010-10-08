@@ -174,8 +174,10 @@ bool MainWindow::setupWorkspace()
 		connect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
 		
 		// TODO: Change the receiver to the data model
-		connect(fitsScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
-		connect(epoScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
+//		connect(fitsScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
+//		connect(epoScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
+		connect(fitsScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
+		connect(epoScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
 		
 		// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
 		connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
