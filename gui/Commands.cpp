@@ -227,6 +227,7 @@ void MoveCommand::redo()
 	
 	// Move the marker to the new position
 	marker->setPos(newPos);
+	scene->update();
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);

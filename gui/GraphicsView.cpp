@@ -65,20 +65,21 @@ void GraphicsView::keyPressEvent(QKeyEvent *event)
 	{
 		rotate(5);
 		rotateFactor = (rotateFactor + 5) % 360;
-		qDebug() << transform().determinant();
 	}
 	else if(event->modifiers() == Qt::ControlModifier && event->key() == Qt::Key_R)
 	{
 		rotate(-5);
 		rotateFactor = (rotateFactor - 5) % 360;
-		qDebug() << transform().determinant();
 	}
+	QGraphicsView::keyPressEvent(event);
+//	qDebug() << transform().determinant();
 }
 
 void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Space)
 		setDragMode(NoDrag);
+	QGraphicsView::keyReleaseEvent(event);
 }
 
 
@@ -102,10 +103,18 @@ void GraphicsView::scaleView(qreal scaleFactor)
 {
 	qreal factor = matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
 	if (factor < 0.07 || factor > 100)
-		return;
-	
-	qDebug() << "Viewport Size: " << viewport()->size();
-	
+		return;	
+//	qDebug() << "Viewport Size: " << viewport()->size();
 	scale(scaleFactor, scaleFactor);
 }
 
+float GraphicsView::scaling()
+{
+	// Get transform matrix
+	QTransform t = transform();
+	
+	// Undo any rotations
+	t.rotate(-rotateFactor);
+	
+	return t.m11();
+}

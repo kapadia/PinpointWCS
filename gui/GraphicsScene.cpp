@@ -86,6 +86,18 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
+
+void GraphicsScene::keyPressEvent(QKeyEvent *event)
+{
+	QGraphicsScene::keyPressEvent(event);
+}
+
+void GraphicsScene::keyReleaseEvent(QKeyEvent *event)
+{
+	QGraphicsScene::keyReleaseEvent(event);
+}
+
+
 void GraphicsScene::toggleClickable(bool sendSignal)
 {
 	// Toggle the clickable variable for both GraphicsScenes

@@ -29,7 +29,6 @@ class CoordinateMarker : public QGraphicsItem
 	
 public:
 	CoordinateMarker(QGraphicsItem *parent = 0);
-	CoordinateMarker(float r, QGraphicsItem *parent = 0);
 	~CoordinateMarker();
 	int row;
 	
@@ -41,10 +40,18 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+	void wheelEvent(QGraphicsSceneWheelEvent *event);
+	void keyPressEvent(QKeyEvent *event);
+	void keyReleaseEvent(QKeyEvent *event);
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 	
 private:
+	float setRadius();
+	float setPenWidth();
 	float radius;
+	float penWidth;
+	float measure;
+	float scale;
 	
 };
 

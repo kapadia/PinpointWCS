@@ -18,20 +18,21 @@
  */
 
 #include <QtGui>
-#include <CoordinateMarker.h>
+#include "CoordinateMarker.h"
 #include "GraphicsScene.h"
+#include "GraphicsView.h"
 
 CoordinateMarker::CoordinateMarker(QGraphicsItem *parent)
 : QGraphicsItem(parent)
 {
 	qDebug() << "Initializing CoordinateMarker object ...";
+	row = NULL;
+	setZValue(2);
+	setOpacity(100.0);
+	setSelected(true);
+	setFocus();
+	setEnabled(true);
 	radius = 1;
-	row = NULL;
-	setZValue(2);
-	setOpacity(100.0);
-	setSelected(true);
-	setFocus();
-	setEnabled(true);
 	
 	// Set some flags
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -39,49 +40,23 @@ CoordinateMarker::CoordinateMarker(QGraphicsItem *parent)
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
 	setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 	setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
-}
-
-
-CoordinateMarker::CoordinateMarker(float r, QGraphicsItem *parent)
-: QGraphicsItem(parent)
-{
-	qDebug() << "Initializing CoordinateMarker object ...";
-	radius = r;
-	row = NULL;
-	setZValue(2);
-	setOpacity(100.0);
-	setSelected(true);
-	setFocus();
-	setEnabled(true);
-	
-	// Set some flags
-	setFlag(QGraphicsItem::ItemIsSelectable, true);
-	setFlag(QGraphicsItem::ItemIsMovable, true);
-	setFlag(QGraphicsItem::ItemIsFocusable, true);
-	setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
-	setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 }
 
 CoordinateMarker::~CoordinateMarker() {}
 
 QRectF CoordinateMarker::boundingRect() const
 {
-	float length = radius/30. + radius;
-	return QRectF(-1*length, -1*length, 2*length, 2*length);
+	return QRectF(-radius-penWidth, -radius-penWidth, 2*radius+2*penWidth+1, 2*radius+2*penWidth+1);
 }
 
 void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {	
 	QPen pen;
 	
-	// FIXME: Testing DPI information
-	qDebug() << "DPI Info";
-	qDebug() << scene()->views().at(0)->physicalDpiX();
-	qDebug() << scene()->views().at(0)->physicalDpiY();
-	
 	// Compute width based on zoom factor of graphics view
-	double x = scene()->views().at(0)->transform().determinant();
-	pen.setWidthF(std::max((-0.75/4.5)*(x-1)+1.25, 0.2));
+	radius = setRadius();
+	penWidth = setPenWidth();
+	pen.setWidthF(penWidth);
 	
 	// Set selected state style
 	if (option->state & QStyle::State_Selected)
@@ -100,7 +75,7 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	}
 	painter->setBrush(Qt::NoBrush);
 	
-	// Draw an slightly transparent circle and crosshair
+	// Draw a slightly transparent circle and crosshair
 	painter->drawEllipse(-radius/2, -radius/2, radius, radius);
 }
 
@@ -118,9 +93,31 @@ void CoordinateMarker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void CoordinateMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
+	scene()->update();
     update();
 }
 
+
+void CoordinateMarker::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+	prepareGeometryChange();
+	QGraphicsItem::wheelEvent(event);
+}
+
+void CoordinateMarker::keyPressEvent(QKeyEvent *event)
+{
+	setFlag(QGraphicsItem::ItemIsMovable, false);
+	setFlag(QGraphicsItem::ItemIsSelectable, false);
+	QGraphicsItem::keyPressEvent(event);
+}
+
+void CoordinateMarker::keyReleaseEvent(QKeyEvent *event)
+{
+	setFlag(QGraphicsItem::ItemIsMovable, true);
+	setFlag(QGraphicsItem::ItemIsSelectable, true);
+	QGraphicsItem::keyReleaseEvent(event);
+}
+	
 QVariant CoordinateMarker::itemChange(GraphicsItemChange change, const QVariant &value)
 {
 	/*
@@ -132,3 +129,19 @@ QVariant CoordinateMarker::itemChange(GraphicsItemChange change, const QVariant 
 	 */
 	return QGraphicsItem::itemChange(change, value);
 }
+
+float CoordinateMarker::setRadius()
+{
+	measure = qobject_cast<GraphicsScene*> (scene())->measure;
+	scale = qobject_cast<GraphicsView*> (scene()->views().at(0))->scaling();
+	if (scale < 1)
+		return std::min(0.04*measure/scale, 0.1*measure);
+	
+	return std::max(0.04*measure/scale, 0.04*measure);
+}
+
+float CoordinateMarker::setPenWidth()
+{
+	return std::max(0.02*radius, 0.1);
+}
+

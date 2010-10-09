@@ -18,10 +18,11 @@
  */
 
 #include "CoordinateDelegate.h"
-#include <QDoubleSpinBox>
 #include "CoordinateModel.h"
 #include "GraphicsScene.h"
+#include <QDoubleSpinBox>
 #include <QDebug>
+
 
 CoordinateDelegate::CoordinateDelegate(QObject *parent)
 : QItemDelegate(parent) {}
@@ -75,7 +76,7 @@ void CoordinateDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 {
 
 	// Cast the model as a CoordinateModel
-	const CoordinateModel2 *model = qobject_cast<const CoordinateModel2*> (index.model());
+	const CoordinateModel *model = qobject_cast<const CoordinateModel*> (index.model());
 	QVariant var = model->data(index, Qt::DisplayRole);
 	double value = var.toDouble();
 	
@@ -86,7 +87,7 @@ void CoordinateDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 
 void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {		
-	
+	/*
 	// Cast the editor as a double spin box
 	QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
 	spinBox->interpretText();
@@ -95,13 +96,15 @@ void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 	double value = spinBox->value();
 	
 	// Cast the model as a CoordinateModel and set the data
-	CoordinateModel2 *m = qobject_cast<CoordinateModel2*>(model);
+	CoordinateModel *m = qobject_cast<CoordinateModel*>(model);
 	
 	// FIXME: Testing the index variable
 	qDebug() << index.row() << "\t" << index.column();
 	
-	// Use the QModelIndex to locate the corresponding CoordinateMarker in the data model
-	QList< QPair<CoordinateMarker*, CoordinateMarker*> > l = m->listOfMarkerPairs;
+	// Use the QModelIndex to locate the corresponding QPointF in the data model
+	QList<QPointF> refCoords = m->refCoords;
+	QList<QPointF> epoCoords = m->epoCoords;
+
 	QPair<CoordinateMarker*, CoordinateMarker*> p = l.at(index.row());
 	CoordinateMarker *marker;
 	QPointF oldPosition;
@@ -136,6 +139,7 @@ void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 	marker->setPos(newPosition);
 //	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(movingItem), oldPos);
 	emit itemMoved(marker, oldPosition);
+	 */
 }
 
 QSize CoordinateDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
