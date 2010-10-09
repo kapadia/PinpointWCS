@@ -19,6 +19,7 @@
 
 #include <QtGui>
 #include "GraphicsScene.h"
+#include <math.h>
 
 GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 : QGraphicsScene(parent)
@@ -26,6 +27,9 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 	reference = ref;
 	movingItem = 0;
 	pixmap = addPixmap(pix);
+	
+	// Compute the measure of the pixmap
+	measure = sqrt(pix.width() * pix.height());
 	
 	if (reference)
 		clickable = true;

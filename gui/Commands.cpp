@@ -92,9 +92,6 @@ void AddCommand::redo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
-	
-	// FIXME: Testing CoordinateMarker
-	qDebug() << marker;
 }
 
 
@@ -136,9 +133,6 @@ void AddCommand::undo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
-	
-	// FIXME: Testing CoordinateMarker
-	qDebug() << marker;
 }
 
 
@@ -200,9 +194,6 @@ void MoveCommand::undo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
-	
-	// FIXME: Testing CoordinateMarker
-	qDebug() << marker;
 }
 
 void MoveCommand::redo()
@@ -239,9 +230,6 @@ void MoveCommand::redo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
-	
-	// FIXME: Testing CoordinateMarker
-	qDebug() << marker;
 }
 
 

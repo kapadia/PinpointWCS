@@ -74,6 +74,11 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 {	
 	QPen pen;
 	
+	// FIXME: Testing DPI information
+	qDebug() << "DPI Info";
+	qDebug() << scene()->views().at(0)->physicalDpiX();
+	qDebug() << scene()->views().at(0)->physicalDpiY();
+	
 	// Compute width based on zoom factor of graphics view
 	double x = scene()->views().at(0)->transform().determinant();
 	pen.setWidthF(std::max((-0.75/4.5)*(x-1)+1.25, 0.2));

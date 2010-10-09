@@ -188,7 +188,6 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 			continue;
 		}
 		
-		
 		// Calibrate Image
 		if ( !calibrateImage(LINEAR_STRETCH, vmin, vmax) )
 			continue;

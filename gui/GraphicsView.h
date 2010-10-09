@@ -35,6 +35,9 @@ public:
 	void keyReleaseEvent(QKeyEvent *event);
 	void enterEvent(QEvent *event);
 	void leaveEvent(QEvent *event);
+	
+	// Attributes
+	int rotateFactor;
 
 protected:
 	// Methods

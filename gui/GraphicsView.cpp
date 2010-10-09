@@ -39,6 +39,9 @@ GraphicsView::GraphicsView(QWidget *parent)
 	
 	// Adjust the background color
 	setBackgroundBrush(QBrush(QColor(30, 30, 30)));
+	
+	// Set initial conditions
+	rotateFactor = 0;
 }
 
 GraphicsView::~GraphicsView() {}
@@ -61,11 +64,13 @@ void GraphicsView::keyPressEvent(QKeyEvent *event)
 	else if(event->modifiers() == Qt::NoModifier && event->key() == Qt::Key_R)
 	{
 		rotate(5);
+		rotateFactor = (rotateFactor + 5) % 360;
 		qDebug() << transform().determinant();
 	}
 	else if(event->modifiers() == Qt::ControlModifier && event->key() == Qt::Key_R)
 	{
 		rotate(-5);
+		rotateFactor = (rotateFactor - 5) % 360;
 		qDebug() << transform().determinant();
 	}
 }
@@ -99,8 +104,7 @@ void GraphicsView::scaleView(qreal scaleFactor)
 	if (factor < 0.07 || factor > 100)
 		return;
 	
-	qDebug() << transform().m11();
-	qDebug() << transform().m22();
+	qDebug() << "Viewport Size: " << viewport()->size();
 	
 	scale(scaleFactor, scaleFactor);
 }

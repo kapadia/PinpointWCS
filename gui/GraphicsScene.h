@@ -32,6 +32,7 @@ public:
 	GraphicsScene(QPixmap pix, bool ref, QObject *parent = 0);
 	~GraphicsScene();
 	bool reference;
+	float measure;
 	void signalItemMoved(CoordinateMarker *m, QPointF oldPos);
 		
 protected:

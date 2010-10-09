@@ -201,15 +201,30 @@ bool MainWindow::setupWorkspace()
 void MainWindow::stretch(QAction *action)
 {
 	if (action == ui.actionLinear_Stretch)
-		fitsImage->setStretch(0);
+	{
+		if (fitsImage->stretch != LINEAR_STRETCH)
+			fitsImage->setStretch(LINEAR_STRETCH);
+	}
 	else if (action == ui.actionLogarithm_Stretch)
-		fitsImage->setStretch(1);
+	{
+		if (fitsImage->stretch != LOG_STRETCH)
+			fitsImage->setStretch(LOG_STRETCH);
+	}
 	else if (action == ui.actionSquare_Root_Stretch)
-		fitsImage->setStretch(2);
+	{
+		if (fitsImage->stretch != SQRT_STRETCH)
+			fitsImage->setStretch(SQRT_STRETCH);
+	}
 	else if (action == ui.actionHyperbolic_Sine_Stretch)
-		fitsImage->setStretch(3);
+	{
+		if (fitsImage->stretch != ARCSINH_STRETCH)
+			fitsImage->setStretch(ARCSINH_STRETCH);
+	}
 	else if (action == ui.actionPower_Stretch)
-		fitsImage->setStretch(4);		
+	{
+		if (fitsImage->stretch != POWER_STRETCH)
+			fitsImage->setStretch(POWER_STRETCH);
+	}
 }
 
 

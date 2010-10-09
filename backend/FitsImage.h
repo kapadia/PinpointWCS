@@ -51,6 +51,7 @@ public:
 	bool downsampled;
 	int M;
 	float* imagedata;
+	int stretch;
 	
 	// Public Methods
 	QPointF fpix2pix(QPointF fpix);
@@ -76,7 +77,6 @@ private:
 	fitsfile *fptr;
 	int status, wcsstatus;
 	int numhdus, numimgs, naxis, hdutype;
-	int stretch;
 	long width, height;
 	long numelements;
 	long* fpixel;
