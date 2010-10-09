@@ -24,8 +24,12 @@
 #include <QDebug>
 
 
-CoordinateDelegate::CoordinateDelegate(QObject *parent)
-: QItemDelegate(parent) {}
+CoordinateDelegate::CoordinateDelegate(GraphicsScene *s1, GraphicsScene *s2, QObject *parent)
+: QItemDelegate(parent)
+{
+	fitsScene = s1;
+	epoScene = s2;
+}
 
 
 QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -86,8 +90,11 @@ void CoordinateDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 }
 
 void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{		
-	/*
+{	
+	// Boolean to determine corresponding scene of data
+	bool scene;
+	bool broadcast = true;
+	
 	// Cast the editor as a double spin box
 	QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
 	spinBox->interpretText();
@@ -98,18 +105,56 @@ void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 	// Cast the model as a CoordinateModel and set the data
 	CoordinateModel *m = qobject_cast<CoordinateModel*>(model);
 	
-	// FIXME: Testing the index variable
-	qDebug() << index.row() << "\t" << index.column();
-	
 	// Use the QModelIndex to locate the corresponding QPointF in the data model
 	QList<QPointF> refCoords = m->refCoords;
 	QList<QPointF> epoCoords = m->epoCoords;
 
-	QPair<CoordinateMarker*, CoordinateMarker*> p = l.at(index.row());
-	CoordinateMarker *marker;
+//	QPair<CoordinateMarker*, CoordinateMarker*> p = l.at(index.row());
+//	CoordinateMarker *marker;
 	QPointF oldPosition;
 	QPointF newPosition;
 	
+	switch (index.column()) {
+		case 0:
+			oldPosition = refCoords.at(index.row());
+			newPosition = QPointF(oldPosition);
+			newPosition.setX(value);
+			scene = true;
+			break;
+		case 1:
+			oldPosition = refCoords.at(index.row());
+			newPosition = QPointF(oldPosition);
+			newPosition.setY(value);
+			scene = true;
+			break;
+		case 2:
+			oldPosition = epoCoords.at(index.row());
+			if (oldPosition == QPointF(-1, -1))
+				broadcast = false;
+			newPosition = QPointF(oldPosition);
+			newPosition.setX(value);
+			scene = false;
+			break;
+		case 3:
+			oldPosition = epoCoords.at(index.row());
+			if (oldPosition == QPointF(-1, -1))
+				broadcast = false;
+			newPosition = QPointF(oldPosition);
+			newPosition.setY(value);
+			scene = false;
+			break;
+	}
+	
+	// Broadcast change of data
+	if (broadcast)
+	{
+		if (scene == true)
+			emit itemMoved(fitsScene, newPosition, oldPosition);
+		else
+			emit itemMoved(epoScene, newPosition, oldPosition);
+	}
+	
+	/*
 	switch (index.column()) {
 		case 0:
 			marker = p.first;
@@ -136,10 +181,10 @@ void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 			newPosition.setY(value);
 			break;
 	}
-	marker->setPos(newPosition);
-//	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(movingItem), oldPos);
-	emit itemMoved(marker, oldPosition);
 	 */
+//	marker->setPos(newPosition);
+//	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(movingItem), oldPos);
+//	emit itemMoved(marker, oldPosition);
 }
 
 QSize CoordinateDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

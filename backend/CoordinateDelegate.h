@@ -21,14 +21,14 @@
 #define COORDINATE_DELEGATE_H
 
 #include <QItemDelegate>
-#include "CoordinateMarker.h"
+#include "GraphicsScene.h"
 
 class CoordinateDelegate : public QItemDelegate
 {
 	Q_OBJECT
 	
 public:
-	CoordinateDelegate(QObject *parent = 0);
+	CoordinateDelegate(GraphicsScene *s1, GraphicsScene *s2, QObject *parent = 0);
 	QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 	void setEditorData(QWidget *editor, const QModelIndex &index) const;
@@ -36,7 +36,11 @@ public:
 	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 	
 signals:
-	void itemMoved(CoordinateMarker *movedItem, const QPointF &movedFromPosition) const;
+	void itemMoved(GraphicsScene *s, const QPointF &newPosition, const QPointF &oldPosition) const;
+	
+private:
+	GraphicsScene *fitsScene;
+	GraphicsScene *epoScene;
 	
 };
 

@@ -89,7 +89,7 @@ bool MainWindow::setupWorkspace()
 		epoCoordPanel = new CoordinatePanel(epoImage, ui.graphicsView_2);
 		
 		// Initialize the CoordinateTableDialog
-		tableDelegate = new CoordinateDelegate(this);
+		tableDelegate = new CoordinateDelegate(fitsScene, epoScene, this);
 		coordinateTableDialog = new CoordinateTableDialog(this);
 		coordinateTableDialog->ui.coordinateTable->setModel(dataModel);
 		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
@@ -166,18 +166,15 @@ bool MainWindow::setupWorkspace()
 		connect(epoScene, SIGNAL(mousePositionChanged(QPointF)), epoCoordPanel, SLOT(updateCoordinates(QPointF)));
 		
 		// Connect yet more signals -- para comunicación entre los GraphicsScenes
-		// TODO: Change the receiver to the data model
 		connect(fitsScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), dataModel, SLOT(setData(GraphicsScene*, QPointF)));
 		connect(epoScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), dataModel, SLOT(setData(GraphicsScene*, QPointF)));
 		
 		connect(fitsScene, SIGNAL(toggleNeighborScene(bool)), epoScene, SLOT(toggleClickable(bool)));
 		connect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
 		
-		// TODO: Change the receiver to the data model
-//		connect(fitsScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
-//		connect(epoScene, SIGNAL(itemMoved(CoordinateMarker*, QPointF)), dataModel, SLOT(updateData(CoordinateMarker*, QPointF)));
 		connect(fitsScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
 		connect(epoScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
+		connect(tableDelegate, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
 		
 		// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
 		connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
