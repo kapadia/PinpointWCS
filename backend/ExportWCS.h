@@ -24,13 +24,16 @@
 #include <QPixmap>
 #include "wcs.h"
 
-class ExportWCS {
+class ExportWCS : public QObject {
+	
+	Q_OBJECT
 	
 public:
 	ExportWCS(QPixmap *p);
 	~ExportWCS();
 	
-	// Methods
+public slots:
+	void testExport();
 	bool exportFITS(struct WorldCoor *wcs);
 	bool exportAVM(struct WorldCoor *wcs);
 	

@@ -162,20 +162,6 @@
      <string>Edit</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menuAdvanced">
-    <property name="title">
-     <string>Advanced</string>
-    </property>
-    <widget class="QMenu" name="menuPixel_Mapping">
-     <property name="title">
-      <string>Pixel Mapping</string>
-     </property>
-     <addaction name="actionLinear"/>
-     <addaction name="actionQuadratic"/>
-     <addaction name="actionCubic"/>
-    </widget>
-    <addaction name="menuPixel_Mapping"/>
-   </widget>
    <widget class="QMenu" name="menuExport">
     <property name="title">
      <string>Export</string>
@@ -205,7 +191,6 @@
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuImage"/>
-   <addaction name="menuAdvanced"/>
    <addaction name="menuExport"/>
    <addaction name="menuHelp"/>
   </widget>

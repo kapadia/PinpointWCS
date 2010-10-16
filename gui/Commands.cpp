@@ -223,6 +223,7 @@ void MoveCommand::redo()
 	
 	// Move the marker to the new position
 	marker->setPos(newPos);
+	marker->update();
 	scene->update();
 	
 	// Broadcast to ComputeWCS

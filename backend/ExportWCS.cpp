@@ -35,6 +35,11 @@ ExportWCS::~ExportWCS()
 {}
 
 
+void ExportWCS::testExport()
+{
+	qDebug() << "Test Export Slot.";
+}
+
 bool ExportWCS::exportFITS(struct WorldCoor *wcs)
 {
 	// Initialize variables
@@ -74,7 +79,7 @@ bool ExportWCS::exportFITS(struct WorldCoor *wcs)
 	// Initialize the values in the image using the QPixmaps
     for (jj = 0; jj < naxes[1]; jj++)
 		for (ii = 0; ii < naxes[0]; ii++)
-			imagedata[jj][ii] = qGray(im.pixel(ii, naxes[1]-jj));
+			imagedata[jj][ii] = qGray(im.pixel(ii, naxes[1]-jj-1));
 	
 	// First pixel and number of pixels to write
 	fpixel = 1;

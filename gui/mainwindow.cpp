@@ -95,13 +95,9 @@ bool MainWindow::setupWorkspace()
 		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
 		coordinateTableDialog->show();
 		
-		// Initialize the ComputeWCS object
+		// Initialize the ComputeWCS and ExportWCS objects
 		computewcs = new ComputeWCS(&(dataModel->refCoords), &(dataModel->epoCoords), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
-		
-// TODO: Testing FITS export ...
-		// Initialize ExportWCS object
-//		exportwcs = new ExportWCS(epoImage->pixmap);
-//		exportwcs->exportFITS(fitsImage->wcs);
+		exportwcs = new ExportWCS(epoImage->pixmap);
 		
 		// Flip the stacked widgets
 		ui.stackedWidget_1->setCurrentIndex(1);
@@ -187,8 +183,10 @@ bool MainWindow::setupWorkspace()
 		connect(computewcs, SIGNAL(wcs()), this, SLOT(enableExport()));
 		connect(computewcs, SIGNAL(nowcs()), this, SLOT(enableExport()));
 
-		// Testing export slot
-//		connect(dataModel, SIGNAL(compute()), this, SLOT(enableExport()));
+		// Connect signals -- export options
+		connect(ui.actionFITS_Image, SIGNAL(triggered(bool)), exportwcs, SLOT(testExport()));
+		// TODO: Testing FITS export ...
+		exportwcs->exportFITS(fitsImage->wcs);
 		
 		return true;
 	}
@@ -243,21 +241,6 @@ bool MainWindow::loadFitsImage(QString& filename)
 	fitsScene = new GraphicsScene(*(fitsImage->pixmap), true);
 	ui.graphicsView_1->setScene(fitsScene);
 	return true;
-}
-
-
-void MainWindow::computeWCS()
-{
-	computewcs->computeTargetWCS();
-	if (computewcs->epoWCS)
-	{
-		epoImage->wcs = computewcs->initTargetWCS();
-		epoWcsInfoPanel->loadWCS(*(epoImage->wcs));
-	}
-	else
-	{
-		epoWcsInfoPanel->clear();
-	}
 }
 
 
@@ -387,13 +370,39 @@ void MainWindow::enableExport()
 {
 	if (computewcs->epoWCS)
 	{
+		// Enable export menu items
 		ui.actionAstronomy_Visualization_Metadata->setEnabled(true);
 		ui.actionFITS_Image->setEnabled(true);
+		
+		// Create EPO WCS object and load WCS to panel
+		epoImage->wcs = computewcs->initTargetWCS();
+		epoWcsInfoPanel->loadWCS(*(epoImage->wcs));
+		
 	}
 	else
 	{
+		// Disable export menu items
 		ui.actionAstronomy_Visualization_Metadata->setEnabled(false);
 		ui.actionFITS_Image->setEnabled(false);
+		
+		// Destroy EPO WCS object and clear WCS from panel
+		epoImage->wcs = NULL;
+		epoWcsInfoPanel->clear();
+	}
+}
+
+
+void MainWindow::computeWCS()
+{
+	computewcs->computeTargetWCS();
+	if (computewcs->epoWCS)
+	{
+		epoImage->wcs = computewcs->initTargetWCS();
+		epoWcsInfoPanel->loadWCS(*(epoImage->wcs));
+	}
+	else
+	{
+		epoWcsInfoPanel->clear();
 	}
 }
 
