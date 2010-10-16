@@ -29,18 +29,22 @@
 #define _USE_MATH_DEFINES
 USING_PART_OF_NAMESPACE_EIGEN
 
-class ComputeWCS
+class ComputeWCS : public QObject
 {
+	
+	Q_OBJECT
+	
 public:
 	// Methods
-	ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *refWCS, double w, double h);
+	ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoor *refWCS, double w, double h);
 	~ComputeWCS();
-	
-	void computeTargetWCS();
 	struct WorldCoor* initTargetWCS();
 	
 	// Public Attributes
 	bool epoWCS;
+	
+public slots:
+	void computeTargetWCS();
 	
 private:
 	// Methods
@@ -56,7 +60,9 @@ private:
 	Vector2d epoToFits(Vector2d p);
 
 	// Attributes
-	QList< QPair<QPointF, QPointF> > *dataModel;
+	QList<QPointF> *refCoords;
+	QList<QPointF> *epoCoords;
+
 	int degree;
 	MatrixXd matrix;
 	VectorXd xvector;

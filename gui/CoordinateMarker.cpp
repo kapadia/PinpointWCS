@@ -21,6 +21,7 @@
 #include "CoordinateMarker.h"
 #include "GraphicsScene.h"
 #include "GraphicsView.h"
+#include "math.h"
 
 CoordinateMarker::CoordinateMarker(QGraphicsItem *parent)
 : QGraphicsItem(parent)
@@ -81,8 +82,8 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void CoordinateMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsItem::mousePressEvent(event);
     update();
+	QGraphicsItem::mousePressEvent(event);
 }
 
 void CoordinateMarker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -92,9 +93,9 @@ void CoordinateMarker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void CoordinateMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsItem::mouseReleaseEvent(event);
 	scene()->update();
     update();
+	QGraphicsItem::mouseReleaseEvent(event);
 }
 
 
@@ -134,15 +135,24 @@ float CoordinateMarker::setRadius()
 {
 	measure = qobject_cast<GraphicsScene*> (scene())->measure;
 	scale = qobject_cast<GraphicsView*> (scene()->views().at(0))->scaling();
-	if (scale < 1)
-		return std::min(0.04*measure/scale, 0.1*measure);
+	float a, b, c, xmin, xmax, rmin, rmax;
 	
-	return std::max(0.04*measure/scale, 0.04*measure);
+	rmin = 0.03*measure;
+	rmax = 0.3*measure;
+	xmin = measure/MAXZOOM;
+	xmax = measure/MINZOOM;
+	c = xmax-xmin;
+	a = (rmax-rmin)/c;
+	b = (rmin*xmax-rmax*xmin)/c;
+	if (scale > 2)
+		return a*(measure/2)+b;
+	return a*(measure/scale)+b;
 }
 
 float CoordinateMarker::setPenWidth()
 {
-	qDebug() << "Radius " << 0.02*radius;
-	return std::max(0.01*radius, 0.1);
+//	qDebug() << exp(0.001*radius);
+//	float s = std::max(0.04*measure/scale, 0.04*measure);
+	return 0.03*radius;
 }
 

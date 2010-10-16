@@ -102,9 +102,8 @@ void GraphicsView::wheelEvent(QWheelEvent *event)
 void GraphicsView::scaleView(qreal scaleFactor)
 {
 	qreal factor = matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
-	if (factor < 0.07 || factor > 100)
+	if (factor < MINZOOM || factor > MAXZOOM)
 		return;	
-//	qDebug() << "Viewport Size: " << viewport()->size();
 	scale(scaleFactor, scaleFactor);
 }
 

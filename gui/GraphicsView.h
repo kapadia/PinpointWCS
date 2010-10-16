@@ -24,6 +24,9 @@
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
 
+#define MINZOOM 0.07
+#define MAXZOOM 100
+
 class GraphicsView : public QGraphicsView
 {
 	Q_OBJECT

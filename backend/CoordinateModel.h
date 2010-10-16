@@ -50,7 +50,6 @@ public:
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 	bool setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
-//	bool updateData(CoordinateMarker *marker, const QVariant &oldValue, int role=Qt::EditRole);
 	bool updateData(GraphicsScene *scene, const QVariant &newValue, const QVariant &oldValue, int role=Qt::EditRole);
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -64,64 +63,16 @@ public:
 
 public slots:
 	void setData(GraphicsScene *s, QPointF coord);
-//	void updateData(CoordinateMarker *m, QPointF coord);
 	void updateData(GraphicsScene *scene, QPointF newCoord, QPointF oldCoord);
 	
 protected:
 	void emitDataChanged(const QModelIndex &index1, const QModelIndex &index2);
-	void computeMapping();
+	void computeWCS();
 	QPointF *p;
 	
 signals:
 	void compute();
 
 };
-
-
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
-
-
-class CoordinateModel2 : public QAbstractTableModel
-{
-	
-	Q_OBJECT
-	
-	friend class AddCommand2;
-	friend class MoveCommand2;
-	friend class CoordinateDelegate;
-	
-public:	
-	CoordinateModel2(QObject *parent=0);
-	CoordinateModel2(QList< QPair<CoordinateMarker*, CoordinateMarker*> > markerPairs, QObject *parent=0);
-	~CoordinateModel2();
-	
-	int rowCount(const QModelIndex &parent) const;
-	int columnCount(const QModelIndex &parent) const;
-	QVariant data(const QModelIndex &index, int role) const;
-	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-	Qt::ItemFlags flags(const QModelIndex &index) const;
-	bool setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
-	bool updateData(CoordinateMarker *item, const QVariant &value, int role=Qt::EditRole);
-	bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex());
-	bool removeRows(int position, int rows, const QModelIndex &index=QModelIndex());
-	QList< QPair<CoordinateMarker*, CoordinateMarker*> > getList();
-	QUndoStack *undoStack;
-	QList< QPair<CoordinateMarker*, CoordinateMarker*> > listOfMarkerPairs;
-	
-protected:
-	void emitDataChanged(const QModelIndex &index1, const QModelIndex &index2);
-	void computeMapping();
-	CoordinateMarker *defaultMarker;
-	
-signals:
-	void compute();
-	
-};
-
-
 
 #endif

@@ -76,10 +76,7 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (movingItem != 0 && event->button() == Qt::LeftButton) {
         if (oldPos != movingItem->pos())
-		{
 			emit itemMoved(this, movingItem->pos(), oldPos);
-//          emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(movingItem), oldPos);
-		}
         movingItem = 0;
     }
 	

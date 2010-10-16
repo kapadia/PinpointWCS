@@ -96,12 +96,11 @@ bool MainWindow::setupWorkspace()
 		coordinateTableDialog->show();
 		
 		// Initialize the ComputeWCS object
-//		computewcs = new ComputeWCS(&(dataModel2->listOfCoordinatePairs), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
+		computewcs = new ComputeWCS(&(dataModel->refCoords), &(dataModel->epoCoords), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
 		
+// TODO: Testing FITS export ...
 		// Initialize ExportWCS object
-		exportwcs = new ExportWCS(epoImage->pixmap);
-		
-		// TODO: Testing FITS export ...
+//		exportwcs = new ExportWCS(epoImage->pixmap);
 //		exportwcs->exportFITS(fitsImage->wcs);
 		
 		// Flip the stacked widgets
@@ -184,7 +183,7 @@ bool MainWindow::setupWorkspace()
 		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
 		
 		// Connect more signals -- communicate between data model and ComputeWCS object
-//		connect(dataModel, SIGNAL(compute()), this, SLOT(computeWCS()));
+		connect(dataModel, SIGNAL(compute()), computewcs, SLOT(computeTargetWCS()));
 		
 		// Testing export slot
 //		connect(dataModel, SIGNAL(compute()), this, SLOT(enableExport()));
@@ -244,48 +243,6 @@ bool MainWindow::loadFitsImage(QString& filename)
 	return true;
 }
 
-void MainWindow::addMarker(GraphicsScene *scene, QPointF pos)
-{
-	//
-	// TESTING CENTROID FITTING
-	//
-	/*
-	float *image;
-	image = (float *) malloc(9 * sizeof(float));
-	
-	// Convert QPoint to index
-	int row = floor(pos.x() + 0.5);
-	int col = floor(pos.y() + 0.5);
-	int width = fitsImage->naxisn[0];
-	long index = row * width + col;
-	
-	// Copy elements to 3x3 array
-	image[0] = fitsImage->imagedata[index-width-1];
-	image[1] = fitsImage->imagedata[index-width];
-	image[2] = fitsImage->imagedata[index-width+1];
-
-	image[3] = fitsImage->imagedata[index-1];
-	image[4] = fitsImage->imagedata[index];
-	image[5] = fitsImage->imagedata[index+1];
-	
-	image[6] = fitsImage->imagedata[index+width-1];
-	image[7] = fitsImage->imagedata[index+width];
-	image[8] = fitsImage->imagedata[index+width+1];
-	
-	float xcen;
-	float ycen;
-	PinpointWCSUtils::cen3x3(image, &xcen, &ycen);
-	qDebug() << "Centroid:";
-	qDebug() << xcen;
-	qDebug() << ycen;
-	pos += QPointF(xcen, ycen);
-	free(image);
-	 */
-	
-	// TODO: Testing data model
-	dataModel->setData(scene, QModelIndex(), pos, Qt::EditRole);
-}
-
 
 void MainWindow::computeWCS()
 {
@@ -299,11 +256,6 @@ void MainWindow::computeWCS()
 	{
 		epoWcsInfoPanel->clear();
 	}
-}
-
-void MainWindow::testSlot()
-{
-	qDebug() << "Test Slot";
 }
 
 
@@ -441,4 +393,10 @@ void MainWindow::enableExport()
 		ui.actionAstronomy_Visualization_Metadata->setEnabled(false);
 		ui.actionFITS_Image->setEnabled(false);
 	}
+}
+
+
+void MainWindow::testSlot()
+{
+	qDebug() << "Test Slot";
 }

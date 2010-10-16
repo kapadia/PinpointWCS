@@ -25,9 +25,11 @@
 #include "math.h"
 
 
-ComputeWCS::ComputeWCS(QList< QPair<QPointF, QPointF> > *m, struct WorldCoor *refWCS, double w, double h)
+ComputeWCS::ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoor *refWCS, double w, double h)
 {
-	dataModel = m;
+	qDebug() << "Initializing ComputeWCS ...";
+	refCoords = ref;
+	epoCoords = epo;
 	referenceWCS = refWCS;
 	epoWCS = false;
 	width = w;
@@ -58,8 +60,10 @@ void ComputeWCS::initializeMatrixVectors(int d)
 
 void ComputeWCS::computeTargetWCS()
 {
+
+	qDebug() << "Attempting to compute EPO WCS ...";
 	// Check if enough points have been selected
-	if (dataModel->size() >= 3 and dataModel->last().second != QPointF(-1, -1))
+	if (epoCoords->size() >= 3)
 	{
 		// Compute matrix and vectors
 		computeSums();
@@ -135,7 +139,12 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	cd[2] = cdmatrix(2);
 	cd[3] = cdmatrix(3);
 	
-	targetWCS = wcskinit(width, height, "RA--", "DEC-", crpix(0), crpix(1), crval(0), crval(1), cd, referenceWCS->cdelt[0], referenceWCS->cdelt[1], referenceWCS->rot, referenceWCS->equinox, referenceWCS->epoch);
+	targetWCS = wcskinit(width, height, "RA--", "DEC-",
+						 crpix(0), crpix(1), crval(0), crval(1),
+						 cd, referenceWCS->cdelt[0], referenceWCS->cdelt[1],
+						 referenceWCS->rot, referenceWCS->equinox, referenceWCS->epoch
+	);
+	
 	return targetWCS;
 }
 
@@ -168,10 +177,10 @@ void ComputeWCS::computeSums()
 	int ii;	
 	if (degree == 1)
 	{
-		for (ii=0; ii < dataModel->size(); ii++)
+		for (ii=0; ii < epoCoords->size(); ii++)
 		{
-			QPointF point1 = dataModel->at(ii).first;
-			QPointF point2 = dataModel->at(ii).second;
+			QPointF point1 = refCoords->at(ii);
+			QPointF point2 = epoCoords->at(ii);
 			point1.setY(referenceWCS->nypix - point1.y());
 			
 			// Set the base
@@ -186,10 +195,10 @@ void ComputeWCS::computeSums()
 	else if (degree == 2)
 	{
 		// Quadratic mapping
-		for (ii=0; ii < dataModel->size(); ii++)
+		for (ii=0; ii < epoCoords->size(); ii++)
 		{
-			QPointF point1 = dataModel->at(ii).first;
-			QPointF point2 = dataModel->at(ii).second;
+			QPointF point1 = refCoords->at(ii);
+			QPointF point2 = epoCoords->at(ii);
 			point1.setY(referenceWCS->nypix - point1.y());
 			
 			// Set the base
@@ -240,10 +249,10 @@ void ComputeWCS::computeSums()
 	else if (degree == 3)
 	{
 		// Cubic mapping
-		for (ii=0; ii < dataModel->size(); ii++)
+		for (ii=0; ii < epoCoords->size(); ii++)
 		{
-			QPointF point1 = dataModel->at(ii).first;
-			QPointF point2 = dataModel->at(ii).second;
+			QPointF point1 = refCoords->at(ii);
+			QPointF point2 = epoCoords->at(ii);
 			point1.setY(referenceWCS->nypix - point1.y());
 			
 			// Set the base
@@ -283,11 +292,11 @@ void ComputeWCS::computeResiduals()
 	
 	// Loop over the pairs stored in the data model
 	int ii;
-	for (ii=0; ii < dataModel->size(); ii++)
+	for (ii=0; ii < epoCoords->size(); ii++)
 	{
 		// Store the coordinate pairs
-		QPointF point1 = dataModel->at(ii).first;
-		QPointF point2 = dataModel->at(ii).second;
+		QPointF point1 = refCoords->at(ii);
+		QPointF point2 = epoCoords->at(ii);
 		point1.setY(referenceWCS->nypix - point1.y());
 		
 		// Map EPO coordinates to FITS coordinates

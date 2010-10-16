@@ -105,7 +105,6 @@ private slots:
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
 	void stretch(QAction *action);
-	void addMarker(GraphicsScene *scene, QPointF pos);
 	void updateCoordPanelProperties();
 	void enableExport();
 	void computeWCS();
