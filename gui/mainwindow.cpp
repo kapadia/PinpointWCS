@@ -184,9 +184,8 @@ bool MainWindow::setupWorkspace()
 		connect(computewcs, SIGNAL(nowcs()), this, SLOT(enableExport()));
 
 		// Connect signals -- export options
-		connect(ui.actionFITS_Image, SIGNAL(triggered(bool)), exportwcs, SLOT(testExport()));
-		// TODO: Testing FITS export ...
-		exportwcs->exportFITS(fitsImage->wcs);
+		connect(ui.actionFITS_Image, SIGNAL(triggered(bool)), exportwcs, SLOT(exportFITS()));
+		connect(ui.actionAstronomy_Visualization_Metadata, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVM()));
 		
 		return true;
 	}
@@ -374,10 +373,11 @@ void MainWindow::enableExport()
 		ui.actionAstronomy_Visualization_Metadata->setEnabled(true);
 		ui.actionFITS_Image->setEnabled(true);
 		
-		// Create EPO WCS object and load WCS to panel
+		// Create EPO WCS object and load WCS to panel and export object
 		epoImage->wcs = computewcs->initTargetWCS();
+		// TODO: Change method argument type
 		epoWcsInfoPanel->loadWCS(*(epoImage->wcs));
-		
+		exportwcs->setWCS(epoImage->wcs);
 	}
 	else
 	{
@@ -388,6 +388,7 @@ void MainWindow::enableExport()
 		// Destroy EPO WCS object and clear WCS from panel
 		epoImage->wcs = NULL;
 		epoWcsInfoPanel->clear();
+		exportwcs->clearWCS();
 	}
 }
 

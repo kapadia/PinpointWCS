@@ -35,13 +35,20 @@ ExportWCS::~ExportWCS()
 {}
 
 
-void ExportWCS::testExport()
+void ExportWCS::setWCS(struct WorldCoor *w)
 {
-	qDebug() << "Test Export Slot.";
+	wcs = w;
 }
 
-bool ExportWCS::exportFITS(struct WorldCoor *wcs)
+
+void ExportWCS::clearWCS()
 {
+	wcs = NULL;
+}
+
+
+bool ExportWCS::exportFITS()
+{	
 	// Initialize variables
 	fitsfile *fptr;
 	int status = 0;
@@ -173,7 +180,8 @@ bool ExportWCS::exportFITS(struct WorldCoor *wcs)
 }
 
 
-bool ExportWCS::exportAVM(struct WorldCoor *wcs)
+bool ExportWCS::exportAVM()
 {
+	
 	return true;
 }

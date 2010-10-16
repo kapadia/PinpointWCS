@@ -23,6 +23,8 @@
 
 #include <QPixmap>
 #include "wcs.h"
+#include "EpoImage.h"
+
 
 class ExportWCS : public QObject {
 	
@@ -31,15 +33,17 @@ class ExportWCS : public QObject {
 public:
 	ExportWCS(QPixmap *p);
 	~ExportWCS();
+	void setWCS(struct WorldCoor *w);
+	void clearWCS();
 	
 public slots:
-	void testExport();
-	bool exportFITS(struct WorldCoor *wcs);
-	bool exportAVM(struct WorldCoor *wcs);
+	bool exportFITS();
+	bool exportAVM();
 	
 private:
 	// Attributes
 	QPixmap *pixmap;
+	struct WorldCoor *wcs;
 };
 
 #endif
