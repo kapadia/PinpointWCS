@@ -67,7 +67,6 @@ public slots:
 	
 protected:
 	void emitDataChanged(const QModelIndex &index1, const QModelIndex &index2);
-	void computeWCS();
 	QPointF *p;
 	
 signals:

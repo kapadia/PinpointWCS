@@ -189,9 +189,3 @@ Qt::ItemFlags CoordinateModel::flags(const QModelIndex &index) const
 void CoordinateModel::emitDataChanged(const QModelIndex &index1, const QModelIndex &index2){
     emit dataChanged(index1, index2);
 }
-
-void CoordinateModel::computeWCS()
-{
-	qDebug() << "Broadcasting compute signal.";
-	emit compute();
-}

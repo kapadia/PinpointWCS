@@ -63,7 +63,8 @@ void ComputeWCS::computeTargetWCS()
 
 	qDebug() << "Attempting to compute EPO WCS ...";
 	// Check if enough points have been selected
-	if (epoCoords->size() >= 3)
+	qDebug() << epoCoords->last();
+	if (epoCoords->size() >= 3 && epoCoords->last() != QPointF(-1, -1))
 	{
 		// Compute matrix and vectors
 		computeSums();
@@ -115,8 +116,11 @@ void ComputeWCS::computeTargetWCS()
 		// EPO WCS calculated!!
 		epoWCS = true;
 		
-		std::cout.precision(15);
-		std::cout << "EPO WCS:" << std::endl;
+		// Broadcast computation
+		emit wcs();
+		
+//		std::cout.precision(15);
+		qDebug() << "*** EPO WCS ***";
 		std::cout << "Reference Pixel:\t" << crpix << std::endl;
 		std::cout << "Reference Value:\t" << crval << std::endl;
 		std::cout << "CD Matrix:\t" << cdmatrix << std::endl;
@@ -127,10 +131,12 @@ void ComputeWCS::computeTargetWCS()
 	}
 	
 	epoWCS = false;
+	emit nowcs();
 }
 
 struct WorldCoor* ComputeWCS::initTargetWCS()
 {
+	qDebug() << "initTargetWCS()";
 	struct WorldCoor *targetWCS;
 	double *cd;
 	cd = (double *) malloc(4 * sizeof(double));
@@ -181,6 +187,8 @@ void ComputeWCS::computeSums()
 		{
 			QPointF point1 = refCoords->at(ii);
 			QPointF point2 = epoCoords->at(ii);
+			
+			// Account the FITS flip
 			point1.setY(referenceWCS->nypix - point1.y());
 			
 			// Set the base

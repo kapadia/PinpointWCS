@@ -184,7 +184,9 @@ bool MainWindow::setupWorkspace()
 		
 		// Connect more signals -- communicate between data model and ComputeWCS object
 		connect(dataModel, SIGNAL(compute()), computewcs, SLOT(computeTargetWCS()));
-		
+		connect(computewcs, SIGNAL(wcs()), this, SLOT(enableExport()));
+		connect(computewcs, SIGNAL(nowcs()), this, SLOT(enableExport()));
+
 		// Testing export slot
 //		connect(dataModel, SIGNAL(compute()), this, SLOT(enableExport()));
 		

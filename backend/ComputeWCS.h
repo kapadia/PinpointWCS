@@ -46,6 +46,10 @@ public:
 public slots:
 	void computeTargetWCS();
 	
+signals:
+	void wcs();
+	void nowcs();
+	
 private:
 	// Methods
 	void initializeMatrixVectors(int d);
