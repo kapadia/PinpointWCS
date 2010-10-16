@@ -22,6 +22,7 @@
 #define EXPORTWCS_H
 
 #include <QPixmap>
+#include <QString>
 #include "wcs.h"
 #include "EpoImage.h"
 
@@ -31,7 +32,7 @@ class ExportWCS : public QObject {
 	Q_OBJECT
 	
 public:
-	ExportWCS(QPixmap *p);
+	ExportWCS(QString *f, QPixmap *p);
 	~ExportWCS();
 	void setWCS(struct WorldCoor *w);
 	void clearWCS();
@@ -43,6 +44,7 @@ public slots:
 private:
 	// Attributes
 	QPixmap *pixmap;
+	QString *filename;
 	struct WorldCoor *wcs;
 };
 

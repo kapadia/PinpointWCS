@@ -97,7 +97,7 @@ bool MainWindow::setupWorkspace()
 		
 		// Initialize the ComputeWCS and ExportWCS objects
 		computewcs = new ComputeWCS(&(dataModel->refCoords), &(dataModel->epoCoords), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
-		exportwcs = new ExportWCS(epoImage->pixmap);
+		exportwcs = new ExportWCS(&(ui.dropLabel_2->filepath), epoImage->pixmap);
 		
 		// Flip the stacked widgets
 		ui.stackedWidget_1->setCurrentIndex(1);

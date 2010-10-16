@@ -23,6 +23,7 @@
 // TODO: Program crashes when undo-ing many markers.  Problem seems to be with the QList associated with refCoords of the data model.
 // TODO: Pass *QPointFs not QPointFs
 // TODO: Quadratic and Cubic mappings (fix the math)
+// TODO: Finish XMP/AVM export.  There are some fields that are not enabled for export.
 
 
 int main(int argc, char *argv[])

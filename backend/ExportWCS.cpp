@@ -18,15 +18,36 @@
  */
 
 #include <iostream>
+#include <string>
 #include <QDebug>
 #include <QImage>
-#include "ExportWCS.h"
 #include "fitsio.h"
-#include <string>
+#include "version.h"
+#include "ExportWCS.h"
+
+// Must be defined to instantiate template classes
+#define TXMP_STRING_TYPE std::string 
+
+// Must be defined to give access to XMPFiles
+#define XMP_INCLUDE_XMPFILES 1 
+
+// Ensure XMP templates are instantiated
+#include "XMP.incl_cpp"
+
+// Provide access to the API
+#include "XMP.hpp"
+
+#include <iostream>
+#include <fstream>
+
+// Define the AVM namespace
+#define kXMP_NS_AVM "http://www.communicatingastronomy.org/avm/1.0/"
+#define kXMP_NS_CXC "www.cfa.harvard.edu/~akapadia/pinpointwcs/"
 
 
-ExportWCS::ExportWCS(QPixmap *p)
+ExportWCS::ExportWCS(QString *f, QPixmap *p)
 {
+	filename = f;
 	pixmap = p;
 }
 
@@ -182,6 +203,160 @@ bool ExportWCS::exportFITS()
 
 bool ExportWCS::exportAVM()
 {
+	qDebug() << "Attempting to export AVM ...";
+	
+	// FIXME: Put opened filename here.  Perhaps sent to this class on initialization
+	std::string f = filename->toStdString();
+//	std::string filename = std::string("/Users/akapadia/Projects/XMPTest/AVM-Tag-Test.tif");
+	
+	// Initialize the Adobe XMP Toolkit
+	if (!SXMPMeta::Initialize())
+		return false;
+	
+	// Set some options
+	XMP_OptionBits options = 0;
+#if UNIX_ENV
+	options |= kXMPFiles_ServerMode;
+#endif
+	
+	// Initialize SXMPFiles
+	if (SXMPFiles::Initialize(options))
+	{
+		try
+		{
+			// Put the good stuff here
+			
+			// Set some options that will be used to open the file
+			XMP_OptionBits opts = kXMPFiles_OpenForUpdate|kXMPFiles_OpenUseSmartHandler;
+			
+			// Initialize some variables
+			bool ok;
+			SXMPFiles epoimage;
+			
+			// Open the file
+			ok = epoimage.OpenFile(f, kXMP_UnknownFile, opts);
+			if (!ok)
+			{
+				qDebug() << "No smart handler available for the file.";
+				qDebug() << "Trying packet scanning ...";
+				
+				// Packet scanning technique
+				opts = kXMPFiles_OpenForUpdate|kXMPFiles_OpenUsePacketScanning;
+				ok = epoimage.OpenFile(f, kXMP_UnknownFile, opts);
+			}
+			
+			// Procede if file is open
+			if (ok)
+			{
+				qDebug() << "All is good.";
+				
+				// Create XMP object and read XMP from file
+				SXMPMeta avm;
+				epoimage.GetXMP(&avm);
+				
+				// Register namespaces
+				std::string avmprefix;
+				std::string cxcprefix;
+				SXMPMeta::RegisterNamespace(kXMP_NS_AVM, "avm", &avmprefix);
+				SXMPMeta::RegisterNamespace(kXMP_NS_CXC, "cxc", &cxcprefix);
+				
+				// Clean the existing Coordinate Metadata
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.CoordinateFrame");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.Equinox");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.ReferenceValue");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.ReferenceDimension");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.ReferencePixel");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.Scale");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.Rotation");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.CoordsystemProjection");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.Quality");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.Notes");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.FITSheader");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.CDMatrix");
+				
+				// Clean the existing CXC Metadata
+				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolver");
+				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolverVersion");
+				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolverRevision");
+				
+				// Initialize QStrings to format the WCS data
+				QString equinox;
+				QString crval1;
+				QString crval2;
+				QString crpix1;
+				QString crpix2;
+				QString cd11;
+				QString cd12;
+				QString cd21;
+				QString cd22;
+				QString spatialnotes;
+				
+				// Format values to specific digits
+				equinox.sprintf("%.1f", wcs->equinox);
+				crval1.sprintf("%.11f", wcs->xref);
+				crval2.sprintf("%.11f", wcs->yref);
+				crpix1.sprintf("%.11f", wcs->xrefpix);
+				crpix2.sprintf("%.11f", wcs->yrefpix);
+				cd11.sprintf("%.11f", wcs->cd[0]);
+				cd12.sprintf("%.11f", wcs->cd[1]);
+				cd21.sprintf("%.11f", wcs->cd[2]);
+				cd22.sprintf("%.11f", wcs->cd[3]);
+				spatialnotes.sprintf("World Coordinate System resolved using PinpointWCS version %s by the Chandra X-ray Center", VERSION);
+				
+				// Begin modifying AVM
+				XMP_OptionBits itemOptions;
+				itemOptions = kXMP_PropValueIsArray|kXMP_PropArrayIsOrdered;
+				
+				// Set the Coordinate Metadata
+				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.CoordinateFrame", "ICRS", 0);
+				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Equinox", equinox.toStdString(), 0);
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceValue", itemOptions, crval1.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceValue", itemOptions, crval2.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceDimension", itemOptions, "SPATIAL REFERENCE DIMENSION TEST");
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceDimension", itemOptions, "SPATIAL REFERENCE DIMENSION TEST");
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferencePixel", itemOptions, crpix1.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferencePixel", itemOptions, crpix2.toStdString());				
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, "SPATIAL SCALE TEST");
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, "SPATIAL SCALE TEST");
+				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Rotation", "SPATIAL ROTATION TEST", 0);
+				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.CoordsystemProjection", "TAN", 0);
+				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Quality", "Full", 0);
+				avm.SetLocalizedText(kXMP_NS_AVM, "avm:Spatial.Notes", "x-default", "x-default", spatialnotes.toStdString(), 0);
+//				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.FITSheader", "SPATIAL FITS HEADER TEST", 0);
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd11.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd12.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd21.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd22.toStdString());
+
+				
+				// Set CXC Metadata :)
+				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolver", "PinpointWCS developed by Amit Kapadia", 0);
+				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolverVersion", VERSION, 0);
+				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolverRevision", REVISION, 0);
+				
+				// Write XMP object to file
+				if (epoimage.CanPutXMP(avm))
+					epoimage.PutXMP(avm);
+				
+				// Close file
+				epoimage.CloseFile();
+				return true;
+			}
+		}
+		catch (XMP_Error &e)
+		{
+			std::cout << "Error: " << e.GetErrMsg() << std::endl;
+		}
+		
+		// Terminate the XMP Toolkit
+		SXMPFiles::Terminate();
+		SXMPMeta::Terminate();
+	}
+	else
+	{
+		qDebug() << "Could not intialize SXMPFiles!";
+		return false;
+	}
 	
 	return true;
 }
