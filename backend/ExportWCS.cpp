@@ -45,10 +45,11 @@
 #define kXMP_NS_CXC "www.cfa.harvard.edu/~akapadia/pinpointwcs/"
 
 
-ExportWCS::ExportWCS(QString *f, QPixmap *p)
+ExportWCS::ExportWCS(QString *f, QPixmap *p, ComputeWCS *cwcs)
 {
 	filename = f;
 	pixmap = p;
+	computewcs = cwcs;
 }
 
 
@@ -285,10 +286,14 @@ bool ExportWCS::exportAVM()
 				QString crval2;
 				QString crpix1;
 				QString crpix2;
+				QString scale;
+				QString orientation;
 				QString cd11;
 				QString cd12;
 				QString cd21;
 				QString cd22;
+				QString width;
+				QString height;
 				QString spatialnotes;
 				
 				// Format values to specific digits
@@ -297,11 +302,15 @@ bool ExportWCS::exportAVM()
 				crval2.sprintf("%.11f", wcs->yref);
 				crpix1.sprintf("%.11f", wcs->xrefpix);
 				crpix2.sprintf("%.11f", wcs->yrefpix);
+				scale.sprintf("%.11f", computewcs->scale);
+				orientation.sprintf("%.11f", computewcs->orientation);
 				cd11.sprintf("%.11f", wcs->cd[0]);
 				cd12.sprintf("%.11f", wcs->cd[1]);
 				cd21.sprintf("%.11f", wcs->cd[2]);
 				cd22.sprintf("%.11f", wcs->cd[3]);
-				spatialnotes.sprintf("World Coordinate System resolved using PinpointWCS version %s by the Chandra X-ray Center", VERSION);
+				width.sprintf("%.2f", computewcs->width);
+				height.sprintf("%.2f", computewcs->height);
+				spatialnotes.sprintf("World Coordinate System resolved using PinpointWCS %s revision %s by the Chandra X-ray Center", VERSION, REVISION);
 				
 				// Begin modifying AVM
 				XMP_OptionBits itemOptions;
@@ -312,13 +321,13 @@ bool ExportWCS::exportAVM()
 				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Equinox", equinox.toStdString(), 0);
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceValue", itemOptions, crval1.toStdString());
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceValue", itemOptions, crval2.toStdString());
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceDimension", itemOptions, "SPATIAL REFERENCE DIMENSION TEST");
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceDimension", itemOptions, "SPATIAL REFERENCE DIMENSION TEST");
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceDimension", itemOptions, width.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceDimension", itemOptions, height.toStdString());
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferencePixel", itemOptions, crpix1.toStdString());
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferencePixel", itemOptions, crpix2.toStdString());				
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, "SPATIAL SCALE TEST");
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, "SPATIAL SCALE TEST");
-				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Rotation", "SPATIAL ROTATION TEST", 0);
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, scale.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, scale.toStdString());
+				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Rotation", orientation.toStdString(), 0);
 				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.CoordsystemProjection", "TAN", 0);
 				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Quality", "Full", 0);
 				avm.SetLocalizedText(kXMP_NS_AVM, "avm:Spatial.Notes", "x-default", "x-default", spatialnotes.toStdString(), 0);

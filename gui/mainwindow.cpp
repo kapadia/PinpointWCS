@@ -93,11 +93,11 @@ bool MainWindow::setupWorkspace()
 		coordinateTableDialog = new CoordinateTableDialog(this);
 		coordinateTableDialog->ui.coordinateTable->setModel(dataModel);
 		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
-		coordinateTableDialog->show();
+//		coordinateTableDialog->show();
 		
 		// Initialize the ComputeWCS and ExportWCS objects
 		computewcs = new ComputeWCS(&(dataModel->refCoords), &(dataModel->epoCoords), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
-		exportwcs = new ExportWCS(&(ui.dropLabel_2->filepath), epoImage->pixmap);
+		exportwcs = new ExportWCS(&(ui.dropLabel_2->filepath), epoImage->pixmap, computewcs);
 		
 		// Flip the stacked widgets
 		ui.stackedWidget_1->setCurrentIndex(1);
@@ -107,6 +107,7 @@ bool MainWindow::setupWorkspace()
 		ui.actionInfo->setEnabled(true);
 		ui.actionCoordinates->setEnabled(true);
 		ui.actionImageAdjustments->setEnabled(true);
+		ui.actionCoordinate_Table->setEnabled(true);
 		
 		// Enable Image Menu items
 		ui.actionLinear_Stretch->setEnabled(true);
@@ -186,6 +187,9 @@ bool MainWindow::setupWorkspace()
 		// Connect signals -- export options
 		connect(ui.actionFITS_Image, SIGNAL(triggered(bool)), exportwcs, SLOT(exportFITS()));
 		connect(ui.actionAstronomy_Visualization_Metadata, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVM()));
+		
+		// And more signals ...
+		connect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(exec()));
 		
 		return true;
 	}

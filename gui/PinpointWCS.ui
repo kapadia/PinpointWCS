@@ -156,6 +156,8 @@
     <addaction name="actionCoordinates"/>
     <addaction name="actionImageAdjustments"/>
     <addaction name="actionInfo"/>
+    <addaction name="separator"/>
+    <addaction name="actionCoordinate_Table"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -189,8 +191,8 @@
     <addaction name="actionAbout_PinpointWCS"/>
    </widget>
    <addaction name="menuEdit"/>
-   <addaction name="menuView"/>
    <addaction name="menuImage"/>
+   <addaction name="menuView"/>
    <addaction name="menuExport"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -389,6 +391,17 @@
   <action name="actionAbout_PinpointWCS">
    <property name="text">
     <string>About PinpointWCS</string>
+   </property>
+  </action>
+  <action name="actionCoordinate_Table">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Coordinate Table</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
  </widget>

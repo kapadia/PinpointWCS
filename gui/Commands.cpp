@@ -92,6 +92,10 @@ void AddCommand::redo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
+	
+	// FIXME: Checking data model
+	qDebug() << dataModel->refCoords;
+	qDebug() << dataModel->epoCoords;
 }
 
 
@@ -133,6 +137,10 @@ void AddCommand::undo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
+	
+	// FIXME: Checking data model
+	qDebug() << dataModel->refCoords;
+	qDebug() << dataModel->epoCoords;
 }
 
 
@@ -193,6 +201,10 @@ void MoveCommand::undo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
+	
+	// FIXME: Checking data model
+	qDebug() << dataModel->refCoords;
+	qDebug() << dataModel->epoCoords;
 }
 
 void MoveCommand::redo()
@@ -231,4 +243,8 @@ void MoveCommand::redo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
+	
+	// FIXME: Checking data model
+	qDebug() << dataModel->refCoords;
+	qDebug() << dataModel->epoCoords;
 }

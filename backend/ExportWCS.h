@@ -25,6 +25,7 @@
 #include <QString>
 #include "wcs.h"
 #include "EpoImage.h"
+#include "ComputeWCS.h"
 
 
 class ExportWCS : public QObject {
@@ -32,7 +33,7 @@ class ExportWCS : public QObject {
 	Q_OBJECT
 	
 public:
-	ExportWCS(QString *f, QPixmap *p);
+	ExportWCS(QString *f, QPixmap *p, ComputeWCS *cwcs);
 	~ExportWCS();
 	void setWCS(struct WorldCoor *w);
 	void clearWCS();
@@ -46,6 +47,7 @@ private:
 	QPixmap *pixmap;
 	QString *filename;
 	struct WorldCoor *wcs;
+	ComputeWCS *computewcs;
 };
 
 #endif

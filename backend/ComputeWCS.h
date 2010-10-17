@@ -43,6 +43,15 @@ public:
 	// Public Attributes
 	bool epoWCS;
 	
+	// EPO Attributes
+	double width;
+	double height;
+	Vector2d crpix;
+	Vector2d crval;
+	Matrix2d cdmatrix;
+	double scale;
+	double orientation;
+	
 public slots:
 	void computeTargetWCS();
 	
@@ -76,16 +85,7 @@ private:
 	VectorXd basis;
 	double rms_x, rms_y;
 	struct WorldCoor *referenceWCS;
-	
-	// EPO Attributes
-	double width;
-	double height;
-	Vector2d crpix;
-	Vector2d crval;
-	Matrix2d cdmatrix;
-	double scale;
-	double orientation;
-	
+		
 	// Common calculation variables
 	Matrix2d flip;
 	Vector2d v;

@@ -63,7 +63,6 @@ void ComputeWCS::computeTargetWCS()
 
 	qDebug() << "Attempting to compute EPO WCS ...";
 	// Check if enough points have been selected
-	qDebug() << epoCoords->last();
 	if (epoCoords->size() >= 3 && epoCoords->last() != QPointF(-1, -1))
 	{
 		// Compute matrix and vectors
@@ -120,12 +119,12 @@ void ComputeWCS::computeTargetWCS()
 		emit wcs();
 		
 //		std::cout.precision(15);
-		qDebug() << "*** EPO WCS ***";
-		std::cout << "Reference Pixel:\t" << crpix << std::endl;
-		std::cout << "Reference Value:\t" << crval << std::endl;
-		std::cout << "CD Matrix:\t" << cdmatrix << std::endl;
-		std::cout << "Scale:\t" << scale << std::endl;
-		std::cout << "Orientation:\t" << orientation << std::endl;
+//		qDebug() << "*** EPO WCS ***";
+//		std::cout << "Reference Pixel:\t" << crpix << std::endl;
+//		std::cout << "Reference Value:\t" << crval << std::endl;
+//		std::cout << "CD Matrix:\t" << cdmatrix << std::endl;
+//		std::cout << "Scale:\t" << scale << std::endl;
+//		std::cout << "Orientation:\t" << orientation << std::endl;
 		
 		return;
 	}
