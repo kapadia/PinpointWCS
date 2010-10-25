@@ -274,10 +274,8 @@ bool ExportWCS::exportAVM()
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.CDMatrix");
 				
 				// Clean existing Publisher Metadata
-				XMP_DateTime updatedTime;
-				SXMPUtils::CurrentDateTime(&updatedTime);
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Publisher.MetadataDate");
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Publisher.MetadataVersion");
-//				avm.DeleteProperty(time, "avm:Publisher.MetadataDate");
 				
 				// Clean the existing CXC Metadata
 				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolver");
@@ -299,6 +297,7 @@ bool ExportWCS::exportAVM()
 				QString width;
 				QString height;
 				QString spatialnotes;
+				QString metadatadate;
 				
 				// Format values to specific digits
 				equinox.sprintf("%.1f", wcs->equinox);
@@ -315,6 +314,7 @@ bool ExportWCS::exportAVM()
 				width.sprintf("%.2f", computewcs->width);
 				height.sprintf("%.2f", computewcs->height);
 				spatialnotes.sprintf("World Coordinate System resolved using PinpointWCS %s revision %s by the Chandra X-ray Center", VERSION, REVISION);
+				
 				
 				// Begin modifying AVM
 				XMP_OptionBits itemOptions;
@@ -340,10 +340,15 @@ bool ExportWCS::exportAVM()
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd12.toStdString());
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd21.toStdString());
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd22.toStdString());
-
+				
+				// Set Publisher Metadata
+				XMP_DateTime updatedTime;
+				SXMPUtils::CurrentDateTime(&updatedTime);
+				avm.SetProperty_Date(kXMP_NS_AVM, "avm:MetadataDate", updatedTime, 0);
+				avm.SetProperty(kXMP_NS_AVM, "avm:MetadataVersion", AVM_VERSION, 0);
 				
 				// Set CXC Metadata :)
-				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolver", "PinpointWCS developed by Amit Kapadia", 0);
+				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolver", "PinpointWCS developed by the Chandra X-ray Center", 0);
 				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolverVersion", VERSION, 0);
 				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolverRevision", REVISION, 0);
 				
