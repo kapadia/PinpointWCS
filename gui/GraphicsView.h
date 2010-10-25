@@ -42,6 +42,10 @@ public:
 	// Attributes
 	int rotateFactor;
 
+// TODO: Testing background function of QGraphicsView
+public slots:
+	void updateBackground(QPixmap *pm);
+
 protected:
 	// Methods
 	void resizeEvent(QResizeEvent *event);
@@ -50,6 +54,7 @@ protected:
 	
 signals:
 	void objectResized(QSize s);
+
 };
 
 #endif

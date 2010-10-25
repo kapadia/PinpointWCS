@@ -206,9 +206,7 @@ bool ExportWCS::exportAVM()
 {
 	qDebug() << "Attempting to export AVM ...";
 	
-	// FIXME: Put opened filename here.  Perhaps sent to this class on initialization
 	std::string f = filename->toStdString();
-//	std::string filename = std::string("/Users/akapadia/Projects/XMPTest/AVM-Tag-Test.tif");
 	
 	// Initialize the Adobe XMP Toolkit
 	if (!SXMPMeta::Initialize())
@@ -274,6 +272,12 @@ bool ExportWCS::exportAVM()
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.Notes");
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.FITSheader");
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.CDMatrix");
+				
+				// Clean existing Publisher Metadata
+				XMP_DateTime updatedTime;
+				SXMPUtils::CurrentDateTime(&updatedTime);
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Publisher.MetadataVersion");
+//				avm.DeleteProperty(time, "avm:Publisher.MetadataDate");
 				
 				// Clean the existing CXC Metadata
 				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolver");

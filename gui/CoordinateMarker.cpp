@@ -47,7 +47,8 @@ CoordinateMarker::~CoordinateMarker() {}
 
 QRectF CoordinateMarker::boundingRect() const
 {
-	return QRectF(-radius-penWidth, -radius-penWidth, 2*radius+2*penWidth+1, 2*radius+2*penWidth+1);
+	return QRectF(-radius*0.60-penWidth, -radius*0.60-penWidth, 2*radius+penWidth, 2*radius+penWidth);
+//	return QRectF(-radius-penWidth, -radius-penWidth, 2*radius+2*penWidth+1, 2*radius+2*penWidth+1);
 }
 
 void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -64,7 +65,8 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	{
 		pen.setColor(Qt::red);
 		painter->setPen(pen);
-		float length = radius/30. + radius;
+		float length = radius*0.60;
+//		float length = radius/30. + radius;
 		painter->drawLine(0, -1*length, 0, length);
 		painter->drawLine(-1*length, 0, length, 0);
 	}

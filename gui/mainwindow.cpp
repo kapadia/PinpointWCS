@@ -177,6 +177,8 @@ bool MainWindow::setupWorkspace()
 		connect(ui.actionInvert, SIGNAL(triggered(bool)), fitsImage, SLOT(invert()));
 		connect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
 		connect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
+		// TODO: Testing background function of QGraphicsView
+//		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), ui.graphicsView_1, SLOT(updateBackground(QPixmap*)));
 		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
 		
 		// Connect more signals -- communicate between data model and ComputeWCS object

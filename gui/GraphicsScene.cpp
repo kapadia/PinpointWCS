@@ -26,6 +26,7 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 {
 	reference = ref;
 	movingItem = 0;
+	setSceneRect(0, 0, pix.width(), pix.height());
 	pixmap = addPixmap(pix);
 	
 	// Compute the measure of the pixmap
