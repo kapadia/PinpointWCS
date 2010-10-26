@@ -191,7 +191,7 @@ bool MainWindow::setupWorkspace()
 		connect(ui.actionAstronomy_Visualization_Metadata, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVM()));
 		
 		// And more signals ...
-		connect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(exec()));
+		connect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(show()));
 		
 		return true;
 	}
