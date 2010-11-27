@@ -24,6 +24,7 @@
 // TODO: Quadratic and Cubic mappings (fix the math)
 // TODO: Add Save As dialog for FITS export
 // TODO: Fix QGraphicsItem bugs (e.g. stray marks, keyboard interactions, dynamic sizing)
+// FIXME: Compute WCS Correctly!!!
 
 
 int main(int argc, char *argv[])

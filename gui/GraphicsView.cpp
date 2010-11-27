@@ -35,7 +35,9 @@ GraphicsView::GraphicsView(QWidget *parent)
 	setRenderHint(QPainter::Antialiasing);
 	setDragMode(NoDrag);
 	setTransformationAnchor(AnchorViewCenter);
-	setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+//	setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+	
 	viewport()->setMouseTracking(true);
 	
 	// Adjust the background color
@@ -117,10 +119,4 @@ float GraphicsView::scaling()
 	t.rotate(-rotateFactor);
 	
 	return t.m11();
-}
-
-// TODO: Testing background function of QGraphicsView
-void GraphicsView::updateBackground(QPixmap *pm)
-{
-	setBackgroundBrush(*pm);
 }

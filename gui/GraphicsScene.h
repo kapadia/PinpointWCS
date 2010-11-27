@@ -23,6 +23,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include "CoordinateMarker.h"
+#include "GraphicsView.h"
 
 class GraphicsScene : public QGraphicsScene
 {
@@ -33,6 +34,7 @@ public:
 	~GraphicsScene();
 	bool reference;
 	float measure;
+	QGraphicsRectItem *centralItem;
 	void signalItemMoved(CoordinateMarker *m, QPointF oldPos);
 		
 protected:
@@ -48,6 +50,8 @@ private:
 	QGraphicsItem *movingItem;
 	QPointF oldPos;
 	QGraphicsPixmapItem *pixmap;
+	
+	float computeRadii();
 	
 signals:
 	void mousePositionChanged(QPointF pos);

@@ -28,6 +28,7 @@ class CoordinateMarker : public QGraphicsItem
 {
 	
 public:
+	enum {Type = UserType + 1};
 	CoordinateMarker(QGraphicsItem *parent = 0);
 	~CoordinateMarker();
 	int row;
@@ -35,6 +36,8 @@ public:
 	// Required methods to implement
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget);
+	QPainterPath shape() const;
+	int type() const { return Type; }
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

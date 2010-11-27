@@ -39,12 +39,9 @@ public:
 	void enterEvent(QEvent *event);
 	void leaveEvent(QEvent *event);
 	float scaling();
+	
 	// Attributes
 	int rotateFactor;
-
-// TODO: Testing background function of QGraphicsView
-public slots:
-	void updateBackground(QPixmap *pm);
 
 protected:
 	// Methods

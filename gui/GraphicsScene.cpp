@@ -26,7 +26,7 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 {
 	reference = ref;
 	movingItem = 0;
-	setSceneRect(0, 0, pix.width(), pix.height());
+	setSceneRect(0, 0, pix.width(), pix.height());	
 	pixmap = addPixmap(pix);
 	
 	// Compute the measure of the pixmap
@@ -36,6 +36,12 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 		clickable = true;
 	else
 		clickable = false;
+	
+	// TODO: Testing a central graphics item
+	centralItem = new QGraphicsRectItem;
+	centralItem->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+	centralItem->setRect(sceneRect());
+	addItem(centralItem);
 }
 
 
@@ -43,7 +49,7 @@ GraphicsScene::~GraphicsScene() {}
 
 
 void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
-{
+{	
 	// Broadcast the position of the mouse
 	emit mousePositionChanged(event->scenePos());
 	QGraphicsScene::mouseMoveEvent(event);
@@ -117,4 +123,18 @@ void GraphicsScene::signalItemMoved(CoordinateMarker *m, QPointF oldPos)
 	// Broadcast the item moved and its old position
 //	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(m), oldPos);
 	emit itemMoved(this, m->scenePos(), oldPos);
+}
+
+
+float GraphicsScene::computeRadii()
+{
+	float radius;
+	
+	// Use the measure and zoom factor to determine the radius in a
+	// manner that is consistent with the full range of image dimensions
+	radius = qobject_cast<GraphicsView*> (views().at(0))->scaling();
+	
+	qDebug() << "Radius: " << radius;
+	
+	return radius;
 }

@@ -79,8 +79,9 @@ void AddCommand::redo()
 	}
 	
 	// Initialize CoordinateMarker and add to GraphicScene
-	marker = new CoordinateMarker();
-	scene->addItem(marker);
+//	marker = new CoordinateMarker();
+	marker = new CoordinateMarker(scene->centralItem);
+//	scene->addItem(marker);
 	marker->setPos(initialPosition.toPointF());
 	marker->row = row;
 	scene->toggleClickable(true);
@@ -148,10 +149,16 @@ void AddCommand::undo()
 MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVariant &oldValue, CoordinateModel *model)
 : QUndoCommand()
 {
+	qDebug() << "MoveCommand";
 	newPos = newValue.toPointF();
 	oldPos = oldValue.toPointF();
 	scene = s;
-	marker = qgraphicsitem_cast<CoordinateMarker *>(scene->itemAt(newPos));
+	marker = qgraphicsitem_cast<CoordinateMarker*>(scene->itemAt(newPos));
+	if (marker == 0)
+	{
+		marker = qgraphicsitem_cast<CoordinateMarker*>(scene->selectedItems()[0]);
+	}
+	qDebug() << marker;
 	dataModel = model;
 }
 
@@ -209,19 +216,23 @@ void MoveCommand::undo()
 
 void MoveCommand::redo()
 {
+	qDebug() << "MoveCommand redo()";
 	// Initialize some variables
 	QModelIndex index1;
 	QModelIndex index2;
 	
 	// If the marker is destroyed by AddCommand::undo(), this code will find the marker using coordinates (shoddy...)
-	if (scene->itemAt(oldPos)->pos() != QPointF(0, 0))
-		marker = qgraphicsitem_cast<CoordinateMarker *>(scene->itemAt(oldPos));
+	if (scene->itemAt(oldPos) != 0)
+	{
+		if (scene->itemAt(oldPos)->pos() != QPointF(0, 0))
+			marker = qgraphicsitem_cast<CoordinateMarker*>(scene->itemAt(oldPos));
+	} else if(scene->selectedItems()[0]->pos() != QPointF(0, 0))
+		marker = qgraphicsitem_cast<CoordinateMarker*>(scene->selectedItems()[0]);
 	
 	int row = marker->row;
-	qDebug() << "MoveCommand redo()";
 	
 	if (scene->reference)
-	{
+	{       
 		dataModel->refCoords.replace(row, newPos);
 		index1 = dataModel->index(row, 0);
 		index2 = dataModel->index(row, 1);
