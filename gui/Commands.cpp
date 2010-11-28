@@ -220,7 +220,7 @@ void MoveCommand::redo()
 	// Initialize some variables
 	QModelIndex index1;
 	QModelIndex index2;
-	
+	qDebug() << "one";
 	// If the marker is destroyed by AddCommand::undo(), this code will find the marker using coordinates (shoddy...)
 	if (scene->itemAt(oldPos) != 0)
 	{

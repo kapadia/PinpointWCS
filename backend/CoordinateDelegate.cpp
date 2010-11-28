@@ -35,7 +35,7 @@ CoordinateDelegate::CoordinateDelegate(GraphicsScene *s1, GraphicsScene *s2, QOb
 QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
-	/*
+
 	double maxValue;
 	switch (index.column()) {
 		case 0:
@@ -51,8 +51,7 @@ QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 			maxValue = epoScene->height();
 			break;
 	}
-	 */
-	editor->setRange(0, 10000);
+	editor->setRange(0, maxValue);
 	return editor;
 }
 

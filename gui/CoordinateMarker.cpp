@@ -47,7 +47,6 @@ CoordinateMarker::~CoordinateMarker() {}
 
 QRectF CoordinateMarker::boundingRect() const
 {
-//	return QRectF(-radius*0.60-penWidth, -radius*0.60-penWidth, 2*radius+penWidth, 2*radius+penWidth);
 	return QRectF(-radius - penWidth, -radius - penWidth, 2*(radius+penWidth), 2*(radius+penWidth));
 }
 
@@ -87,7 +86,6 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	
 	// Draw a slightly transparent circle and crosshair
 	painter->drawEllipse(-radius, -radius, radius*2, radius*2);
-//	painter->drawEllipse(-radius/2, -radius/2, radius, radius);
 }
 
 void CoordinateMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -98,17 +96,12 @@ void CoordinateMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void CoordinateMarker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-	QPointF pos = event->scenePos();
-	QPointF itemPos = mapFromScene(pos);
-	
-	if (pos.x()-itemPos.x() < 0)
-		setPos(0, pos.y());
 	QGraphicsItem::mouseMoveEvent(event);
 }
 
 void CoordinateMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {	
-    update();
+	update();
 	QGraphicsItem::mouseReleaseEvent(event);
 }
 

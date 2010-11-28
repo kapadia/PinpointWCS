@@ -82,11 +82,22 @@ void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (movingItem != 0 && event->button() == Qt::LeftButton) {
+		QPointF newPos = movingItem->pos();
         if (oldPos != movingItem->pos())
+		{
+			if (newPos.x() < 0)
+				movingItem->setX(0);
+			if (newPos.x() > width())
+				movingItem->setX(width());
+			if (newPos.y() < 0)
+				movingItem->setY(0);
+			if (newPos.y() > height())
+				movingItem->setY(height());
 			emit itemMoved(this, movingItem->pos(), oldPos);
+		}
         movingItem = 0;
     }
-	
+
     QGraphicsScene::mouseReleaseEvent(event);
 }
 
@@ -101,7 +112,6 @@ void GraphicsScene::keyReleaseEvent(QKeyEvent *event)
 	QGraphicsScene::keyReleaseEvent(event);
 }
 
-
 void GraphicsScene::toggleClickable(bool sendSignal)
 {
 	// Toggle the clickable variable for both GraphicsScenes
@@ -109,7 +119,6 @@ void GraphicsScene::toggleClickable(bool sendSignal)
 	if (sendSignal)
 		emit toggleNeighborScene(false);
 }
-
 
 void GraphicsScene::updatePixmap(QPixmap *pm)
 {
