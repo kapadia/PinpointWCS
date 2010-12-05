@@ -9,13 +9,21 @@ ui_*.h
 qrc_*.cpp
 
 # Xcode project file
-*.xcodeproj/
+PinpointWCS.xcodeproj/
 
 # build folder
 build/
 
-# Compiled application
+# Compiled application and files
 *.app
+*.o
+*.a
 
 # Shell Scripts
 *.sh
+
+# Folders and files for external libraries
+XMP-Toolkit-SDK-*/intermediate/
+XMP-Toolkit-SDK-*/public/libraries/
+cfitsio/include/
+cfitsio/lib/

@@ -5,13 +5,13 @@
 TEMPLATE = app
 TARGET =
 DEPENDPATH += . backend gui
-INCLUDEPATH += . gui backend /usr/local/include ../libwcs/ ../eigen
-INCLUDEPATH += /Users/akapadia/Documents/Software/XMP-Toolkit-SDK-5.1.2/public/include
+INCLUDEPATH += . gui backend ../cfitsio/include ../libwcs/ ../eigen
+INCLUDEPATH += ../XMP-Toolkit-SDK-5.1.2/public/include
 CONFIG += release
 #CONFIG += debug_and_release
-LIBS += -L/usr/local/lib -lcfitsio
+LIBS += -L../cfitsio/lib -lcfitsio
 LIBS += -L../libwcs -lwcs -lm
-LIBS += -L/Users/akapadia/Documents/Software/XMP-Toolkit-SDK-5.1.2/public/libraries/macintosh/release
+LIBS += -L../XMP-Toolkit-SDK-5.1.2/public/libraries/macintosh/release
 LIBS += -lXMPCoreStaticRelease -lXMPFilesStaticRelease
 LIBS += -framework CoreServices
 DEFINES +=  MAC_ENV="1"
