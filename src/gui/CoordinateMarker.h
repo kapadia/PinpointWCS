@@ -21,8 +21,10 @@
 #define COORDINATE_MARKER_H
 
 #include <QGraphicsItem>
-#include <QGraphicsSceneMouseEvent>
-#include <QModelIndex>
+
+QT_BEGIN_NAMESPACE
+class QModelIndex;
+QT_END_NAMESPACE
 
 class CoordinateMarker : public QGraphicsItem
 {
@@ -49,6 +51,7 @@ protected:
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 	
 private:
+	QModelIndex *index;
 	float setRadius();
 	float setPenWidth();
 	float radius;

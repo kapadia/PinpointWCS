@@ -17,6 +17,8 @@
  *
  */
 
+#include <QDebug>
+
 #include "AboutDialog.h"
 #include "version.h"
 
@@ -28,14 +30,14 @@ AboutDialog::AboutDialog(QWidget *parent)
     ui.setupUi(this);
 	
 	// Get version and revision info from version.h
-	QString version;
-	version.sprintf("Version %s\n(rev %s)", VERSION, REVISION);
-	ui.version->setText(version);
+	version = new QString;
+	version->sprintf("Version %s\n(rev %s)", VERSION, REVISION);
+	ui.version->setText(*version);
 	
 	// Set the logo
-	QPixmap logo;
-	logo.load(":/gui/images/logo.png");
-	ui.logoLabel->setPixmap(logo);
+	logo = new QPixmap;
+	logo->load(":/gui/images/logo.png");
+	ui.logoLabel->setPixmap(*logo);
 }
 
 AboutDialog::~AboutDialog() {}

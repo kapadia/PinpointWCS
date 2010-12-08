@@ -20,17 +20,27 @@
 #ifndef ABOUT_DIALOG_H
 #define ABOUT_DIALOG_H
 
-#include <QtGui>
+#include <QDialog>
 #include "ui_AboutDialog.h"
 
+QT_BEGIN_NAMESPACE
+class QString;
+class QPixmap;
+QT_END_NAMESPACE
+
 class AboutDialog : public QDialog
-	{
-		Q_OBJECT
-		
-	public:
-		AboutDialog(QWidget *parent = 0);
-		~AboutDialog();
-		Ui::AboutDialog ui;
-	};
+{
+	Q_OBJECT
+	
+public:
+	AboutDialog(QWidget *parent = 0);
+	~AboutDialog();
+	Ui::AboutDialog ui;
+	
+private:
+	QString *version;
+	QPixmap *logo;
+	
+};
 
 #endif

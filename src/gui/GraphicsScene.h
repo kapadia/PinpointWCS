@@ -47,8 +47,8 @@ protected:
 
 private:
 	bool clickable;
-	QGraphicsItem *movingItem;
 	QPointF oldPos;
+	QGraphicsItem *movingItem;
 	QGraphicsPixmapItem *pixmap;
 	
 	float computeRadii();
