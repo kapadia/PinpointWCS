@@ -88,27 +88,30 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	painter->drawEllipse(-radius, -radius, radius*2, radius*2);
 }
 
+
 void CoordinateMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     update();
 	QGraphicsItem::mousePressEvent(event);
 }
 
+
 void CoordinateMarker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsItem::mouseMoveEvent(event);
 }
 
+
 void CoordinateMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {	
-	update();
 	QGraphicsItem::mouseReleaseEvent(event);
 }
 
 
 void CoordinateMarker::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-	prepareGeometryChange();
+	// TODO: Call prepareGeometryChange() when ready to implement this dynamic resizing feature.
+//	prepareGeometryChange();
 	QGraphicsItem::wheelEvent(event);
 }
 

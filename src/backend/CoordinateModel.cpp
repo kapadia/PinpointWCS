@@ -18,7 +18,6 @@
  */
 
 #include <QDebug>
-#include <QUndoCommand>
 #include "CoordinateModel.h"
 
 
@@ -52,16 +51,16 @@ int CoordinateModel::columnCount(const QModelIndex &parent) const
 
 QVariant CoordinateModel::data(const QModelIndex &index, int role) const
 {
+	// Prevent an invalid QModelIndex from being processed
     if (!index.isValid())
         return QVariant();
-    
     if (index.row() >= refCoords.size() || index.row() < 0)
         return QVariant();
 	
+	// Display the data correctly
 	if (role == Qt::DisplayRole)
 	{
-		// Set some variables
-		QString formattedData;
+		// Get the two coordinates
 		QPointF refCoord = refCoords.at(index.row());
 		QPointF epoCoord = epoCoords.at(index.row());
 		
@@ -72,14 +71,14 @@ QVariant CoordinateModel::data(const QModelIndex &index, int role) const
 		else if (index.column() == 2)
 		{
 			if (epoCoord.x() == -1)
-				return formattedData.sprintf("%s", "-");
+				return QString("-");
 			else
 				return epoCoord.x();
 		}
 		else
 		{
 			if (epoCoord.y() == -1)
-				return formattedData.sprintf("%s", "-");
+				return QString("-");
 			else
 				return epoCoord.y();
 		}

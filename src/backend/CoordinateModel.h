@@ -21,16 +21,19 @@
 #define COORDINATE_MODEL_H
 
 #include <QAbstractTableModel>
-#include <QList>
-#include <QPointF>
-#include <QUndoStack>
-#include <QVariant>
-#include "GraphicsScene.h"
+
 #include "Commands.h"
+#include "GraphicsScene.h"
 #include "CoordinateMarker.h"
 #include "CoordinateDelegate.h"
 #include "ComputeWCS.h"
 
+QT_BEGIN_NAMESPACE
+template<class T> class QList;
+class QPointF;
+class QUndoStack;
+class QVariant;
+QT_END_NAMESPACE
 
 class CoordinateModel : public QAbstractTableModel
 {
@@ -71,7 +74,6 @@ protected:
 	
 signals:
 	void compute();
-
 };
 
 #endif
