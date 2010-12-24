@@ -17,8 +17,8 @@
  *
  */
 
-#include <QtGui>
-#include <QTransform>
+
+#include <QDebug>
 #include "Commands.h"
 
 
@@ -70,20 +70,27 @@ void AddCommand::redo()
 		
 		// Set the epo coordinate and indices
 		coord = initialPosition.toPointF();
-		index1 = dataModel->index(numrows-1, 0);
-		index2 = dataModel->index(numrows-1, 1);
+		index1 = dataModel->index(numrows-1, 2);
+		index2 = dataModel->index(numrows-1, 3);
 		row = numrows-1;
 		
 		// Update the data
 		dataModel->epoCoords.replace(numrows-1, coord);
 	}
 	
+	// FIXME: Checking QModelIndex values
+//	qDebug() << index1 << index2;
+	
+	// TODO: Add a QModelIndex as an attribute to the CoordinateMarker
+	// How shall this be done???
+	// Need to figure out what the index will be.
+	// This is a little confusing since the way the data is stored.  Two table items refer to one CoordinateMarker.
+	// Determine which row the marker belongs to, then determine the column (i.e. reference or epo)
+	// Store the model index with row and either 1 or 3 refering to reference or epo, respectively.
+	
 	// Initialize CoordinateMarker and add to GraphicScene
-//	marker = new CoordinateMarker();
-	marker = new CoordinateMarker(scene->centralItem);
-//	scene->addItem(marker);
+	marker = new CoordinateMarker(index1, scene->centralItem);
 	marker->setPos(initialPosition.toPointF());
-	marker->row = row;
 	scene->toggleClickable(true);
 	scene->clearSelection();
 	scene->update();
@@ -146,7 +153,7 @@ void AddCommand::undo()
 
 
 
-MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVariant &oldValue, CoordinateModel *model)
+MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVariant &oldValue, CoordinateModel *model, QModelIndex *index)
 : QUndoCommand()
 {
 	qDebug() << "MoveCommand";
@@ -154,11 +161,27 @@ MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVari
 	oldPos = oldValue.toPointF();
 	scene = s;
 	marker = qgraphicsitem_cast<CoordinateMarker*>(scene->itemAt(newPos));
+	// FIXME: Memory error if a marker is not referenced.
+	// FIXME: This occurs when handling data via the table view
 	if (marker == 0)
 	{
-		marker = qgraphicsitem_cast<CoordinateMarker*>(scene->selectedItems()[0]);
+		QList<QGraphicsItem*> markers = scene->selectedItems();
+		if (markers.isEmpty())
+		{
+			// Loop through the CoordinateMarkers, checking the indices
+			QList<QGraphicsItem*> markers = scene->items();
+			for (int i = 0; i < markers.size(); ++i)
+			{
+				marker = qgraphicsitem_cast<CoordinateMarker*>(markers.at(i));
+				if (marker->index->row() == index->row())
+					break;
+			}
+		}
+		else {
+			marker = qgraphicsitem_cast<CoordinateMarker*>(scene->selectedItems()[0]);
+		}
 	}
-	qDebug() << marker;
+	qDebug() << "Marker: " << marker;
 	dataModel = model;
 }
 
@@ -183,7 +206,7 @@ void MoveCommand::undo()
 	QModelIndex index2;
 	
 	// Get the row of the data
-	int row = marker->row;
+	int row = marker->index->row();
 	
 	if (scene->reference)
 	{		
@@ -229,7 +252,7 @@ void MoveCommand::redo()
 	} else if(scene->selectedItems()[0]->pos() != QPointF(0, 0))
 		marker = qgraphicsitem_cast<CoordinateMarker*>(scene->selectedItems()[0]);
 	
-	int row = marker->row;
+	int row = marker->index->row();
 	
 	if (scene->reference)
 	{       

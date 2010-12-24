@@ -21,10 +21,14 @@
 #define COMMANDS_H
 
 #include <QUndoCommand>
-#include <QVariant>
 #include "GraphicsScene.h"
 #include "CoordinateMarker.h"
 #include "CoordinateModel.h"
+
+QT_BEGIN_NAMESPACE
+class QVariant;
+class QModelIndex;
+QT_END_NAMESPACE
 
 
 class CoordinateModel;
@@ -52,7 +56,7 @@ class MoveCommand : public QUndoCommand
 public:
 	enum { Id = 1234 };
 	
-	MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVariant &oldValue, CoordinateModel *model);
+	MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVariant &oldValue, CoordinateModel *model, QModelIndex *index = 0);
 	void undo();
 	void redo();
 	bool mergeWith(const QUndoCommand *command);

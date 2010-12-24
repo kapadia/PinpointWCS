@@ -16,24 +16,23 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #include <QtGui>
 #include "CoordinateMarker.h"
 #include "GraphicsScene.h"
 #include "GraphicsView.h"
 #include "math.h"
 
-CoordinateMarker::CoordinateMarker(QGraphicsItem *parent)
+CoordinateMarker::CoordinateMarker(QModelIndex &idx, QGraphicsItem *parent)
 : QGraphicsItem(parent)
 {
 	qDebug() << "Initializing CoordinateMarker object ...";
-	row = NULL;
 	setZValue(2);
 	setOpacity(100.0);
 	setSelected(true);
 	setFocus();
 	setEnabled(true);
 	radius = setRadius();
+	index = new QPersistentModelIndex(idx);
 	
 	// Set some flags
 	setFlag(QGraphicsItem::ItemIsSelectable, true);

@@ -21,7 +21,9 @@
 #define COORDINATE_DELEGATE_H
 
 #include <QItemDelegate>
+#include <QDoubleSpinBox>
 #include "GraphicsScene.h"
+	
 
 class CoordinateDelegate : public QItemDelegate
 {
@@ -36,7 +38,7 @@ public:
 	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 	
 signals:
-	void itemMoved(GraphicsScene *s, const QPointF &newPosition, const QPointF &oldPosition) const;
+	void itemMoved(GraphicsScene *s, const QPointF &newPosition, const QPointF &oldPosition, QModelIndex *index) const;
 	
 private:
 	GraphicsScene *fitsScene;

@@ -53,7 +53,7 @@ public:
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
 	bool setData(GraphicsScene *scene, const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
-	bool updateData(GraphicsScene *scene, const QVariant &newValue, const QVariant &oldValue, int role=Qt::EditRole);
+	bool updateData(GraphicsScene *scene, const QVariant &newValue, const QVariant &oldValue, QModelIndex *index=0, int role=Qt::EditRole);
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex());
@@ -66,7 +66,8 @@ public:
 
 public slots:
 	void setData(GraphicsScene *s, QPointF coord);
-	void updateData(GraphicsScene *scene, QPointF newCoord, QPointF oldCoord);
+	void updateData(GraphicsScene *scene, QPointF newCoord, QPointF oldCoord, QModelIndex *index=0);
+//	void updateData(GraphicsScene *scene, QPointF newCoord, QPointF oldCoord, QModelIndex index);
 	
 protected:
 	void emitDataChanged(const QModelIndex &index1, const QModelIndex &index2);

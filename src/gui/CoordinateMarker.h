@@ -23,17 +23,19 @@
 #include <QGraphicsItem>
 
 QT_BEGIN_NAMESPACE
+class QPersistentModelIndex;
 class QModelIndex;
 QT_END_NAMESPACE
 
 class CoordinateMarker : public QGraphicsItem
 {
 	
+	friend class MoveCommand;
+	
 public:
 	enum {Type = UserType + 1};
-	CoordinateMarker(QGraphicsItem *parent = 0);
+	CoordinateMarker(QModelIndex &idx, QGraphicsItem *parent = 0);
 	~CoordinateMarker();
-	int row;
 	
 	// Required methods to implement
 	QRectF boundingRect() const;
@@ -51,7 +53,7 @@ protected:
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 	
 private:
-	QModelIndex *index;
+	QPersistentModelIndex *index;
 	float setRadius();
 	float setPenWidth();
 	float radius;

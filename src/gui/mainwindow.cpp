@@ -170,7 +170,7 @@ bool MainWindow::setupWorkspace()
 		
 		connect(fitsScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
 		connect(epoScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
-		connect(tableDelegate, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
+		connect(tableDelegate, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF, QModelIndex*)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF, QModelIndex*)));
 		
 		// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
 		connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));

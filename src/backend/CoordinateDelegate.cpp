@@ -20,7 +20,6 @@
 #include "CoordinateDelegate.h"
 #include "CoordinateModel.h"
 #include "GraphicsScene.h"
-#include <QDoubleSpinBox>
 #include <QDebug>
 
 
@@ -35,8 +34,8 @@ CoordinateDelegate::CoordinateDelegate(GraphicsScene *s1, GraphicsScene *s2, QOb
 QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	QDoubleSpinBox *editor = new QDoubleSpinBox(parent);
-
 	double maxValue;
+	
 	switch (index.column()) {
 		case 0:
 			maxValue = fitsScene->width();
@@ -51,7 +50,7 @@ QWidget* CoordinateDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 			maxValue = epoScene->height();
 			break;
 	}
-	editor->setRange(0, maxValue);
+	editor->setRange(-maxValue, maxValue);
 	return editor;
 }
 
@@ -130,10 +129,11 @@ void CoordinateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 	// Broadcast change of data
 	if (broadcast)
 	{
+		QModelIndex indx = QModelIndex(index);
 		if (scene == true)
-			emit itemMoved(fitsScene, newPosition, oldPosition);
+			emit itemMoved(fitsScene, newPosition, oldPosition, &indx);
 		else
-			emit itemMoved(epoScene, newPosition, oldPosition);
+			emit itemMoved(epoScene, newPosition, oldPosition, &indx);
 	}
 }
 

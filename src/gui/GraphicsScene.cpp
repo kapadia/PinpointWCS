@@ -39,7 +39,7 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 	
 	// TODO: Testing a central graphics item
 	centralItem = new QGraphicsRectItem;
-	centralItem->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+//	centralItem->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 	centralItem->setRect(sceneRect());
 	addItem(centralItem);
 }
@@ -81,8 +81,15 @@ void GraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+	if (movingItem != 0 && event->button() == Qt::LeftButton) {
+        if (oldPos != movingItem->pos())
+			emit itemMoved(this, movingItem->pos(), oldPos);
+        movingItem = 0;
+	}
+	/*
     if (movingItem != 0 && event->button() == Qt::LeftButton) {
 		QPointF newPos = movingItem->pos();
+		
         if (oldPos != movingItem->pos())
 		{
 			if (newPos.x() < 0)
@@ -97,6 +104,7 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		}
         movingItem = 0;
     }
+	 */
 
     QGraphicsScene::mouseReleaseEvent(event);
 }
