@@ -17,7 +17,7 @@
  *
  */
 
-#include <iostream>
+#include <QDebug>
 #include <QPalette>
 #include "fitsToolbar.h"
 #include "CoordinatePanel.h"

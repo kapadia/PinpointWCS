@@ -17,6 +17,7 @@
  *
  */
 
+#include <QDebug>
 #include "CoordinateTableDialog.h"
 
 CoordinateTableDialog::CoordinateTableDialog(QWidget *parent)

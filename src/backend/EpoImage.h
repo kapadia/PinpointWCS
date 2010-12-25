@@ -20,8 +20,11 @@
 #ifndef EPOIMAGE_H
 #define EPOIMAGE_H
 
-#include <QPixmap>
 #include "PPWcsImage.h"
+
+QT_BEGIN_NAMESPACE
+class QPixmap;
+QT_END_NAMESPACE
 
 class EpoImage : public PPWcsImage {
 	

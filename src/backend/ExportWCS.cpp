@@ -191,7 +191,7 @@ bool ExportWCS::exportFITS()
 		return false;	
 
 	// Write comments
-	if (fits_write_comment(fptr, "World Coordinate System computed using PinpointWCS by the Chandra X-ray Center.  PinpointWCS is being developed by Amit Kapadia (CfA) akapadia@cfa.harvard.edu.", &status))
+	if (fits_write_comment(fptr, "World Coordinate System computed using PinpointWCS by the Chandra X-ray Center.  PinpointWCS is developed and maintained by Amit Kapadia (CfA) akapadia@cfa.harvard.edu.", &status))
 		return false;
 	
 	// Close FITS file

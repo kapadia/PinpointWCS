@@ -21,10 +21,10 @@
 #define COORDINATE_MARKER_H
 
 #include <QGraphicsItem>
+#include <QStyleOptionGraphicsItem>
 
 QT_BEGIN_NAMESPACE
 class QPersistentModelIndex;
-class QModelIndex;
 QT_END_NAMESPACE
 
 class CoordinateMarker : public QGraphicsItem

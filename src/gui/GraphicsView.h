@@ -21,8 +21,12 @@
 #define GRAPHICSVIEW_H
 
 #include <QGraphicsView>
-#include <QPixmap>
-#include <QGraphicsPixmapItem>
+#include <QKeyEvent>
+
+QT_BEGIN_NAMESPACE
+class QPixmap;
+class QGraphicsPixmapItem;
+QT_END_NAMESPACE
 
 #define MINZOOM 0.07
 #define MAXZOOM 100

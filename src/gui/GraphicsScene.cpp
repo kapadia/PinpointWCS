@@ -17,7 +17,7 @@
  *
  */
 
-#include <QtGui>
+#include <QDebug>
 #include "GraphicsScene.h"
 #include <math.h>
 

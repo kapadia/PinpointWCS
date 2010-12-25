@@ -20,7 +20,7 @@
 #ifndef WCS_INFO_PANEL_H
 #define WCS_INFO_PANEL_H
 
-#include <QtGui>
+#include <QFrame>
 #include "Ui_WcsInfoPanel.h"
 #include "wcs.h"
 #include "fitsfile.h"

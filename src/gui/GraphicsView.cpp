@@ -17,9 +17,10 @@
  *
  */
 
+#include <QDebug>
 #include "GraphicsView.h"
 #include "GraphicsScene.h"
-#include <QtGui>
+#include "math.h"
 //#include <QGLWidget>
 
 GraphicsView::GraphicsView(QWidget *parent)

@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QPixmap>
+
 #include "wcs.h"
 
 class PPWcsImage : public QObject {

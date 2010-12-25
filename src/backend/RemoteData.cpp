@@ -17,8 +17,9 @@
  *
  */
 
-#include "RemoteData.h"
 #include <QDebug>
+#include "RemoteData.h"
+
 
 RemoteData::RemoteData()
 {}

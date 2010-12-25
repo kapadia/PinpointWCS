@@ -20,7 +20,7 @@
 #ifndef COORDINATE_PANEL_H
 #define COORDINATE_PANEL_H
 
-#include <QtGui>
+#include <QFrame>
 #include "PPWcsImage.h"
 #include "ui_CoordinatePanel.h"
 

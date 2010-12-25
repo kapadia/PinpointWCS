@@ -20,7 +20,7 @@
 #ifndef FITS_TOOLBAR_H
 #define FITS_TOOLBAR_H
 
-#include <QtGui>
+#include <QFrame>
 #include "ui_FitsToolbar.h"
 
 class FitsToolbar : public QFrame

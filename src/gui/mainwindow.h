@@ -20,8 +20,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtGui>
-#include <QtNetwork>
+#include <QMainWindow>
+#include <QStateMachine>
+#include <QPropertyAnimation>
+#include <QAbstractTransition>
+#include <QSignalTransition>
+//#include <QtNetwork>
 
 #include "ui_PinpointWCS.h"
 #include "FitsImage.h"

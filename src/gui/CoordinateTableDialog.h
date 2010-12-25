@@ -20,7 +20,7 @@
 #ifndef COORDINATE_TABLE
 #define COORDINATE_TABLE
 
-#include <QtGui>
+#include <QDialog>
 #include "ui_CoordinateTableDialog.h"
 
 class CoordinateTableDialog : public QDialog

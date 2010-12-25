@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include <QtGui>
+
+#include <QDebug>
+
 #include "CoordinateMarker.h"
 #include "GraphicsScene.h"
 #include "GraphicsView.h"

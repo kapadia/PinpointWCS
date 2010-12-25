@@ -17,10 +17,8 @@
  *
  */
 
-#include <iostream>
-#include <QDragEnterEvent>
-
 #include "DropArea.h"
+
 
 DropArea::DropArea(QWidget *parent)
 	: QLabel(parent)

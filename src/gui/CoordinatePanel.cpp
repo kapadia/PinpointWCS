@@ -18,7 +18,6 @@
  */
 
 #include <math.h>
-#include <QPalette>
 #include "CoordinatePanel.h"
 
 CoordinatePanel::CoordinatePanel(PPWcsImage *im, QWidget *parent)

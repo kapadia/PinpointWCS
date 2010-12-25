@@ -17,9 +17,10 @@
  *
  */
 
+#include <QDebug>
+
 #include <algorithm>
 #include <exception>
-#include <QDebug>
 
 #include "math.h"
 #include "FitsImage.h"

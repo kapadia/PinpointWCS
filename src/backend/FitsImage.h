@@ -21,10 +21,13 @@
 #define FITSIMAGE_H
 
 #include <QImage>
-#include <QPixmap>
-#include "fitsio.h"
 
-// WCSTools library
+QT_BEGIN_NAMESPACE
+class QPixmap;
+QT_END_NAMESPACE
+
+// External libraries
+#include "fitsio.h"
 #include "wcs.h"
 #include "fitsfile.h"
 

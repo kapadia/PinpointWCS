@@ -17,7 +17,7 @@
  *
  */
 
-#include <iostream>
+#include <QDebug>
 #include <QPalette>
 
 #include "WcsInfoPanel.h"
@@ -26,7 +26,7 @@ WcsInfoPanel::WcsInfoPanel(QWidget *parent)
 : QFrame(parent)
 {
 	// Set up user interface from the Designer file
-	std::cout << "Initializing WcsInfoPanel ...\n";
+	qDebug() <<  "Initializing WcsInfoPanel ...";
     ui.setupUi(this);
 	
 	// Set up frame style

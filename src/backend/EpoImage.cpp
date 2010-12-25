@@ -17,10 +17,9 @@
  *
  */
 
-#include <iostream>
 #include <QDebug>
-
 #include "EpoImage.h"
+
 
 EpoImage::EpoImage(QString filename) : PPWcsImage()
 {
