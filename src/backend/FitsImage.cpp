@@ -154,10 +154,14 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		// FIXME: Adjust for Spitzer data.  As is, the quantiles are mis-calculated since it 
 		// weighs on zeroed pixels.
 		// Check that pixel values are not NAN
+		/*
 		for (int iii=0; iii<numelements; iii++)
 			if (isnan(imagedata[iii]))
+			{
+				qDebug() << "NAN";
 				imagedata[iii] = 0;
-		
+			}
+		*/
 		// Set some default parameters (or only one for now)
 		inverted = false;
 		
@@ -563,7 +567,6 @@ void FitsImage::setVmax(float maxpix)
 	calibrateImage(stretch, vmin, vmax);	
 }
 
-// FIXME: Free the memory alloted by the new image variable.
 void FitsImage::invert()
 {
 	qDebug() << "Inverting";

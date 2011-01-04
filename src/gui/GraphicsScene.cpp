@@ -115,10 +115,12 @@ void GraphicsScene::keyPressEvent(QKeyEvent *event)
 	QGraphicsScene::keyPressEvent(event);
 }
 
+
 void GraphicsScene::keyReleaseEvent(QKeyEvent *event)
 {
 	QGraphicsScene::keyReleaseEvent(event);
 }
+
 
 void GraphicsScene::toggleClickable(bool sendSignal)
 {
@@ -129,15 +131,13 @@ void GraphicsScene::toggleClickable(bool sendSignal)
 }
 
 
-// FIXME: Maybe this pixmap needs to be deleted.
 void GraphicsScene::updatePixmap(QPixmap *pm)
 {
 	qDebug() << pm;
 	// Update the pixmap
-//	ptr_pixmap->setPixmap(*pm);
-	
-	delete ptr_pixmap;
-	ptr_pixmap = addPixmap(*pm);
+	ptr_pixmap->setPixmap(*pm);
+//	delete ptr_pixmap;
+//	ptr_pixmap = addPixmap(*pm);
 }
 
 

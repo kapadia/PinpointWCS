@@ -189,8 +189,7 @@ bool MainWindow::setupWorkspace()
 		
 		// Mouse dependent rotation menu items
 		rotateMenuItems(ui.graphicsView_1); // Set a default
-		// TODO: What was I doing here!?!?!
-//		connect(ui.graphicsView_1, SIGNAL(mouseEnterEvent(GraphicsView*)), this, SLOT());
+		connect(ui.graphicsView_1, SIGNAL(mouseEnterEvent(GraphicsView*)), this, SLOT(rotateMenuItems(GraphicsView*)));
 		connect(ui.graphicsView_2, SIGNAL(mouseEnterEvent(GraphicsView*)), this, SLOT(rotateMenuItems(GraphicsView*)));
 		
 		return true;
