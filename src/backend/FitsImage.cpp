@@ -151,6 +151,8 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 		
 		// FITS data retrieved!!!
 		
+		// FIXME: Adjust for Spitzer data.  As is, the quantiles are mis-calculated since it 
+		// weighs on zeroed pixels.
 		// Check that pixel values are not NAN
 		for (int iii=0; iii<numelements; iii++)
 			if (isnan(imagedata[iii]))
@@ -530,14 +532,13 @@ bool FitsImage::calibrateImage(int s, float minpix, float maxpix)
 	free(renderdata);
 	
 	// Set pixmap
-	pixmap = new QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
+	pixmap = QPixmap(QPixmap::fromImage(*image, Qt::DiffuseDither));
 	
-	// Deconstruct the image and free memory
-	image->~QImage();
-	free(image);
+	// Delete the image
+	delete image;
 	
 	// Emit signal to broadcast the new pixmap and slider values
-	emit pixmapChanged(pixmap);
+	emit pixmapChanged(&pixmap);
 	
 	return true;
 }
@@ -562,14 +563,15 @@ void FitsImage::setVmax(float maxpix)
 	calibrateImage(stretch, vmin, vmax);	
 }
 
+// FIXME: Free the memory alloted by the new image variable.
 void FitsImage::invert()
 {
 	qDebug() << "Inverting";
-	QImage image = pixmap->toImage();
+	QImage image = pixmap.toImage();
 	image.invertPixels();
-	pixmap = new QPixmap(QPixmap::fromImage(image, Qt::DiffuseDither));
+	pixmap = QPixmap::fromImage(image, Qt::DiffuseDither);
 	inverted = !inverted;
-	emit pixmapChanged(pixmap);
+	emit pixmapChanged(&pixmap);
 }
 
 QPointF FitsImage::fpix2pix(QPointF fpix)

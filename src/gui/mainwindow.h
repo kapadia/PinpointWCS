@@ -112,6 +112,7 @@ private slots:
 	void updateCoordPanelProperties();
 	void enableExport();
 	void computeWCS();
+	void rotateMenuItems(GraphicsView *gv);
 	
 	// A slot for testing ...
 	void testSlot();

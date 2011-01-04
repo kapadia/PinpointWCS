@@ -46,6 +46,10 @@ public:
 	
 	// Attributes
 	int rotateFactor;
+	
+public slots:
+	void rotateCW();
+	void rotateCCW();
 
 protected:
 	// Methods
@@ -55,6 +59,7 @@ protected:
 	
 signals:
 	void objectResized(QSize s);
+	void mouseEnterEvent(GraphicsView *gv);
 
 };
 

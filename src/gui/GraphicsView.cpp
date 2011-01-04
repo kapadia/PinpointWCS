@@ -65,6 +65,7 @@ void GraphicsView::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Space)
 		setDragMode(ScrollHandDrag);
+	/*
 	else if(event->modifiers() == Qt::NoModifier && event->key() == Qt::Key_R)
 	{
 		rotate(5);
@@ -75,8 +76,9 @@ void GraphicsView::keyPressEvent(QKeyEvent *event)
 		rotate(-5);
 		rotateFactor = (rotateFactor - 5) % 360;
 	}
+	 */
+	
 	QGraphicsView::keyPressEvent(event);
-//	qDebug() << transform().determinant();
 }
 
 void GraphicsView::keyReleaseEvent(QKeyEvent *event)
@@ -91,6 +93,9 @@ void GraphicsView::enterEvent(QEvent *event)
 {
 	setDragMode(QGraphicsView::NoDrag);
 	setFocus();
+	
+	// Signal a mouseEnterEvent
+	emit mouseEnterEvent(this);
 }
 
 void GraphicsView::leaveEvent(QEvent *event)
@@ -120,4 +125,16 @@ float GraphicsView::scaling()
 	t.rotate(-rotateFactor);
 	
 	return t.m11();
+}
+
+void GraphicsView::rotateCW()
+{
+	rotate(5);
+	rotateFactor = (rotateFactor + 5) % 360;
+}
+
+void GraphicsView::rotateCCW()
+{
+	rotate(-5);
+	rotateFactor = (rotateFactor - 5) % 360;
 }

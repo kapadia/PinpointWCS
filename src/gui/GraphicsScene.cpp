@@ -27,7 +27,7 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 	reference = ref;
 	movingItem = 0;
 	setSceneRect(0, 0, pix.width(), pix.height());	
-	pixmap = addPixmap(pix);
+	ptr_pixmap = addPixmap(pix);
 	
 	// Compute the measure of the pixmap
 	measure = sqrt(pix.width() * pix.height());
@@ -128,10 +128,16 @@ void GraphicsScene::toggleClickable(bool sendSignal)
 		emit toggleNeighborScene(false);
 }
 
+
+// FIXME: Maybe this pixmap needs to be deleted.
 void GraphicsScene::updatePixmap(QPixmap *pm)
 {
+	qDebug() << pm;
 	// Update the pixmap
-	pixmap->setPixmap(*pm);
+//	ptr_pixmap->setPixmap(*pm);
+	
+	delete ptr_pixmap;
+	ptr_pixmap = addPixmap(*pm);
 }
 
 

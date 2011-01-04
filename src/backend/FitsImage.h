@@ -55,6 +55,7 @@ public:
 	int M;
 	float* imagedata;
 	int stretch;
+	QPixmap pixmap;
 	
 	// Public Methods
 	QPointF fpix2pix(QPointF fpix);

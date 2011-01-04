@@ -183,6 +183,9 @@
     <addaction name="actionPower_Stretch"/>
     <addaction name="separator"/>
     <addaction name="actionInvert"/>
+    <addaction name="separator"/>
+    <addaction name="actionRotate_Clockwise"/>
+    <addaction name="actionRotate_Counterclockwise"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -191,8 +194,8 @@
     <addaction name="actionAbout_PinpointWCS"/>
    </widget>
    <addaction name="menuEdit"/>
-   <addaction name="menuImage"/>
    <addaction name="menuView"/>
+   <addaction name="menuImage"/>
    <addaction name="menuExport"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -211,7 +214,7 @@
     <string>Coordinates</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+R</string>
+    <string>Ctrl+Shift+C</string>
    </property>
   </action>
   <action name="actionInfo">
@@ -402,6 +405,22 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionRotate_Clockwise">
+   <property name="text">
+    <string>Rotate Clockwise</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionRotate_Counterclockwise">
+   <property name="text">
+    <string>Rotate Counterclockwise</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
    </property>
   </action>
  </widget>

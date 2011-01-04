@@ -49,7 +49,7 @@ private:
 	bool clickable;
 	QPointF oldPos;
 	QGraphicsItem *movingItem;
-	QGraphicsPixmapItem *pixmap;
+	QGraphicsPixmapItem *ptr_pixmap;
 	
 	float computeRadii();
 	

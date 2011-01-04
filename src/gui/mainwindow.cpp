@@ -17,13 +17,8 @@
  *
  */
 
-//#include <string>
 #include <QDebug>
-
 #include "mainwindow.h"
-#include "FitsImage.h"
-#include "Commands.h"
-#include "PinpointWCSUtils.h"
 
 MainWindow::MainWindow()
 {
@@ -93,7 +88,6 @@ bool MainWindow::setupWorkspace()
 		coordinateTableDialog = new CoordinateTableDialog(this);
 		coordinateTableDialog->ui.coordinateTable->setModel(dataModel);
 		coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
-//		coordinateTableDialog->show();
 		
 		// Initialize the ComputeWCS and ExportWCS objects
 		computewcs = new ComputeWCS(&(dataModel->refCoords), &(dataModel->epoCoords), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
@@ -116,6 +110,8 @@ bool MainWindow::setupWorkspace()
 		ui.actionHyperbolic_Sine_Stretch->setEnabled(true);
 		ui.actionPower_Stretch->setEnabled(true);
 		ui.actionInvert->setEnabled(true);
+		ui.actionRotate_Clockwise->setEnabled(true);
+		ui.actionRotate_Counterclockwise->setEnabled(true);
 		
 		// Create a QActionGroup from the stretch menu items
 		QActionGroup *stretchActionGroup = new QActionGroup(this);
@@ -191,6 +187,12 @@ bool MainWindow::setupWorkspace()
 		// And more signals ...
 		connect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(show()));
 		
+		// Mouse dependent rotation menu items
+		rotateMenuItems(ui.graphicsView_1); // Set a default
+		// TODO: What was I doing here!?!?!
+//		connect(ui.graphicsView_1, SIGNAL(mouseEnterEvent(GraphicsView*)), this, SLOT());
+		connect(ui.graphicsView_2, SIGNAL(mouseEnterEvent(GraphicsView*)), this, SLOT(rotateMenuItems(GraphicsView*)));
+		
 		return true;
 	}
 	return false;
@@ -241,7 +243,7 @@ bool MainWindow::loadFitsImage(QString& filename)
 {
 	qDebug() << "Loading FITS image ...";
 	fitsImage = new FitsImage(filename);
-	fitsScene = new GraphicsScene(*(fitsImage->pixmap), true);
+	fitsScene = new GraphicsScene((fitsImage->pixmap), true);
 	ui.graphicsView_1->setScene(fitsScene);
 	return true;
 }
@@ -411,6 +413,36 @@ void MainWindow::computeWCS()
 	}
 }
 
+
+void MainWindow::rotateMenuItems(GraphicsView *gv)
+{
+	if (gv == ui.graphicsView_1)
+	{
+		ui.actionRotate_Clockwise->setText("Rotate FITS Clockwise");
+		ui.actionRotate_Counterclockwise->setText("Rotate FITS Counterclockwise");
+		
+		// Disconnect slots
+		disconnect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCW()));
+		disconnect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCCW()));
+		
+		// Connect slots
+		connect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCW()));
+		connect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCCW()));
+	}
+	else
+	{
+		ui.actionRotate_Clockwise->setText("Rotate EPO Clockwise");
+		ui.actionRotate_Counterclockwise->setText("Rotate EPO Counterclockwise");
+		
+		// Disconnect slots
+		disconnect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCW()));
+		disconnect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCCW()));
+		
+		// Connect slots
+		connect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCW()));
+		connect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCCW()));
+	}
+}
 
 void MainWindow::testSlot()
 {
