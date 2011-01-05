@@ -78,16 +78,6 @@ void AddCommand::redo()
 		dataModel->epoCoords.replace(numrows-1, coord);
 	}
 	
-	// FIXME: Checking QModelIndex values
-//	qDebug() << index1 << index2;
-	
-	// TODO: Add a QModelIndex as an attribute to the CoordinateMarker
-	// How shall this be done???
-	// Need to figure out what the index will be.
-	// This is a little confusing since the way the data is stored.  Two table items refer to one CoordinateMarker.
-	// Determine which row the marker belongs to, then determine the column (i.e. reference or epo)
-	// Store the model index with row and either 1 or 3 refering to reference or epo, respectively.
-	
 	// Initialize CoordinateMarker and add to GraphicScene
 	marker = new CoordinateMarker(index1, scene->centralItem);
 	marker->setPos(initialPosition.toPointF());
@@ -100,10 +90,6 @@ void AddCommand::redo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
-	
-	// FIXME: Checking data model
-	qDebug() << dataModel->refCoords;
-	qDebug() << dataModel->epoCoords;
 }
 
 

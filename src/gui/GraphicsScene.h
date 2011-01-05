@@ -60,10 +60,13 @@ signals:
 //    void itemMoved(CoordinateMarker *movedItem, const QPointF &movedFromPosition);
 	void itemMoved(GraphicsScene *scene, QPointF newPosition, QPointF oldPosition);
 	void markerChange(CoordinateMarker *m);
+	void currentSelection(int row);
 
 public slots:
 	void updatePixmap(QPixmap *pm);
 	void toggleClickable(bool sendSignal = true);
+	void findSelectedItem();
+	void matchSelectedItem(int row);
 	
 };
 

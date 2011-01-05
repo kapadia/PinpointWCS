@@ -33,7 +33,7 @@ CoordinateMarker::CoordinateMarker(QModelIndex &idx, QGraphicsItem *parent)
 	setSelected(true);
 	setFocus();
 	setEnabled(true);
-	radius = setRadius();
+	setRadius();
 	index = new QPersistentModelIndex(idx);
 	
 	// Set some flags
@@ -64,7 +64,7 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	QPen pen;
 	
 	// Compute width based on zoom factor of graphics view
-	radius = setRadius();
+	setRadius();
 	penWidth = setPenWidth();
 	pen.setWidthF(penWidth);
 	
@@ -142,7 +142,7 @@ QVariant CoordinateMarker::itemChange(GraphicsItemChange change, const QVariant 
 	return QGraphicsItem::itemChange(change, value);
 }
 
-float CoordinateMarker::setRadius()
+void CoordinateMarker::setRadius()
 {
 	/*
 	measure = qobject_cast<GraphicsScene*> (scene())->measure;
@@ -160,7 +160,7 @@ float CoordinateMarker::setRadius()
 		return a*(measure/2)+b;
 	return a*(measure/scale)+b;
 	 */
-	return 30;
+	radius = 30;
 }
 
 float CoordinateMarker::setPenWidth()

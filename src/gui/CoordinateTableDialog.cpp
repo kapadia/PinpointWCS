@@ -47,3 +47,12 @@ CoordinateTableDialog::~CoordinateTableDialog()
 {}
 
 
+void CoordinateTableDialog::toggle()
+{
+	if (isVisible())
+		setVisible(false);
+	else
+		setVisible(true);
+}
+
+

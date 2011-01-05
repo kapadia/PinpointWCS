@@ -185,12 +185,19 @@ bool MainWindow::setupWorkspace()
 		connect(ui.actionAstronomy_Visualization_Metadata, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVM()));
 		
 		// And more signals ...
-		connect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(show()));
+		connect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(toggle()));
 		
 		// Mouse dependent rotation menu items
 		rotateMenuItems(ui.graphicsView_1); // Set a default
 		connect(ui.graphicsView_1, SIGNAL(mouseEnterEvent(GraphicsView*)), this, SLOT(rotateMenuItems(GraphicsView*)));
 		connect(ui.graphicsView_2, SIGNAL(mouseEnterEvent(GraphicsView*)), this, SLOT(rotateMenuItems(GraphicsView*)));
+		
+		// Selecting corresponding items across scenes
+		connect(fitsScene, SIGNAL(selectionChanged()), fitsScene, SLOT(findSelectedItem()));
+		connect(fitsScene, SIGNAL(currentSelection(int)), epoScene, SLOT(matchSelectedItem(int)));
+		connect(epoScene, SIGNAL(selectionChanged()), epoScene, SLOT(findSelectedItem()));
+		connect(epoScene, SIGNAL(currentSelection(int)), fitsScene, SLOT(matchSelectedItem(int)));
+		
 		
 		return true;
 	}

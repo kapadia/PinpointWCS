@@ -161,3 +161,38 @@ float GraphicsScene::computeRadii()
 	
 	return radius;
 }
+
+void GraphicsScene::findSelectedItem()
+{
+	// Determine the selected item
+	if (selectedItems().isEmpty())
+		return;
+	CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker *>(selectedItems()[0]);
+	emit currentSelection(item->index->row());
+}
+
+void GraphicsScene::matchSelectedItem(int row)
+{
+	// Check if corresponding marker is already selected
+	if (!selectedItems().isEmpty())
+	{
+		CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker *>(selectedItems()[0]);
+		if (item->index->row() == row)
+			return;
+	}
+	
+	// Search for the corresponding marker
+	if (items().isEmpty())
+		return;
+	QList<QGraphicsItem*> markers = centralItem->childItems();
+	for (int i = 0; i < markers.size(); ++i)
+	{
+		CoordinateMarker *marker = qgraphicsitem_cast<CoordinateMarker*>(markers.at(i));
+		if (marker->index->row() == row)
+		{
+			clearSelection();
+			marker->setSelected(true);
+		}
+	}
+
+}

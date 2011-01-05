@@ -32,6 +32,10 @@ public:
 	CoordinateTableDialog(QWidget *parent = 0);
 	~CoordinateTableDialog();
 	Ui::CoordinateTableDialog ui;
+	
+public slots:
+	void toggle();
+	
 };
 
 #endif

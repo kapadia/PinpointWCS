@@ -31,6 +31,7 @@ class CoordinateMarker : public QGraphicsItem
 {
 	
 	friend class MoveCommand;
+	friend class GraphicsScene;
 	
 public:
 	enum {Type = UserType + 1};
@@ -54,7 +55,7 @@ protected:
 	
 private:
 	QPersistentModelIndex *index;
-	float setRadius();
+	void setRadius();
 	float setPenWidth();
 	float radius;
 	float penWidth;
