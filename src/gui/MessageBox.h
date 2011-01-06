@@ -17,42 +17,26 @@
  *
  */
 
+#ifndef MESSAGEBOX_H
+#define MESSAGEBOX_H
 
-#ifndef EXPORTWCS_H
-#define EXPORTWCS_H
+#include <QMessageBox>
 
-#include <QPixmap>
-#include <QString>
-#include "wcs.h"
-#include "EpoImage.h"
-#include "ComputeWCS.h"
+QT_BEGIN_NAMESPACE
+class QPixmap;
+QT_END_NAMESPACE
 
-#define AVM_VERSION "1.1"
-
-class ExportWCS : public QObject {
-	
-	Q_OBJECT
-	
-public:
-	ExportWCS(QString *f, QPixmap *p, ComputeWCS *cwcs);
-	~ExportWCS();
-	void setWCS(struct WorldCoor *w);
-	void clearWCS();
-	
-public slots:
-	bool exportFITS();
-	void exportAVM();
-	
-signals:
-	void exportResults(bool success);
-	
-private:
-	// Attributes
-	QPixmap *pixmap;
-	QString *filename;
-	struct WorldCoor *wcs;
-	ComputeWCS *computewcs;
+class MessageBox : public QMessageBox
+	{
+		Q_OBJECT
+		
+	public:
+		MessageBox(const QString &title, bool status, QWidget *parent = 0, Qt::WindowFlags f = Qt::Dialog|Qt::MSWindowsFixedSizeDialogHint);
+		~MessageBox();
+		void closeEvent(QCloseEvent *event);
+		
+		QPixmap *icon;
+		
 };
 
 #endif
-

@@ -202,7 +202,7 @@ bool ExportWCS::exportFITS()
 }
 
 
-bool ExportWCS::exportAVM()
+void ExportWCS::exportAVM()
 {
 	qDebug() << "Attempting to export AVM ...";
 	
@@ -210,7 +210,7 @@ bool ExportWCS::exportAVM()
 	
 	// Initialize the Adobe XMP Toolkit
 	if (!SXMPMeta::Initialize())
-		return false;
+		emit exportResults(false);
 	
 	// Set some options
 	XMP_OptionBits options = 0;
@@ -358,12 +358,19 @@ bool ExportWCS::exportAVM()
 				
 				// Close file
 				epoimage.CloseFile();
-				return true;
+				
+				// Broadcast results
+				emit exportResults(true);
 			}
+			else
+				emit exportResults(false);
 		}
 		catch (XMP_Error &e)
 		{
 			std::cout << "Error: " << e.GetErrMsg() << std::endl;
+			
+			// Broadcast results
+			emit exportResults(false);
 		}
 		
 		// Terminate the XMP Toolkit
@@ -373,8 +380,8 @@ bool ExportWCS::exportAVM()
 	else
 	{
 		qDebug() << "Could not intialize SXMPFiles!";
-		return false;
+		
+		// Broadcast results
+		emit exportResults(false);
 	}
-	
-	return true;
 }

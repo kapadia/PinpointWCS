@@ -61,6 +61,7 @@ signals:
 	void itemMoved(GraphicsScene *scene, QPointF newPosition, QPointF oldPosition);
 	void markerChange(CoordinateMarker *m);
 	void currentSelection(int row);
+	void clearCorrespondingSelection();
 
 public slots:
 	void updatePixmap(QPixmap *pm);

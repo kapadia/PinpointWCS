@@ -162,17 +162,24 @@ float GraphicsScene::computeRadii()
 	return radius;
 }
 
+
 void GraphicsScene::findSelectedItem()
 {
+	qDebug() << "findSelectedItem";
 	// Determine the selected item
 	if (selectedItems().isEmpty())
+	{
+		emit clearCorrespondingSelection();
 		return;
+	}
 	CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker *>(selectedItems()[0]);
 	emit currentSelection(item->index->row());
 }
 
+
 void GraphicsScene::matchSelectedItem(int row)
 {
+	qDebug() << "matchSelectedItem";
 	// Check if corresponding marker is already selected
 	if (!selectedItems().isEmpty())
 	{
@@ -180,6 +187,9 @@ void GraphicsScene::matchSelectedItem(int row)
 		if (item->index->row() == row)
 			return;
 	}
+	
+	// Clear selection
+	clearSelection();
 	
 	// Search for the corresponding marker
 	if (items().isEmpty())
@@ -189,10 +199,6 @@ void GraphicsScene::matchSelectedItem(int row)
 	{
 		CoordinateMarker *marker = qgraphicsitem_cast<CoordinateMarker*>(markers.at(i));
 		if (marker->index->row() == row)
-		{
-			clearSelection();
 			marker->setSelected(true);
-		}
 	}
-
 }

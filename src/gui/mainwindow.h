@@ -41,6 +41,7 @@
 #include "ComputeWCS.h"
 #include "ExportWCS.h"
 #include "AboutDialog.h"
+#include "MessageBox.h"
  
 class MainWindow : public QMainWindow
 {
@@ -113,6 +114,7 @@ private slots:
 	void enableExport();
 	void computeWCS();
 	void rotateMenuItems(GraphicsView *gv);
+	void promptMessage(bool status);
 	
 	// A slot for testing ...
 	void testSlot();

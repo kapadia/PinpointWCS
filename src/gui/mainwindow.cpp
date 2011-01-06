@@ -197,7 +197,11 @@ bool MainWindow::setupWorkspace()
 		connect(fitsScene, SIGNAL(currentSelection(int)), epoScene, SLOT(matchSelectedItem(int)));
 		connect(epoScene, SIGNAL(selectionChanged()), epoScene, SLOT(findSelectedItem()));
 		connect(epoScene, SIGNAL(currentSelection(int)), fitsScene, SLOT(matchSelectedItem(int)));
-		
+		connect(fitsScene, SIGNAL(clearCorrespondingSelection()), epoScene, SLOT(clearSelection()));
+		connect(epoScene, SIGNAL(clearCorrespondingSelection()), fitsScene, SLOT(clearSelection()));
+
+		// Exporting signals and slots
+		connect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 		
 		return true;
 	}
@@ -448,6 +452,14 @@ void MainWindow::rotateMenuItems(GraphicsView *gv)
 		connect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCW()));
 		connect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCCW()));
 	}
+}
+
+// FIXME: Memory Leak!!
+void MainWindow::promptMessage(bool status)
+{
+	// Set up message and pixmap for prompt
+	MessageBox *msg = new MessageBox("Export Status", status, this);
+	msg->exec();
 }
 
 void MainWindow::testSlot()
