@@ -50,9 +50,21 @@ CoordinateTableDialog::~CoordinateTableDialog()
 void CoordinateTableDialog::toggle()
 {
 	if (isVisible())
-		setVisible(false);
+		close();
 	else
-		setVisible(true);
+	{
+		if (lastPos.isNull())
+			show();
+		else
+		{
+			move(lastPos);
+			show();
+		}
+	}
 }
 
-
+void CoordinateTableDialog::closeEvent(QCloseEvent *event)
+{
+	lastPos = pos();
+	QDialog::closeEvent(event);
+}

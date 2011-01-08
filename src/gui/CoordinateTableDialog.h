@@ -33,6 +33,12 @@ public:
 	~CoordinateTableDialog();
 	Ui::CoordinateTableDialog ui;
 	
+protected:
+	void closeEvent(QCloseEvent *event);
+	
+private:
+	QPoint lastPos;
+	
 public slots:
 	void toggle();
 	

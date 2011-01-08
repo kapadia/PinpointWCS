@@ -147,8 +147,7 @@ MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVari
 	oldPos = oldValue.toPointF();
 	scene = s;
 	marker = qgraphicsitem_cast<CoordinateMarker*>(scene->itemAt(newPos));
-	// FIXME: Memory error if a marker is not referenced.
-	// FIXME: This occurs when handling data via the table view
+
 	if (marker == 0)
 	{
 		QList<QGraphicsItem*> markers = scene->selectedItems();
@@ -167,7 +166,7 @@ MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVari
 			marker = qgraphicsitem_cast<CoordinateMarker*>(scene->selectedItems()[0]);
 		}
 	}
-	qDebug() << "Marker: " << marker;
+
 	dataModel = model;
 }
 
@@ -229,7 +228,7 @@ void MoveCommand::redo()
 	// Initialize some variables
 	QModelIndex index1;
 	QModelIndex index2;
-	qDebug() << "one";
+
 	// If the marker is destroyed by AddCommand::undo(), this code will find the marker using coordinates (shoddy...)
 	if (scene->itemAt(oldPos) != 0)
 	{

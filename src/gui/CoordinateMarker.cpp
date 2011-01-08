@@ -89,10 +89,10 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	painter->drawEllipse(-radius, -radius, radius*2, radius*2);
 }
 
-
+// Don't think we need these methods overridden
+/*
 void CoordinateMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    update();
 	QGraphicsItem::mousePressEvent(event);
 }
 
@@ -107,7 +107,7 @@ void CoordinateMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {	
 	QGraphicsItem::mouseReleaseEvent(event);
 }
-
+*/
 
 void CoordinateMarker::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
@@ -118,6 +118,7 @@ void CoordinateMarker::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 void CoordinateMarker::keyPressEvent(QKeyEvent *event)
 {
+	qDebug() << "keyPressEvent";
 	setFlag(QGraphicsItem::ItemIsMovable, false);
 	setFlag(QGraphicsItem::ItemIsSelectable, false);
 	QGraphicsItem::keyPressEvent(event);
@@ -125,6 +126,7 @@ void CoordinateMarker::keyPressEvent(QKeyEvent *event)
 
 void CoordinateMarker::keyReleaseEvent(QKeyEvent *event)
 {
+	qDebug() << "keyReleaseEvent";
 	setFlag(QGraphicsItem::ItemIsMovable, true);
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
 	QGraphicsItem::keyReleaseEvent(event);

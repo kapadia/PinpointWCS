@@ -19,6 +19,7 @@
 
 #include <QApplication>
 #include "mainwindow.h"
+#include <time.h>
 
 // TODO: Pass *QPointFs not QPointFs
 // TODO: Quadratic and Cubic mappings (fix the math)
@@ -29,6 +30,10 @@
 
 int main(int argc, char *argv[])
 {
+	time_t seconds;
+	seconds = time(NULL);
+	std::cout << seconds << std::endl;
+	
 	// Initialize application
 	QApplication app(argc, argv);
 	app.setOrganizationName("Smithsonian Astrophysical Observatory");

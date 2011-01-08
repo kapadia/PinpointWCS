@@ -37,7 +37,7 @@ GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
 	else
 		clickable = false;
 	
-	// TODO: Testing a central graphics item
+	// Create a container for all the markers
 	centralItem = new QGraphicsRectItem;
 //	centralItem->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 	centralItem->setRect(sceneRect());
@@ -86,25 +86,6 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 			emit itemMoved(this, movingItem->pos(), oldPos);
         movingItem = 0;
 	}
-	/*
-    if (movingItem != 0 && event->button() == Qt::LeftButton) {
-		QPointF newPos = movingItem->pos();
-		
-        if (oldPos != movingItem->pos())
-		{
-			if (newPos.x() < 0)
-				movingItem->setX(0);
-			if (newPos.x() > width())
-				movingItem->setX(width());
-			if (newPos.y() < 0)
-				movingItem->setY(0);
-			if (newPos.y() > height())
-				movingItem->setY(height());
-			emit itemMoved(this, movingItem->pos(), oldPos);
-		}
-        movingItem = 0;
-    }
-	 */
 
     QGraphicsScene::mouseReleaseEvent(event);
 }
@@ -165,7 +146,6 @@ float GraphicsScene::computeRadii()
 
 void GraphicsScene::findSelectedItem()
 {
-	qDebug() << "findSelectedItem";
 	// Determine the selected item
 	if (selectedItems().isEmpty())
 	{
@@ -179,7 +159,6 @@ void GraphicsScene::findSelectedItem()
 
 void GraphicsScene::matchSelectedItem(int row)
 {
-	qDebug() << "matchSelectedItem";
 	// Check if corresponding marker is already selected
 	if (!selectedItems().isEmpty())
 	{

@@ -36,7 +36,6 @@ GraphicsView::GraphicsView(QWidget *parent)
 	setRenderHint(QPainter::Antialiasing);
 	setDragMode(NoDrag);
 	setTransformationAnchor(AnchorViewCenter);
-//	setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
 	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 	
 	viewport()->setMouseTracking(true);
