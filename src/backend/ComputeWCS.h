@@ -42,6 +42,7 @@ public:
 	
 	// Public Attributes
 	bool epoWCS;
+	bool mappingExists;
 	
 	// EPO Attributes
 	double width;
@@ -51,6 +52,7 @@ public:
 	Matrix2d cdmatrix;
 	double scale;
 	double orientation;
+	QPointF fitsToEpo(QPointF *p);
 	
 public slots:
 	void computeTargetWCS();
@@ -67,7 +69,6 @@ private:
 	Vector2d xi_eta(Vector2d pixel);
 	void computeSums();
 	void computeResiduals();
-	Vector2d fitsToEpo(QPointF *p);
 	Vector2d epoToFits(QPointF *p);
 	Vector2d epoToFits(double x, double y);
 	Vector2d epoToFits(Vector2d p);

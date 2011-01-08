@@ -33,6 +33,7 @@ ComputeWCS::ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoo
 	epoCoords = epo;
 	referenceWCS = refWCS;
 	epoWCS = false;
+	mappingExists = false;
 	width = w;
 	height = h;
 	
@@ -285,12 +286,14 @@ void ComputeWCS::plateSolution()
 	matrix.lu().solve(xvector, &xcoeff);
 	matrix.lu().solve(yvector, &ycoeff);
 	
+	mappingExists = true;
 	// Print to standard output
 //	std::cout << "xcoeff:\n" << xcoeff << "\n" << std::endl;
 //	std::cout << "ycoeff:\n" << ycoeff << "\n" << std::endl;
 }
 
 
+// TODO: Complete this code!!!
 void ComputeWCS::computeResiduals()
 {
 	// Initialize some variables
@@ -323,10 +326,32 @@ void ComputeWCS::computeResiduals()
 	qDebug() << "RMS Y:" << rms_y;
 }
 
-
-Vector2d ComputeWCS::fitsToEpo(QPointF *p)
+// TODO: Compute the mapped coordinates
+QPointF ComputeWCS::fitsToEpo(QPointF *p)
 {
-	return Vector2d(p->x(), p->y());
+	// TODO: Check that bd-af is nonzero
+	QPointF epoCoord;
+	float x0, y0;
+	
+	// Create matrix of coeffients
+	Matrix2d m;
+	m << xcoeff(0), xcoeff(1), ycoeff(0), ycoeff(1);
+	
+	// Take the inverse
+	m = m.inverse();
+	Vector3d xinverse;
+	Vector3d yinverse;
+	xinverse << m(0,0), m(0,1), xcoeff[2];
+	yinverse << m(1,0), m(1,1), ycoeff[2];
+	
+	// Find the difference
+	x0 = p->x() - xinverse[2];
+	y0 = referenceWCS->nypix - p->y() - yinverse[2];
+	
+	epoCoord.setX(xinverse[0] * x0 + xinverse[1] * y0);
+	epoCoord.setY(yinverse[0] * x0 + yinverse[1] * y0);
+
+	return epoCoord;
 }
 
 
@@ -336,6 +361,8 @@ Vector2d ComputeWCS::epoToFits(QPointF *p)
 		
 	if (degree == 1)
 	{
+		// x_r = a*x + b*y + c
+		// y_r = d*x + f*b + g
 		coordinate(0) = xcoeff[0] * p->x() + xcoeff[1] * p->y() + xcoeff[2];
 		coordinate(1) = ycoeff[0] * p->x() + ycoeff[1] * p->y() + ycoeff[2];
 	}

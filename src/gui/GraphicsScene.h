@@ -35,6 +35,7 @@ public:
 	bool reference;
 	float measure;
 	QGraphicsRectItem *centralItem;
+	bool clickable;
 	void signalItemMoved(CoordinateMarker *m, QPointF oldPos);
 		
 protected:
@@ -46,7 +47,6 @@ protected:
 	void keyReleaseEvent(QKeyEvent *event);
 
 private:
-	bool clickable;
 	QPointF oldPos;
 	QGraphicsItem *movingItem;
 	QGraphicsPixmapItem *ptr_pixmap;

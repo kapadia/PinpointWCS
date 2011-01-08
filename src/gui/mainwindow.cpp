@@ -203,6 +203,9 @@ bool MainWindow::setupWorkspace()
 		// Exporting signals and slots
 		connect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 		
+		// Prediction signal and slot
+		connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(testSlot()));
+		
 		return true;
 	}
 	return false;
@@ -401,11 +404,21 @@ void MainWindow::enableExport()
 		ui.actionAstronomy_Visualization_Metadata->setEnabled(false);
 		ui.actionFITS_Image->setEnabled(false);
 		
+		// Disable prediction of EPO coordinate
+		ui.actionFit_Point->setEnabled(false);
+		
 		// Destroy EPO WCS object and clear WCS from panel
 		epoImage->wcs = NULL;
 		epoWcsInfoPanel->clear();
 		exportwcs->clearWCS();
 	}
+	
+	// Enable prediction of EPO coordinate if mapping exists
+	if (computewcs->mappingExists && epoScene->clickable)
+		ui.actionFit_Point->setEnabled(true);
+	else
+		ui.actionFit_Point->setEnabled(false);
+		
 }
 
 
@@ -465,4 +478,11 @@ void MainWindow::promptMessage(bool status)
 void MainWindow::testSlot()
 {
 	qDebug() << "Test Slot";
+	
+	// Get the last reference point in the data model
+	QPointF refCoord = dataModel->refCoords.last();
+	
+	// Send the predicted coordinate to the data model via commands
+	dataModel->setData(epoScene, computewcs->fitsToEpo(&refCoord));
+	
 }
