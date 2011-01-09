@@ -162,7 +162,7 @@ void GraphicsScene::matchSelectedItem(int row)
 	// Check if corresponding marker is already selected
 	if (!selectedItems().isEmpty())
 	{
-		CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker *>(selectedItems()[0]);
+		CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker*>(selectedItems()[0]);
 		if (item->index->row() == row)
 			return;
 	}
@@ -180,4 +180,22 @@ void GraphicsScene::matchSelectedItem(int row)
 		if (marker->index->row() == row)
 			marker->setSelected(true);
 	}
+}
+
+
+void GraphicsScene::centroidSelectedItem()
+{
+	qDebug() << "Centroid ...";
+	
+	// Get selected item if any
+	if (selectedItems().isEmpty())
+		return;
+	CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker*>(selectedItems()[0]);
+	QPointF pos = item->pos();
+	
+	// Get intensity of pixels from FITS image
+	
+	
+	
+	qDebug() << pos;
 }

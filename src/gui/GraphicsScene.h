@@ -68,6 +68,7 @@ public slots:
 	void toggleClickable(bool sendSignal = true);
 	void findSelectedItem();
 	void matchSelectedItem(int row);
+	void centroidSelectedItem();
 	
 };
 

@@ -113,6 +113,10 @@ bool MainWindow::setupWorkspace()
 		ui.actionRotate_Clockwise->setEnabled(true);
 		ui.actionRotate_Counterclockwise->setEnabled(true);
 		
+		// TODO: Testing advanced options
+		// Enable some advanced options
+		ui.actionCentroid->setEnabled(true);
+		
 		// Create a QActionGroup from the stretch menu items
 		QActionGroup *stretchActionGroup = new QActionGroup(this);
 		stretchActionGroup->addAction(ui.actionLinear_Stretch);
@@ -203,8 +207,9 @@ bool MainWindow::setupWorkspace()
 		// Exporting signals and slots
 		connect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 		
-		// Prediction signal and slot
+		// Prediction and centroid signal and slots
 		connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(testSlot()));
+		connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(centroidSelectedItem()));
 		
 		return true;
 	}
