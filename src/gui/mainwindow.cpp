@@ -115,7 +115,7 @@ bool MainWindow::setupWorkspace()
 		
 		// TODO: Testing advanced options
 		// Enable some advanced options
-		ui.actionCentroid->setEnabled(true);
+//		ui.actionCentroid->setEnabled(true);
 		
 		// Create a QActionGroup from the stretch menu items
 		QActionGroup *stretchActionGroup = new QActionGroup(this);
@@ -207,7 +207,7 @@ bool MainWindow::setupWorkspace()
 		// Exporting signals and slots
 		connect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 		
-		// Prediction and centroid signal and slots
+		// TODO: Prediction and centroid signal and slots
 		connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(testSlot()));
 		connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
 		connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
