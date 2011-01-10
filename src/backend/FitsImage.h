@@ -52,7 +52,6 @@ public:
 	float minpixel, maxpixel, difference;
 	float vmin, vmax, lowerLimit, upperLimit;
 	bool downsampled;
-	int M;
 	float* imagedata;
 	int stretch;
 	QPixmap pixmap;
@@ -88,7 +87,6 @@ private:
 	long numelements;
 	long* fpixel;
 	int bitpix;
-	long naxisn[2];
 	float* renderdata;
 	float lowerPercentile;
 	float upperPercentile;

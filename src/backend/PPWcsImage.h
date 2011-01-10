@@ -37,6 +37,7 @@ public:
 	// Attributes
 	struct WorldCoor *wcs;
 	QPixmap *pixmap;
+	int M;	// Downsampling factor
 	
 	// Methods
 	double *pix2sky(QPointF pos);
@@ -45,9 +46,8 @@ protected:
 	// Variables for WCSTools
 	double xpix, ypix;
 	double *world;
-	
-	// Private Methods
 	void finishInitialization();
+	long naxisn[2];
 };
 
 #endif

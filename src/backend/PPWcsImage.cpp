@@ -26,6 +26,7 @@ PPWcsImage::PPWcsImage()
 	
 	// Initialize attributes common to all base classes
 	wcs = NULL;
+	M = 1;
 }
 
 PPWcsImage::~PPWcsImage() {}
@@ -41,10 +42,13 @@ double* PPWcsImage::pix2sky(QPointF pos)
 	if (!wcs)
 		return world;
 	
-//	qDebug() << pos;
-	xpix = pos.x();
-	ypix = wcs->nypix - pos.y();
-	pix2wcs(wcs, xpix, ypix, &world[0], &world[1]);
+	// Get unbinned pixel
+	float xf, yf;
+	
+	xf = M*(pos.x()-1)+2-0.5;
+	yf = naxisn[1]-(M*(pos.y()-1))-0.5;
+
+	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	
 	// Perhaps the transformationStatus needs to be checked ...
 	return world;

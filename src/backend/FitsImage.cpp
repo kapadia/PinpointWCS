@@ -41,7 +41,6 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	renderdata = NULL;
 	lowerPercentile = 0.0025;
 	upperPercentile = 0.9975;
-	M = 1;
 	downsampled = false;
 	
 	// Open FITS file
@@ -577,11 +576,14 @@ void FitsImage::invert()
 	emit pixmapChanged(&pixmap);
 }
 
+// TODO: Double check this to make sure the mapping between pixels is correct.
 QPointF FitsImage::fpix2pix(QPointF fpix)
 {
 	float x, y, xf, yf;
 	x = fpix.x();
 	y = fpix.y();
+	
+	// Unbin the pixels, if image is not binned this will just return the same value
 	xf = M*(x-1)+2-0.5;
 	yf = naxisn[1]-(M*(y-1))-0.5;
 	
@@ -616,10 +618,6 @@ void FitsImage::fitCentroid(QPointF pos)
 	qDebug() << "fitCentroid starting at" << pos;
 	
 	// Crawl within a predefined radius (say 10 pixels) to find the brightest
-	float px1, px2, px3;
-	float px4,		px5;
-	float px6, px7, px8;
-	
 	float maxpxl;
 	QPointF pxlPos;
 	QPointF maxpxlPos;
