@@ -62,13 +62,14 @@ signals:
 	void markerChange(CoordinateMarker *m);
 	void currentSelection(int row);
 	void clearCorrespondingSelection();
+	void itemPos(QPointF pos);
 
 public slots:
 	void updatePixmap(QPixmap *pm);
 	void toggleClickable(bool sendSignal = true);
 	void findSelectedItem();
 	void matchSelectedItem(int row);
-	void centroidSelectedItem();
+	void selectedItemPos();
 	
 };
 

@@ -116,8 +116,9 @@ private slots:
 	void rotateMenuItems(GraphicsView *gv);
 	void promptMessage(bool status);
 	
-	// A slot for testing ...
+	// A slots for testing ...
 	void testSlot();
+	void testSlotII(QPointF pos);
 };
 
 

@@ -183,19 +183,11 @@ void GraphicsScene::matchSelectedItem(int row)
 }
 
 
-void GraphicsScene::centroidSelectedItem()
-{
-	qDebug() << "Centroid ...";
-	
+void GraphicsScene::selectedItemPos()
+{	
 	// Get selected item if any
 	if (selectedItems().isEmpty())
 		return;
 	CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker*>(selectedItems()[0]);
-	QPointF pos = item->pos();
-	
-	// Get intensity of pixels from FITS image
-	
-	
-	
-	qDebug() << pos;
+	emit itemPos(item->pos());
 }

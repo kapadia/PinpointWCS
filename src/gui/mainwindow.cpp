@@ -209,7 +209,9 @@ bool MainWindow::setupWorkspace()
 		
 		// Prediction and centroid signal and slots
 		connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(testSlot()));
-		connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(centroidSelectedItem()));
+		connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
+		connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
+		connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
 		
 		return true;
 	}
@@ -490,4 +492,12 @@ void MainWindow::testSlot()
 	// Send the predicted coordinate to the data model via commands
 	dataModel->setData(epoScene, computewcs->fitsToEpo(&refCoord));
 	
+}
+
+void MainWindow::testSlotII(QPointF pos)
+{
+	qDebug() << "Test Slot II";
+	
+	CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker*>(fitsScene->selectedItems()[0]);
+	dataModel->updateData(fitsScene, pos, item->pos());
 }

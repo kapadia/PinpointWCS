@@ -65,9 +65,11 @@ public slots:
 	void setVmin(float minpix);
 	void setVmax(float maxpix);
 	void invert();
+	void fitCentroid(QPointF pos);
 	
 signals:
 	void pixmapChanged(QPixmap *pm);
+	void centroid(QPointF pos);
 	
 private:
 	// Methods
@@ -76,6 +78,7 @@ private:
 	void downsample(float** arr, int W, int H, int S, int* newW, int* newH);
 	bool calculatePercentile(float lp, float up);
 	bool calibrateImage(int s, float minpix, float maxpix);
+	float pixelIntensity(QPointF pos);
 		
 	// Attributes
 	fitsfile *fptr;
