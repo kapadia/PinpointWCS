@@ -135,6 +135,8 @@ void ComputeWCS::computeTargetWCS()
 	emit nowcs();
 }
 
+
+// FIXME: Fix and make work with galatic coordinates
 struct WorldCoor* ComputeWCS::initTargetWCS()
 {
 	qDebug() << "initTargetWCS()";
@@ -154,6 +156,26 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	
 	return targetWCS;
 }
+
+
+// FIXME: Try copying WCS over and only changing the reference pixel
+struct WorldCoor* ComputeWCS::initTargetWCSII()
+{
+	qDebug() << "initTargetWCSII()";
+	struct WorldCoor *targetWCS;
+	
+	// Determine the reference image's reference pixel from the frame of reference of the epo image
+	crpix = fitsToEpo(referenceWCS->crpix[0], referenceWCS->crpix[1]);
+	
+	targetWCS = wcskinit(width, height, "RA--", "DEC-",
+						 crpix(0), crpix(1), referenceWCS->crval[0], referenceWCS->crval[1],
+						 referenceWCS->cd, referenceWCS->cdelt[0], referenceWCS->cdelt[1],
+						 referenceWCS->rot, referenceWCS->equinox, referenceWCS->epoch
+						 );
+
+	return targetWCS;
+}
+
 
 
 Vector2d ComputeWCS::xi_eta(double xpix, double ypix)
@@ -251,9 +273,6 @@ void ComputeWCS::plateSolution()
 	matrix.lu().solve(yvector, &ycoeff);
 	
 	mappingExists = true;
-	// Print to standard output
-//	std::cout << "xcoeff:\n" << xcoeff << "\n" << std::endl;
-//	std::cout << "ycoeff:\n" << ycoeff << "\n" << std::endl;
 }
 
 
@@ -317,6 +336,33 @@ QPointF ComputeWCS::fitsToEpo(QPointF *p)
 
 	return epoCoord;
 }
+
+
+Vector2d ComputeWCS::fitsToEpo(double x, double y)
+{
+	// TODO: Check that bd-af is nonzero
+	Vector2d epoCoord;
+	float x0, y0;
+	
+	// Create matrix of coeffients
+	Matrix2d m;
+	m << xcoeff(0), xcoeff(1), ycoeff(0), ycoeff(1);
+	
+	// Take the inverse
+	m = m.inverse();
+	Vector3d xinverse;
+	Vector3d yinverse;
+	xinverse << m(0,0), m(0,1), xcoeff[2];
+	yinverse << m(1,0), m(1,1), ycoeff[2];
+	
+	// Find the difference
+	x0 = x - xinverse[2];
+	y0 = referenceWCS->nypix - y - yinverse[2];
+	
+	epoCoord << xinverse[0] * x0 + xinverse[1] * y0, yinverse[0] * x0 + yinverse[1] * y0;	
+	return epoCoord;
+}
+
 
 
 Vector2d ComputeWCS::epoToFits(QPointF *p)

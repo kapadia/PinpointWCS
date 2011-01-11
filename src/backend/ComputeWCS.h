@@ -21,8 +21,8 @@
 #define COMPUTEWCS_H
 
 #include <QList>
-#include <QPair>
 #include <QPointF>
+#include <QPair>
 #include <Eigen/Core>
 #include "wcs.h"
 
@@ -39,6 +39,7 @@ public:
 	ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoor *refWCS, double w, double h);
 	~ComputeWCS();
 	struct WorldCoor* initTargetWCS();
+	struct WorldCoor* initTargetWCSII();
 	
 	// Public Attributes
 	bool epoWCS;
@@ -53,6 +54,7 @@ public:
 	double scale;
 	double orientation;
 	QPointF fitsToEpo(QPointF *p);
+	Vector2d fitsToEpo(double x, double y);
 	
 public slots:
 	void computeTargetWCS();

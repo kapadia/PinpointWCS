@@ -416,6 +416,9 @@
    </property>
   </action>
   <action name="actionRotate_Clockwise">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Rotate Clockwise</string>
    </property>
@@ -424,6 +427,9 @@
    </property>
   </action>
   <action name="actionRotate_Counterclockwise">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Rotate Counterclockwise</string>
    </property>

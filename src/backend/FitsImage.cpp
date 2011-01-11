@@ -40,7 +40,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	imagedata = NULL;
 	renderdata = NULL;
 	lowerPercentile = 0.0025;
-	upperPercentile = 0.9975;
+	upperPercentile = 0.9975;	
 	downsampled = false;
 	
 	// Open FITS file
