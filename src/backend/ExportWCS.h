@@ -23,6 +23,7 @@
 
 #include <QPixmap>
 #include <QString>
+#include <QFileDialog>
 #include "wcs.h"
 #include "EpoImage.h"
 #include "ComputeWCS.h"
@@ -40,7 +41,7 @@ public:
 	void clearWCS();
 	
 public slots:
-	bool exportFITS();
+	void exportFITS();
 	void exportAVM();
 	
 signals:
