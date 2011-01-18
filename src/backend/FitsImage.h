@@ -65,6 +65,7 @@ public slots:
 	void setVmax(float maxpix);
 	void invert();
 	void fitCentroid(QPointF pos);
+	double* pix2sky(QPointF pos);
 	
 signals:
 	void pixmapChanged(QPixmap *pm);

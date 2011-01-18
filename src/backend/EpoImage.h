@@ -34,6 +34,8 @@ public:
 	// Public Methods
 	EpoImage(QString filename);
 	~EpoImage();
+
+	double* pix2sky(QPointF pos);
 };
 
 #endif

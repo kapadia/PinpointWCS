@@ -726,3 +726,25 @@ void FitsImage::fitCentroid(QPointF pos)
 	// maxpxlPos is the location of the max pixel
 	emit centroid(maxpxlPos);
 }
+
+
+double* FitsImage::pix2sky(QPointF pos)
+{
+	if (!wcs)
+		return world;
+	
+	// Get unbinned pixel
+	float xf, yf;
+	
+	xf = M*(pos.x()-1)+2-0.5;
+	yf = naxisn[1]-(M*(pos.y()-1))-0.5;
+	
+	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
+	
+	// Check if coordinates are galatic
+	if (wcs->syswcs != WCS_J2000)
+		wcscon(wcs->syswcs, WCS_J2000, wcs->equinox, wcs->eqout, &world[0], &world[1], wcs->epoch);
+	
+	// Perhaps the transformationStatus needs to be checked ...
+	return world;
+}

@@ -39,15 +39,15 @@ public:
 	QPixmap *pixmap;
 	int M;	// Downsampling factor
 	
-	// Methods
-	double *pix2sky(QPointF pos);
+	virtual double *pix2sky(QPointF pos);
 	
 protected:
 	// Variables for WCSTools
 	double xpix, ypix;
 	double *world;
-	void finishInitialization();
 	long naxisn[2];
+	
+	void finishInitialization();
 };
 
 #endif
