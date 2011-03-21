@@ -43,6 +43,7 @@ double* EpoImage::pix2sky(QPointF pos)
 	float xf, yf;
 	
 	xf = M*(pos.x()-1)+2-0.5;
+	// FIXME: Computes WCS incorrectly.
 	yf = (M*(pos.y()-1))-0.5;
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);

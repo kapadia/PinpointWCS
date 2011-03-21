@@ -22,9 +22,8 @@
 #include <time.h>
 
 // TODO: Pass *QPointFs not QPointFs
-// TODO: Quadratic and Cubic mappings (fix the math)
 // TODO: Add Save As dialog for FITS export
-// TODO: Fix QGraphicsItem bugs (e.g. stray marks, keyboard interactions, dynamic sizing)
+// FIXME: Something unusual when marking new point, undoing, then predicting.
 // FIXME: Compute WCS Correctly!!!
 
 

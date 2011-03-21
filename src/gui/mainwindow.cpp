@@ -448,9 +448,6 @@ void MainWindow::rotateMenuItems(GraphicsView *gv)
 {
 	if (gv == ui.graphicsView_1)
 	{
-		ui.actionRotate_Clockwise->setText("Rotate FITS Clockwise");
-		ui.actionRotate_Counterclockwise->setText("Rotate FITS Counterclockwise");
-		
 		// Disconnect slots
 		disconnect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCW()));
 		disconnect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCCW()));
@@ -460,10 +457,7 @@ void MainWindow::rotateMenuItems(GraphicsView *gv)
 		connect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCCW()));
 	}
 	else
-	{
-		ui.actionRotate_Clockwise->setText("Rotate EPO Clockwise");
-		ui.actionRotate_Counterclockwise->setText("Rotate EPO Counterclockwise");
-		
+	{		
 		// Disconnect slots
 		disconnect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCW()));
 		disconnect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCCW()));

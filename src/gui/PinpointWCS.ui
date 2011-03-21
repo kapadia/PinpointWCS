@@ -420,7 +420,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Rotate Clockwise</string>
+    <string>Rotate Clockwise ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -431,7 +431,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Rotate Counterclockwise</string>
+    <string>Rotate Counterclockwise ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+R</string>
