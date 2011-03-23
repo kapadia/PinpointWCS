@@ -33,7 +33,8 @@ EpoImage::EpoImage(QString filename) : PPWcsImage()
 EpoImage::~EpoImage()
 {}
 
-
+// FIXME: Pixel mapping not correct.  Find reason!!!
+// TODO: Check the initialization of the WCS object
 double* EpoImage::pix2sky(QPointF pos)
 {
 	if (!wcs)
@@ -41,9 +42,7 @@ double* EpoImage::pix2sky(QPointF pos)
 	
 	// Get unbinned pixel
 	float xf, yf;
-	
 	xf = M*(pos.x()-1)+2-0.5;
-	// FIXME: Computes WCS incorrectly.
 	yf = (M*(pos.y()-1))-0.5;
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);

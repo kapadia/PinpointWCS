@@ -39,8 +39,11 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	status = 0;
 	imagedata = NULL;
 	renderdata = NULL;
-	lowerPercentile = 0.0025;
-	upperPercentile = 0.9975;	
+	// TODO: Changed scaling to better match DS9. Change back when done!!!
+//	lowerPercentile = 0.0025;
+//	upperPercentile = 0.9975;
+	lowerPercentile = 0.0015;
+	upperPercentile = 0.9985;
 	downsampled = false;
 	
 	// Open FITS file
@@ -727,7 +730,6 @@ void FitsImage::fitCentroid(QPointF pos)
 	emit centroid(maxpxlPos);
 }
 
-
 double* FitsImage::pix2sky(QPointF pos)
 {
 	if (!wcs)
@@ -736,6 +738,8 @@ double* FitsImage::pix2sky(QPointF pos)
 	// Get unbinned pixel
 	float xf, yf;
 	
+	// Transform from binned QPixmap pixels to FITS pixels
+	// this includes a 1 and 1/2 pixel offset.
 	xf = M*(pos.x()-1)+2-0.5;
 	yf = naxisn[1]-(M*(pos.y()-1))-0.5;
 	
