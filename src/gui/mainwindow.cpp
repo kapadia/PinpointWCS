@@ -253,6 +253,7 @@ bool MainWindow::loadEpoImage(QString& filename)
 {
 	qDebug() << "Loading EPO image ...";
 	epoImage = new EpoImage(filename);
+	// TODO: Make same as fitsScene argument ...
 	epoScene = new GraphicsScene(*(epoImage->pixmap), false);
 	ui.graphicsView_2->setScene(epoScene);
 	return true;
@@ -263,6 +264,7 @@ bool MainWindow::loadFitsImage(QString& filename)
 {
 	qDebug() << "Loading FITS image ...";
 	fitsImage = new FitsImage(filename);
+	// TODO: Make epoScene the same as this ...
 	fitsScene = new GraphicsScene((fitsImage->pixmap), true);
 	ui.graphicsView_1->setScene(fitsScene);
 	return true;

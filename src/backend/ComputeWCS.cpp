@@ -160,6 +160,7 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 
 
 // TODO: Try copying WCS over and only changing the reference pixel
+// TODO: Try wcslib's wcsshift to reset the center of the reference WCS to that of the epo WCS.
 struct WorldCoor* ComputeWCS::initTargetWCSII()
 {
 	qDebug() << "initTargetWCSII()";

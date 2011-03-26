@@ -34,7 +34,6 @@ EpoImage::~EpoImage()
 {}
 
 // FIXME: Pixel mapping not correct.  Find reason!!!
-// TODO: Check the initialization of the WCS object
 double* EpoImage::pix2sky(QPointF pos)
 {
 	if (!wcs)
@@ -44,10 +43,15 @@ double* EpoImage::pix2sky(QPointF pos)
 	float xf, yf;
 	xf = M*(pos.x()-1)+2-0.5;
 	yf = (M*(pos.y()-1))-0.5;
+	// WRONG!
+//	xf = pos.x()+0.5;
+//	yf = naxisn[1]-pos.y()+0.5;
+//	xf = pos.x();
+//	yf = pos.y();
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	
-	// Check if coordinates are galatic
+	// TODO: Support galatic coordinates
 	if (wcs->syswcs != WCS_J2000)
 		wcscon(wcs->syswcs, WCS_J2000, wcs->equinox, wcs->eqout, &world[0], &world[1], wcs->epoch);
 	
