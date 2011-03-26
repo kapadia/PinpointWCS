@@ -290,7 +290,8 @@ void ExportWCS::exportAVM()
 				QString crval2;
 				QString crpix1;
 				QString crpix2;
-				QString scale;
+				QString scale1;
+				QString scale2;
 				QString orientation;
 				QString cd11;
 				QString cd12;
@@ -307,7 +308,8 @@ void ExportWCS::exportAVM()
 				crval2.sprintf("%.11f", wcs->yref);
 				crpix1.sprintf("%.11f", wcs->xrefpix);
 				crpix2.sprintf("%.11f", wcs->yrefpix);
-				scale.sprintf("%.11f", computewcs->scale);
+				scale1.sprintf("%.11f", -1*computewcs->scale); // Following FITS convention of 1st value negative
+				scale2.sprintf("%.11f", computewcs->scale);
 				orientation.sprintf("%.11f", computewcs->orientation);
 				cd11.sprintf("%.11f", wcs->cd[0]);
 				cd12.sprintf("%.11f", wcs->cd[1]);
@@ -331,8 +333,8 @@ void ExportWCS::exportAVM()
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferenceDimension", itemOptions, height.toStdString());
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferencePixel", itemOptions, crpix1.toStdString());
 				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.ReferencePixel", itemOptions, crpix2.toStdString());				
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, scale.toStdString());
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, scale.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, scale1.toStdString());
+				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.Scale", itemOptions, scale2.toStdString());
 				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Rotation", orientation.toStdString(), 0);
 				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.CoordsystemProjection", "TAN", 0);
 				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Quality", "Full", 0);

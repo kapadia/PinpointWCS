@@ -28,7 +28,7 @@
 #include "EpoImage.h"
 #include "ComputeWCS.h"
 
-#define AVM_VERSION "1.1"
+#define AVM_VERSION "1.2"
 
 class ExportWCS : public QObject {
 	
