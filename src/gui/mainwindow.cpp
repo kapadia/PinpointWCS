@@ -139,7 +139,7 @@ bool MainWindow::setupWorkspace()
 		fitsCoordPanel->show();
 		epoCoordPanel->show();
 		buildCoordPanelMachine();
-		fitsWcsInfoPanel->loadWCS(*(fitsImage->wcs));
+		fitsWcsInfoPanel->loadWCS(fitsImage->wcs);
 		
 		// Set up the FitsToolbar, set range and value for sliders
 		fitsToolbar->setExtremals(fitsImage->lowerLimit, fitsImage->upperLimit);
@@ -401,8 +401,7 @@ void MainWindow::enableExport()
 		
 		// Create EPO WCS object and load WCS to panel and export object
 		epoImage->wcs = computewcs->initTargetWCS();
-		// TODO: Change method argument type
-		epoWcsInfoPanel->loadWCS(*(epoImage->wcs));
+		epoWcsInfoPanel->loadWCS(epoImage->wcs);
 		exportwcs->setWCS(epoImage->wcs);
 	}
 	else
@@ -435,7 +434,7 @@ void MainWindow::computeWCS()
 	if (computewcs->epoWCS)
 	{
 		epoImage->wcs = computewcs->initTargetWCS();
-		epoWcsInfoPanel->loadWCS(*(epoImage->wcs));
+		epoWcsInfoPanel->loadWCS(epoImage->wcs);
 	}
 	else
 	{

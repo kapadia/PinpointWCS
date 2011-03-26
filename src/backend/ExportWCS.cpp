@@ -248,9 +248,7 @@ void ExportWCS::exportAVM()
 			
 			// Procede if file is open
 			if (ok)
-			{
-				qDebug() << "All is good.";
-				
+			{	
 				// Create XMP object and read XMP from file
 				SXMPMeta avm;
 				epoimage.GetXMP(&avm);

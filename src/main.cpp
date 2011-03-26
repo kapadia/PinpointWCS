@@ -22,16 +22,17 @@
 #include <time.h>
 
 // TODO: Pass *QPointFs not QPointFs
-// TODO: Add Save As dialog for FITS export
 // FIXME: Something unusual when marking new point, undoing, then predicting.
 // FIXME: Compute WCS Correctly!!!
 
 
 int main(int argc, char *argv[])
 {
+	/*
 	time_t seconds;
 	seconds = time(NULL);
 	std::cout << seconds << std::endl;
+	*/
 	
 	// Initialize application
 	QApplication app(argc, argv);

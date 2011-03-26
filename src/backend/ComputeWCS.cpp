@@ -90,6 +90,7 @@ void ComputeWCS::computeTargetWCS()
 		pix2wcs(referenceWCS, ref0[0], ref0[1], &crval[0], &crval[1]);
 
 		// Coordinate axis flipped, need to make adjustment
+		// TODO: Find sample data to test this with
 		if (referenceWCS->coorflip == 1)
 			crval = flip*crval;
 		
@@ -158,7 +159,7 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 }
 
 
-// FIXME: Try copying WCS over and only changing the reference pixel
+// TODO: Try copying WCS over and only changing the reference pixel
 struct WorldCoor* ComputeWCS::initTargetWCSII()
 {
 	qDebug() << "initTargetWCSII()";
@@ -276,7 +277,7 @@ void ComputeWCS::plateSolution()
 }
 
 
-// TODO: Complete this code!!!
+// TODO: Compute the residuals!!!
 void ComputeWCS::computeResiduals()
 {
 	// Initialize some variables

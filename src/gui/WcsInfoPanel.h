@@ -34,7 +34,7 @@ class WcsInfoPanel : public QFrame
 		WcsInfoPanel(QWidget *parent = 0);
 		~WcsInfoPanel();
 		Ui::WcsInfoPanel ui;
-		void loadWCS(struct WorldCoor wcs);
+		void loadWCS(struct WorldCoor* wcs);
 		void clear();
 		
 	public slots:

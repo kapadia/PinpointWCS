@@ -76,7 +76,7 @@ void WcsInfoPanel::updateFontSize(QFont font)
 }
 
 
-void WcsInfoPanel::loadWCS(struct WorldCoor wcs)
+void WcsInfoPanel::loadWCS(struct WorldCoor* wcs)
 {
 	// Write some data to the WcsInfoPanels
 	QString radesys;
@@ -94,20 +94,20 @@ void WcsInfoPanel::loadWCS(struct WorldCoor wcs)
 	QString cd21;
 	QString cd22;
 	
-	radesys.sprintf("%s", wcs.radecsys);
-	equinox.sprintf("%.1f", wcs.equinox);
-	ctype1.sprintf("%s", wcs.c1type);
-	ctype2.sprintf("%s", wcs.c2type);
-	naxis1.sprintf("%.2f", wcs.nxpix);
-	naxis2.sprintf("%.2f", wcs.nypix);
-	crval1.sprintf("%.2f", wcs.xref);
-	crval2.sprintf("%.2f", wcs.yref);
-	crpix1.sprintf("%.2f", wcs.xrefpix);
-	crpix2.sprintf("%.2f", wcs.yrefpix);
-	cd11.sprintf("%.6f", wcs.cd[0]);
-	cd12.sprintf("%.6f", wcs.cd[1]);
-	cd21.sprintf("%.6f", wcs.cd[2]);
-	cd22.sprintf("%.6f", wcs.cd[3]);
+	radesys.sprintf("%s", wcs->radecsys);
+	equinox.sprintf("%.1f", wcs->equinox);
+	ctype1.sprintf("%s", wcs->c1type);
+	ctype2.sprintf("%s", wcs->c2type);
+	naxis1.sprintf("%.2f", wcs->nxpix);
+	naxis2.sprintf("%.2f", wcs->nypix);
+	crval1.sprintf("%.2f", wcs->xref);
+	crval2.sprintf("%.2f", wcs->yref);
+	crpix1.sprintf("%.2f", wcs->xrefpix);
+	crpix2.sprintf("%.2f", wcs->yrefpix);
+	cd11.sprintf("%.6f", wcs->cd[0]);
+	cd12.sprintf("%.6f", wcs->cd[1]);
+	cd21.sprintf("%.6f", wcs->cd[2]);
+	cd22.sprintf("%.6f", wcs->cd[3]);
 	
 	ui.radesys_input->setText(radesys);
 	ui.equinox_input->setText(equinox);
