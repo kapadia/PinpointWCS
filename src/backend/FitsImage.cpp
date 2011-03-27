@@ -26,9 +26,6 @@
 #include "FitsImage.h"
 #include "PinpointWCSUtils.h"
 
-#include "fitsfile.h"
-#include "wcs.h"
-
 
 FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 {	

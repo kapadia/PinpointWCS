@@ -18,6 +18,8 @@ build/
 *.app
 *.o
 *.a
+*.fit
+*.fits
 
 # Shell Scripts
 *.sh

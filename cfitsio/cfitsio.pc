@@ -1,11 +1,11 @@
-prefix=/Users/amit/Projects/cfitsio
+prefix=/Users/akapadia/Projects/PinpointWCS/cfitsio
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: cfitsio
 Description: FITS File Subroutine Library
-Version: 3.25
+Version: 3.27
 Libs: -L${libdir} -lcfitsio 
 Libs.private: -lm
 Cflags: -I${includedir}
