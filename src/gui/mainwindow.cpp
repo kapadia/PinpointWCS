@@ -213,6 +213,9 @@ bool MainWindow::setupWorkspace()
 		connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
 		connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
 		
+		// TODO: Testing coordinate info panel by setting some markers for the M101 data
+		testI();
+		
 		return true;
 	}
 	return false;
@@ -436,7 +439,7 @@ void MainWindow::computeWCS()
 	if (computewcs->epoWCS)
 	{
 		epoImage->wcs = computewcs->initTargetWCS();
-		epoWcsInfoPanel->loadWCS(epoImage->wcs);
+		epoWcsInfoPanel->loadWCS(computewcs->initTargetWCS());
 	}
 	else
 	{
@@ -495,4 +498,20 @@ void MainWindow::testSlotII(QPointF pos)
 	
 	CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker*>(fitsScene->selectedItems()[0]);
 	dataModel->updateData(fitsScene, pos, item->pos());
+}
+
+void MainWindow::testI()
+{
+	// Automatically add some markers for the M101 data
+	dataModel->setData(fitsScene, QPointF(394, 445));
+	dataModel->setData(epoScene, QPointF(826, 461));
+	
+	dataModel->setData(fitsScene, QPointF(432, 367));
+	dataModel->setData(epoScene, QPointF(904, 544));
+	
+	dataModel->setData(fitsScene, QPointF(543.84, 717.53));
+	dataModel->setData(epoScene, QPointF(417.55, 513.86));
+	
+	dataModel->setData(fitsScene, QPointF(589.43, 718.44));
+	dataModel->setData(epoScene, QPointF(394.76, 569.78));
 }

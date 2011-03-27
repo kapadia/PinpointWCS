@@ -41,13 +41,9 @@ double* EpoImage::pix2sky(QPointF pos)
 	
 	// Get unbinned pixel
 	float xf, yf;
-	xf = M*(pos.x()-1)+2-0.5;
-	yf = (M*(pos.y()-1))-0.5;
-	// WRONG!
-//	xf = pos.x()+0.5;
-//	yf = naxisn[1]-pos.y()+0.5;
-//	xf = pos.x();
-//	yf = pos.y();
+	xf = M*(pos.x()+1)-2+0.5;
+//	yf = naxisn[1]-(M*(pos.y()-1))-0.5;
+	yf = naxisn[1]-(M*(pos.y()+1))+0.5;
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	

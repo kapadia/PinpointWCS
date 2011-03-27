@@ -119,6 +119,9 @@ private slots:
 	// A slots for testing ...
 	void testSlot();
 	void testSlotII(QPointF pos);
+	
+	// Test function(s) for debugging
+	void testI();
 };
 
 
