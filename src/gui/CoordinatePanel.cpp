@@ -87,26 +87,16 @@ void CoordinatePanel::updateCoordinates(QPointF pos)
 	{
 		world = image->pix2sky(pos);
 		
-		// Initialize some variables for a conversion
-//		int H1, M1, H2, M2;
-//		double S1, S2;
-		
-		// Convert from decimal to sexagesimal
-//		H1 = floor(world[0]/360 * 24);
-//		M1 = floor( (world[0]/360 * 24 - H1) * 60);
-//		S1 = ((world[0]/360 * 24 - H1) * 60 - floor((world[0]/360 * 24 - H1) * 60)) * 60;
-		
-//		H2 = floor(abs(world[1])) * world[1]/abs(world[1]);
-//		M2 = abs(floor((world[1] - H2) * 60));
-//		S2 = abs(((world[1] - H2) * 60 - floor((world[1] - H2) * 60)) * 60);
+		char rastr[32], decstr[32];
+		ra2str(rastr, 31, world[0], 3);
+		dec2str(decstr, 31, world[1], 2);
 		
 		QString ra;
 		QString dec;
 		ra.sprintf("%.8f", world[0]);
 		dec.sprintf("%.8f", world[1]);
-//		ra.sprintf("%02d::%02d::%06.3f", H1, M1, S1);
-//		dec.sprintf("%02d::%02d::%06.3f", H2, M2, S2);
-		ui.ra_value->setText(ra);
-		ui.dec_value->setText(dec);
+		
+		ui.ra_value->setText(rastr);
+		ui.dec_value->setText(decstr);
 	}
 }

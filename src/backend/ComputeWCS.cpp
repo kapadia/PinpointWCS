@@ -149,32 +149,17 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	cd[2] = cdmatrix(2);
 	cd[3] = cdmatrix(3);
 	
-	/*
-	// FIXME: Attempting to initialize the WCS differently
-	targetWCS = wcskinit(width, height, "RA--", "DEC-",
-						 crpix(0), crpix(1), crval(0), crval(1),
-						 cd, -1*scale, scale,
-						 referenceWCS->rot, referenceWCS->equinox, referenceWCS->epoch
-	);
-	 */
-	/*
-	targetWCS = wcskinit(width, height, "RA--", "DEC-",
-						 crpix(0), crpix(1), crval(0), crval(1),
-						 cd, referenceWCS->cdelt[0], referenceWCS->cdelt[1],
-						 orientation, referenceWCS->equinox, referenceWCS->epoch
-	);
-	*/
 	targetWCS = wcskinit(width, height, "RA--", "DEC-",
 						 crpix(0), crpix(1), crval(0), crval(1),
 						 cd, NULL, NULL,
-						 NULL, referenceWCS->equinox, NULL
+						 NULL, referenceWCS->equinox, referenceWCS->epoch
 	);
+	
 	return targetWCS;
 }
 
 
 // TODO: Try copying WCS over and only changing the reference pixel
-// TODO: Try wcslib's wcsshift to reset the center of the reference WCS to that of the epo WCS.
 struct WorldCoor* ComputeWCS::initTargetWCSII()
 {
 	qDebug() << "initTargetWCSII()";
