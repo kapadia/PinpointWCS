@@ -158,6 +158,9 @@
     <addaction name="actionInfo"/>
     <addaction name="separator"/>
     <addaction name="actionCoordinate_Table"/>
+    <addaction name="separator"/>
+    <addaction name="actionDegrees"/>
+    <addaction name="actionSexagesimal"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -457,6 +460,31 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionDegrees">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Degrees</string>
+   </property>
+  </action>
+  <action name="actionSexagesimal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Sexagesimal</string>
    </property>
   </action>
  </widget>

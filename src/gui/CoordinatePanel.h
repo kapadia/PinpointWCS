@@ -35,11 +35,13 @@ class CoordinatePanel : public QFrame
 		
 	public slots:
 		void parentResized(QSize sz);
+		void setWcsFormat(bool format);
 		void updateCoordinates(QPointF pos);
 		
 	private:
 		// Attributes
 		PPWcsImage *image;
+		bool wcsFormat;
 		
 		// Methods
 		void updateFontSize(QFont font);

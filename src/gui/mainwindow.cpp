@@ -102,6 +102,9 @@ bool MainWindow::setupWorkspace()
 		ui.actionCoordinates->setEnabled(true);
 		ui.actionImageAdjustments->setEnabled(true);
 		ui.actionCoordinate_Table->setEnabled(true);
+		ui.actionDegrees->setEnabled(true);
+		ui.actionDegrees->setChecked(true);
+		ui.actionSexagesimal->setEnabled(true);
 		
 		// Enable Image Menu items
 		ui.actionLinear_Stretch->setEnabled(true);
@@ -117,7 +120,7 @@ bool MainWindow::setupWorkspace()
 		// Enable some advanced options
 //		ui.actionCentroid->setEnabled(true);
 		
-		// Create a QActionGroup from the stretch menu items
+		// Create a QActionGroup for the stretch menu items
 		QActionGroup *stretchActionGroup = new QActionGroup(this);
 		stretchActionGroup->addAction(ui.actionLinear_Stretch);
 		stretchActionGroup->addAction(ui.actionLogarithm_Stretch);
@@ -125,6 +128,12 @@ bool MainWindow::setupWorkspace()
 		stretchActionGroup->addAction(ui.actionHyperbolic_Sine_Stretch);
 		stretchActionGroup->addAction(ui.actionPower_Stretch);
 		stretchActionGroup->setExclusive(true);
+		
+		// Create a QActionGroup for the WCS format options
+		QActionGroup *wcsFormatActionGroup = new QActionGroup(this);
+		wcsFormatActionGroup->addAction(ui.actionDegrees);
+		wcsFormatActionGroup->addAction(ui.actionSexagesimal);
+		wcsFormatActionGroup->setExclusive(true);
 		
 		// Set up the WcsInfoPanel for each image
 		fitsWcsInfoPanel->parentResized(ui.graphicsView_1->size());
@@ -178,6 +187,10 @@ bool MainWindow::setupWorkspace()
 		connect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
 		connect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
 		connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
+		
+		// Connect señales for the WCS format
+		connect(ui.actionDegrees, SIGNAL(toggled(bool)), fitsCoordPanel, SLOT(setWcsFormat(bool)));
+		connect(ui.actionDegrees, SIGNAL(toggled(bool)), epoCoordPanel, SLOT(setWcsFormat(bool)));
 		
 		// Connect more signals -- communicate between data model and ComputeWCS object
 		connect(dataModel, SIGNAL(compute()), computewcs, SLOT(computeTargetWCS()));

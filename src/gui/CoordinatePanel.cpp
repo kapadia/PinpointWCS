@@ -19,12 +19,14 @@
 
 #include <math.h>
 #include "CoordinatePanel.h"
+#include <QDebug>
 
 CoordinatePanel::CoordinatePanel(PPWcsImage *im, QWidget *parent)
 : QFrame(parent)
 {
 	// Setup user interface
     ui.setupUi(this);
+	wcsFormat = false; // true for sexagesimal, false for degrees
 	
 	// Set associated image
 	image = im;
@@ -68,6 +70,11 @@ void CoordinatePanel::parentResized(QSize sz)
 }
 
 
+void CoordinatePanel::setWcsFormat(bool format)
+{
+	wcsFormat = !format;
+}
+
 void CoordinatePanel::updateCoordinates(QPointF pos)
 {
 	// Initialize variables
@@ -87,16 +94,27 @@ void CoordinatePanel::updateCoordinates(QPointF pos)
 	{
 		world = image->pix2sky(pos);
 		
-		char rastr[32], decstr[32];
-		ra2str(rastr, 31, world[0], 3);
-		dec2str(decstr, 31, world[1], 2);
-		
-		QString ra;
-		QString dec;
-		ra.sprintf("%.8f", world[0]);
-		dec.sprintf("%.8f", world[1]);
-		
-		ui.ra_value->setText(rastr);
-		ui.dec_value->setText(decstr);
+		if (wcsFormat)
+		{
+			char rastr[32], decstr[32];
+			ra2str(rastr, 31, world[0], 3);
+			dec2str(decstr, 31, world[1], 2);
+				
+			// Set the text
+			ui.ra_value->setText(rastr);
+			ui.dec_value->setText(decstr);
+		}
+		else {
+			QString rastr;
+			QString decstr;
+			rastr.sprintf("%.8f", world[0]);
+			decstr.sprintf("%.8f", world[1]);
+			
+			// Set the text
+			ui.ra_value->setText(rastr);
+			ui.dec_value->setText(decstr);
+		}
+	
+
 	}
 }
