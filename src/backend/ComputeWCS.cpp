@@ -149,19 +149,26 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	cd[2] = cdmatrix(2);
 	cd[3] = cdmatrix(3);
 	
+	/*
 	// FIXME: Attempting to initialize the WCS differently
 	targetWCS = wcskinit(width, height, "RA--", "DEC-",
 						 crpix(0), crpix(1), crval(0), crval(1),
 						 cd, -1*scale, scale,
 						 referenceWCS->rot, referenceWCS->equinox, referenceWCS->epoch
 	);
-	/* THIS ONE WORKS
+	 */
+	/*
 	targetWCS = wcskinit(width, height, "RA--", "DEC-",
 						 crpix(0), crpix(1), crval(0), crval(1),
 						 cd, referenceWCS->cdelt[0], referenceWCS->cdelt[1],
 						 orientation, referenceWCS->equinox, referenceWCS->epoch
 	);
 	*/
+	targetWCS = wcskinit(width, height, "RA--", "DEC-",
+						 crpix(0), crpix(1), crval(0), crval(1),
+						 cd, NULL, NULL,
+						 NULL, referenceWCS->equinox, NULL
+	);
 	return targetWCS;
 }
 

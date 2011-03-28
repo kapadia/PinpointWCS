@@ -22,7 +22,7 @@ build/
 *.fits
 
 # Shell Scripts
-*.sh
+#*.sh
 
 # Folders and files for external libraries
 XMP-Toolkit-SDK-*/intermediate/
