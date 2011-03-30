@@ -23,6 +23,8 @@
 #include <iostream>
 #include <math.h>
 
+#include <QString>
+
 #include "PinpointWCSUtils.h"
 
 namespace PinpointWCSUtils {
@@ -214,6 +216,55 @@ namespace PinpointWCSUtils {
 		std::cout << " ---------- ---------- ---------- ---------- ---------- ---------- ----------" << std::endl;
 		
 	} // dumpWCS
+	
+	QString createHeader(int width, int height, double equinox, char* radecsys, double crpix1, 
+						 double crval1, double crpix2, double crval2, double cd[4])
+	{
+		QString header;
+		header.sprintf(
+					   "SIMPLE  =                    T / file does conform to FITS standard             "
+					   "BITPIX  =                    8 / number of bits per data pixel                  "
+					   "NAXIS   =                    2 / number of data axes                            "
+					   "NAXIS1  =                 %d / length of data axis 1                          "
+					   "NAXIS2  =                 %d / length of data axis 2                          "
+					   "EXTEND  =                    T / FITS dataset may contain extensions            "
+					   "XTENSION= 'IMAGE   '                                                            "
+					   "ORIGIN  = 'PinpointWCS by the Chandra X-ray Center'                             "
+					   "WCSAXES =                    2                                                  "
+					   "WCSNAME = 'Primary WCS'                                                         "
+					   "EQUINOX = '%.1f  '                                                            "
+					   "RADESYS = '%s     '                                                            "
+					   "CTYPE1  = '%s'                                                            "
+					   "CRPIX1  = '%.11f'                                                    "
+					   "CRVAL1  = '%.11f'                                                     "
+					   "CUNIT1  = '%s     '                                                            "
+					   "CTYPE2  = '%s'                                                            "
+					   "CRPIX2  = '%.11f'                                                     "
+					   "CRVAL2  = '%.11f'                                                      "
+					   "CUNIT2  = '%s     '                                                            "
+					   "CD1_1   = '%.11f'                                                       "
+					   "CD1_2   = '%.11f'                                                       "
+					   "CD2_1   = '%.11f'                                                       "
+					   "CD2_2   = '%.11f'                                                      ",
+					   width, // NAXIS1
+					   height, // NAXIS2
+					   equinox, // EQUINOX
+					   radecsys, // RADESYS
+					   "RA---TAN", // CTYPE1
+					   crpix1, // CRPIX1
+					   crval1, // CRVAL1
+					   "deg", // CUNIT1
+					   "DEC--TAN", // CTYPE2
+					   crpix2, // CRPIX2
+					   crval2, // CRVAL2
+					   "deg", // CUNIT2
+					   cd[0], // CD1_1
+					   cd[1], // CD1_2
+					   cd[2], // CD2_1
+					   cd[3] // CD2_2
+					   );
+		return header;
+	}
 	
 }  // namespace
 
