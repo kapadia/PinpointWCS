@@ -25,6 +25,8 @@ EpoImage::EpoImage(QString filename) : PPWcsImage()
 {
 	qDebug() << "Initializing EpoImage object ...";
 	pixmap = new QPixmap(filename);
+	naxisn[0] = pixmap->width();
+	naxisn[1] = pixmap->height();
 	
 	// Call finishInit from base class
 	finishInitialization();
@@ -42,8 +44,7 @@ double* EpoImage::pix2sky(QPointF pos)
 	// Get unbinned pixel
 	float xf, yf;
 	xf = M*(pos.x()-1)+2-0.5;
-	yf = (M*(pos.y()-1)-0.5);
-//	yf = naxisn[1]-(M*(pos.y()-1)-0.5);
+	yf = naxisn[1]-(M*(pos.y()-1)-0.5);
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	

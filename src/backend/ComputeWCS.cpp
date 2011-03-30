@@ -156,37 +156,56 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 				   "SIMPLE  =                    T / file does conform to FITS standard             "
 				   "BITPIX  =                    8 / number of bits per data pixel                  "
 				   "NAXIS   =                    2 / number of data axes                            "
-				   "NAXIS1  =                 2000 / length of data axis 1                          "
-				   "NAXIS2  =                 1277 / length of data axis 2                          "
+				   "NAXIS1  =                 %d / length of data axis 1                          "
+				   "NAXIS2  =                 %d / length of data axis 2                          "
 				   "EXTEND  =                    T / FITS dataset may contain extensions            "
 				   "XTENSION= 'IMAGE   '                                                            "
 				   "ORIGIN  = 'PinpointWCS by the Chandra X-ray Center'                             "
 				   "WCSAXES =                    2                                                  "
 				   "WCSNAME = 'Primary WCS'                                                         "
-				   "EQUINOX = '2000.0  '                                                            "
-				   "RADESYS = 'FK5     '                                                            "
-				   "CTYPE1  = 'RA---TAN'                                                            "
-				   "CRPIX1  = '1000.00000000000'                                                    "
-				   "CRVAL1  = '210.79359405124'                                                     "
-				   "CUNIT1  = 'deg     '                                                            "
-				   "CTYPE2  = 'DEC--TAN'                                                            "
-				   "CRPIX2  = '638.50000000000'                                                     "
-				   "CRVAL2  = '54.39677620488'                                                      "
-				   "CUNIT2  = 'deg     '                                                            "
-				   "CD1_1   = '0.00008760449'                                                       "
-				   "CD1_2   = '0.00019217973'                                                       "
-				   "CD2_1   = '0.00019485172'                                                       "
-				   "CD2_2   = '-0.00008819594'                                                      "
+				   "EQUINOX = '%.1f  '                                                            "
+				   "RADESYS = '%s     '                                                            "
+				   "CTYPE1  = '%s'                                                            "
+				   "CRPIX1  = '%.11f'                                                    "
+				   "CRVAL1  = '%.11f'                                                     "
+				   "CUNIT1  = '%s     '                                                            "
+				   "CTYPE2  = '%s'                                                            "
+				   "CRPIX2  = '%.11f'                                                     "
+				   "CRVAL2  = '%.11f'                                                      "
+				   "CUNIT2  = '%s     '                                                            "
+				   "CD1_1   = '%.11f'                                                       "
+				   "CD1_2   = '%.11f'                                                       "
+				   "CD2_1   = '%.11f'                                                       "
+				   "CD2_2   = '%.11f'                                                      ",
+				   (int) width, // NAXIS1
+				   (int) height, // NAXIS2
+				   referenceWCS->equinox, // EQUINOX
+				   referenceWCS->radecsys, // RADESYS
+				   "RA---TAN", // CTYPE1
+				   crpix(0), // CRPIX1
+				   crval(0), // CRVAL1
+				   "deg", // CUNIT1
+				   "DEC--TAN", // CTYPE2
+				   crpix(1), // CRPIX2
+				   crval(1), // CRVAL2
+				   "deg", // CUNIT2
+				   cd[0], // CD1_1
+				   cd[1], // CD1_2
+				   cd[2], // CD2_1
+				   cd[3] // CD2_2
 	);
-/*
+
+	/*
 	targetWCS = wcskinit(width, height, "RA--", "DEC-",
 						 crpix(0), crpix(1), crval(0), crval(1),
 						 cd, NULL, NULL,
 						 NULL, referenceWCS->equinox, NULL
 	);
-*/	
+	*/
+	
 	// Initialize WCS using a FITS header template
 	targetWCS = wcsinit(header.toStdString().c_str());
+	
 	// TODO: Dumping WCS struct
 	PinpointWCSUtils::dumpWCS(targetWCS);
 
