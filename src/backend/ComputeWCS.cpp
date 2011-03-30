@@ -24,6 +24,7 @@
 #include <QDebug>
 #include "ComputeWCS.h"
 #include "math.h"
+#include "PinpointWCSUtils.h"
 
 
 ComputeWCS::ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoor *refWCS, double w, double h)
@@ -149,12 +150,46 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	cd[2] = cdmatrix(2);
 	cd[3] = cdmatrix(3);
 	
+	// TESTING: Create a FITS header to feed into wcsinit
+	QString header;
+	header.sprintf(
+				   "SIMPLE  =                    T / file does conform to FITS standard             "
+				   "BITPIX  =                    8 / number of bits per data pixel                  "
+				   "NAXIS   =                    2 / number of data axes                            "
+				   "NAXIS1  =                 2000 / length of data axis 1                          "
+				   "NAXIS2  =                 1277 / length of data axis 2                          "
+				   "EXTEND  =                    T / FITS dataset may contain extensions            "
+				   "XTENSION= 'IMAGE   '                                                            "
+				   "ORIGIN  = 'PinpointWCS by the Chandra X-ray Center'                             "
+				   "WCSAXES =                    2                                                  "
+				   "WCSNAME = 'Primary WCS'                                                         "
+				   "EQUINOX = '2000.0  '                                                            "
+				   "RADESYS = 'FK5     '                                                            "
+				   "CTYPE1  = 'RA---TAN'                                                            "
+				   "CRPIX1  = '1000.00000000000'                                                    "
+				   "CRVAL1  = '210.79359405124'                                                     "
+				   "CUNIT1  = 'deg     '                                                            "
+				   "CTYPE2  = 'DEC--TAN'                                                            "
+				   "CRPIX2  = '638.50000000000'                                                     "
+				   "CRVAL2  = '54.39677620488'                                                      "
+				   "CUNIT2  = 'deg     '                                                            "
+				   "CD1_1   = '0.00008760449'                                                       "
+				   "CD1_2   = '0.00019217973'                                                       "
+				   "CD2_1   = '0.00019485172'                                                       "
+				   "CD2_2   = '-0.00008819594'                                                      "
+	);
+/*
 	targetWCS = wcskinit(width, height, "RA--", "DEC-",
 						 crpix(0), crpix(1), crval(0), crval(1),
 						 cd, NULL, NULL,
-						 NULL, referenceWCS->equinox, referenceWCS->epoch
+						 NULL, referenceWCS->equinox, NULL
 	);
-	
+*/	
+	// Initialize WCS using a FITS header template
+	targetWCS = wcsinit(header.toStdString().c_str());
+	// TODO: Dumping WCS struct
+	PinpointWCSUtils::dumpWCS(targetWCS);
+
 	return targetWCS;
 }
 

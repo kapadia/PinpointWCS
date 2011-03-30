@@ -183,7 +183,37 @@ namespace PinpointWCSUtils {
 			return false;
 		
 		return true;
-	} // cen3x3 function
+	} // cen3x3
+
+	void dumpWCS(struct WorldCoor *wcs)
+	{
+		std::cout << "Dumping WCS ---------- ---------- ---------- ---------- ---------- ----------" << std::endl;
+		std::cout << "CRVAL1:\t" << wcs->xref << std::endl;
+		std::cout << "CRVAL2:\t" << wcs->yref << std::endl;
+		std::cout << "CRPIX1:\t" << wcs->xrefpix << std::endl;
+		std::cout << "CRPIX2:\t" << wcs->yrefpix << std::endl;
+		
+		std::cout << "CDELT1:\t" << wcs->xinc << std::endl;
+		std::cout << "CDELT2:\t" << wcs->yinc << std::endl;
+		std::cout << "CROTA2:\t" << wcs->rot << std::endl;
+		std::cout << "CD1_1:\t" << wcs->cd[0] << std::endl;
+		std::cout << "CD1_2:\t" << wcs->cd[1] << std::endl;
+		std::cout << "CD2_1:\t" << wcs->cd[2] << std::endl;
+		std::cout << "CD2_2:\t" << wcs->cd[3] << std::endl;
+		std::cout << "EPOCH:\t" << wcs->equinox << std::endl;
+		
+		std::cout << "DATE-OBS:\t" << wcs->epoch << std::endl;
+		std::cout << "NAXIS1:\t" << wcs->nxpix << std::endl;
+		std::cout << "NAXIS2:\t" << wcs->nypix << std::endl;
+		std::cout << "NAXIS:\t" << wcs->naxes << std::endl;
+		std::cout << "CTYPE1:\t" << wcs->c1type << std::endl;
+		
+		std::cout << "CTYPE2:\t" << wcs->c2type << std::endl;
+		std::cout << "CUNITn:\t" << wcs->units << std::endl;
+		std::cout << "RADECSYS:\t" << wcs->radecsys << std::endl;
+		std::cout << " ---------- ---------- ---------- ---------- ---------- ---------- ----------" << std::endl;
+		
+	} // dumpWCS
 	
 }  // namespace
 

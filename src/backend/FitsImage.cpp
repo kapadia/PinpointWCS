@@ -263,6 +263,10 @@ bool FitsImage::verifyWCS()
 			break;			
 		}
 	}
+	
+	// TODO: Dumping WCS
+	PinpointWCSUtils::dumpWCS(wcs);
+	
 	qDebug() << "WCS found!!!";\
 	return true;
 }
