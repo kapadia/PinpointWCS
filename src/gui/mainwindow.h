@@ -62,6 +62,7 @@ private:
 	CoordinatePanel *fitsCoordPanel;
 	CoordinatePanel *epoCoordPanel;
 	FitsToolbar *fitsToolbar;
+	MessageBox *msg;
 	
 	// Image Attributes
 	FitsImage *fitsImage;

@@ -22,30 +22,34 @@
 #include "MessageBox.h"
 
 
-MessageBox::MessageBox(const QString &title, bool status, QWidget *parent, Qt::WindowFlags f)
+MessageBox::MessageBox(const QString &title, QWidget *parent, Qt::WindowFlags f)
 : QMessageBox(QMessageBox::NoIcon, title, "", QMessageBox::Ok, parent, f)
 {
 	icon = new QPixmap;
-	if (status)
-	{
-		setText("Cool stuff just happened.  Celestial Coordinates Exported Successfully!");
-		icon->load(":/gui/images/good.png");
-	}
-	else 
-	{
-		setText("Uh Oh! Spaghetti O's.  Check that:<p><ul><li>The image is in the same directory as when imported</li><li>The image is not locked</li><li>The image has not been deleted</li><li>The astronomical object hasn't disappeared into the nether regions of the universe.</li></p>");
-		icon->load(":/gui/images/bad.png");	
-	}
-	setIconPixmap(*icon);
 	setWindowModality(Qt::ApplicationModal);
-	qDebug() << "ButtonRole:\t" << buttonRole(buttons()[0]);
 }
 
 MessageBox::~MessageBox()
 {}
 
+void MessageBox::setStatus(bool status)
+{
+	if (status)
+	{
+		setText("Cool stuff just happened.  Celestial Coordinates Exported Successfully!");
+		icon->load(":/gui/images/good.png");
+	}
+	else
+	{
+		setText("Uh Oh! Spaghetti O's.  Check that:<p><ul><li>The image is in the same directory as when imported</li><li>The image is not locked</li><li>The image has not been deleted</li><li>The astronomical object hasn't disappeared into the nether regions of the universe.</li></p>");
+		icon->load(":/gui/images/bad.png");
+	}
+	setIconPixmap(*icon);
+}
+
 void MessageBox::closeEvent(QCloseEvent *event)
 {
+	QMessageBox::closeEvent(event);
 	qDebug() << "closeEvent";
 	this->~MessageBox();
 }

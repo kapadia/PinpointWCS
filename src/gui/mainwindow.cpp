@@ -157,6 +157,9 @@ bool MainWindow::setupWorkspace()
 		buildImageAdjustmentMachine();
 		fitsToolbar->show();
 		
+		// Initialize MessageBox
+		msg = new MessageBox("Export Status", this);
+		
 		// Connect some signals -- used for resizing panels
 		connect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
 		connect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoWcsInfoPanel, SLOT(parentResized(QSize)));		
@@ -488,9 +491,9 @@ void MainWindow::rotateMenuItems(GraphicsView *gv)
 // FIXME: Memory Leak!!
 void MainWindow::promptMessage(bool status)
 {
-	// Set up message and pixmap for prompt
-	MessageBox *msg = new MessageBox("Export Status", status, this);
-	msg->exec();
+	// Set the status of the message box
+	msg->setStatus(status);
+	msg->show();
 }
 
 void MainWindow::testSlot()
