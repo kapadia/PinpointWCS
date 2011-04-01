@@ -264,9 +264,6 @@ bool FitsImage::verifyWCS()
 		}
 	}
 	
-	// TODO: Dumping WCS
-	PinpointWCSUtils::dumpWCS(wcs);
-	
 	qDebug() << "WCS found!!!";\
 	return true;
 }
@@ -285,6 +282,7 @@ void FitsImage::calculateExtremals()
 	}
 }
 
+// Borrowed from Astrometry.net code
 void FitsImage::downsample(float** arr, int W, int H, int S, int* newW, int* newH)
 {
 	qDebug() << "Downsampling Factor:" << S;
@@ -732,18 +730,37 @@ void FitsImage::fitCentroid(QPointF pos)
 }
 
 double* FitsImage::pix2sky(QPointF pos)
-{
+{	
 	if (!wcs)
 		return world;
+	
+	// TESTING: Determining if libwcs reads pixel locations in the same manner as DS9
+	pix2wcs(wcs, 0.5, 893.5, &world[0], &world[1]);
+	QString ra;
+	QString dec;
+	
+	ra.sprintf("RA  = %.11f", world[0]);
+	dec.sprintf("Dec = %.11f", world[1]);
+	qDebug() << "x = 0.5\t" << ra;
+	qDebug() << "y = 893.5\t" << dec;
 	
 	// Get unbinned pixel
 	float xf, yf;
 	
 	// Transform from binned QPixmap pixels to FITS pixels
 	// this includes a 1 and 1/2 pixel offset.
-	xf = M*(pos.x()-1)+2-0.5;
-	yf = naxisn[1]-(M*(pos.y()-1)-0.5);
-
+	
+	// First unbin the pixel
+	xf = M*(pos.x()-1)+1;
+	yf = M*(pos.y()-1)+1;
+	
+	// Now transform QGraphicsScene pixels to FITS pixels
+	xf = xf+0.5;
+	yf = (naxisn[1]-yf)+0.5;
+	
+//	xf = M*(pos.x()-1)+2-0.5;
+//	yf = naxisn[1]-(M*(pos.y()-1)-0.5);
+	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	
 	// Check if coordinates are galatic

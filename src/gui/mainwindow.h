@@ -123,6 +123,7 @@ private slots:
 	
 	// Test function(s) for debugging
 	void testI();
+	void testII();
 };
 
 

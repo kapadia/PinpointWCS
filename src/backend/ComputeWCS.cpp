@@ -151,16 +151,14 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	cd[3] = cdmatrix(3);
 	
 	// TESTING: Create a FITS header to feed into wcsinit
-	QString header = PinpointWCSUtils::createHeader(width, height, referenceWCS->equinox, referenceWCS->radecsys, crpix(0), crval(0), crpix(1), crval(1), cd);
-	targetWCS = wcsinit(header.toStdString().c_str());
-	
-	/*
+//	QString header = PinpointWCSUtils::createHeader(width, height, referenceWCS->equinox, referenceWCS->radecsys, crpix(0), crval(0), crpix(1), crval(1), cd);
+//	targetWCS = wcsinit(header.toStdString().c_str());
+
 	targetWCS = wcskinit(width, height, "RA--", "DEC-",
 						 crpix(0), crpix(1), crval(0), crval(1),
 						 cd, NULL, NULL,
 						 NULL, referenceWCS->equinox, NULL
 	);
-	*/
 
 	return targetWCS;
 }

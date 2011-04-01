@@ -230,7 +230,7 @@ bool MainWindow::setupWorkspace()
 		connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
 		
 		// TODO: Testing coordinate info panel by setting some markers for the M101 data
-		testI();
+		testII();
 		
 		return true;
 	}
@@ -530,4 +530,21 @@ void MainWindow::testI()
 	
 	dataModel->setData(fitsScene, QPointF(589.43, 718.44));
 	dataModel->setData(epoScene, QPointF(394.76, 569.78));
+}
+
+// TESTING: Using a TIFF derived from the original FITS as a control
+void MainWindow::testII()
+{
+	// Pixel should be the usual FITS pixels to EPO pixels transformation.
+	dataModel->setData(fitsScene, QPointF(394, 445));
+	dataModel->setData(epoScene, QPointF(394, 445));
+	
+	dataModel->setData(fitsScene, QPointF(432, 367));
+	dataModel->setData(epoScene, QPointF(432, 367));
+	
+	dataModel->setData(fitsScene, QPointF(543.84, 717.53));
+	dataModel->setData(epoScene, QPointF(543.84, 717.53));
+	
+	dataModel->setData(fitsScene, QPointF(589.43, 718.44));
+	dataModel->setData(epoScene, QPointF(589.43, 718.44));
 }

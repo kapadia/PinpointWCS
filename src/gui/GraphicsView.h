@@ -29,7 +29,7 @@ class QGraphicsPixmapItem;
 QT_END_NAMESPACE
 
 #define MINZOOM 0.07
-#define MAXZOOM 100
+#define MAXZOOM 400
 
 class GraphicsView : public QGraphicsView
 {
