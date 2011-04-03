@@ -48,11 +48,9 @@ ComputeWCS::ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoo
 ComputeWCS::~ComputeWCS()
 {}
 
-void ComputeWCS::initializeMatrixVectors(int d)
+void ComputeWCS::initializeMatrixVectors()
 {
-	degree = d;
-	int size = 3*degree;
-	
+	int size = 3;
 	basis = VectorXd::Zero(size);
 	matrix = MatrixXd::Zero(size, size);
 	xvector = VectorXd::Zero(size);
@@ -66,16 +64,23 @@ void ComputeWCS::computeTargetWCS()
 
 	qDebug() << "Attempting to compute EPO WCS ...";
 	// Check if enough points have been selected
-	if (epoCoords->size() >= 3 && epoCoords->last() != QPointF(-1, -1))
+	// TODO: Put logic here to compute WCS based on size()-1 coordinate if 
+	//		 last QPointF = (-1, -1)
+	int numPoints;
+	if (epoCoords->size() >= 3)
+//	if (epoCoords->size() >= 3 && epoCoords->last() != QPointF(-1, -1))
 	{
+		// Determine the number of points to use
+		numPoints = refCoords->size();
+
 		// Compute matrix and vectors
-		computeSums();
+		computeSums(numPoints);
 		
 		// Solve matrix equation for mapping
 		plateSolution();
 		
 		// Compute residuals
-		computeResiduals();
+		computeResiduals(numPoints);
 		
 		// Declare the CRPIX for the EPO image to be the center pixel
 		// Maybe this can eventually be set by the user
@@ -204,71 +209,28 @@ Vector2d ComputeWCS::xi_eta(Vector2d pixel)
 	return intermediate;
 }
 
-void ComputeWCS::computeSums()
+void ComputeWCS::computeSums(int numPoints)
 {
 	// Dynamically initialize matrix and vectors
-	initializeMatrixVectors(1);
+	initializeMatrixVectors();
 	
-	int ii;	
-	if (degree == 1)
+	for (int ii=0; ii < numPoints; ii++)
 	{
-		for (ii=0; ii < epoCoords->size(); ii++)
-		{
-			QPointF point1 = refCoords->at(ii);
-			QPointF point2 = epoCoords->at(ii);
-			
-			// Account the FITS flip
-			point1.setY(referenceWCS->nypix - point1.y());
-			
-			// Set the base
-			basis << point2.x(), point2.y(), 1;
-			
-			// Generate matrix and vectors
-			matrix += basis * basis.transpose();
-			xvector += point1.x() * basis;
-			yvector += point1.y() * basis;
-		}
+		QPointF point1 = refCoords->at(ii);
+		QPointF point2 = epoCoords->at(ii);
+		
+		// Account the FITS flip
+		// TODO: This should be taken to account only when mapping to celestial coordinates.
+		point1.setY(referenceWCS->nypix - point1.y());
+		
+		// Set the base
+		basis << point2.x(), point2.y(), 1;
+		
+		// Generate matrix and vectors
+		matrix += basis * basis.transpose();
+		xvector += point1.x() * basis;
+		yvector += point1.y() * basis;
 	}
-	else if (degree == 2)
-	{
-		// Quadratic mapping
-		for (ii=0; ii < epoCoords->size(); ii++)
-		{
-			QPointF point1 = refCoords->at(ii);
-			QPointF point2 = epoCoords->at(ii);
-			point1.setY(referenceWCS->nypix - point1.y());
-			
-			// Set the basis
-			basis << 1, point2.x(), point2.y(), point2.x()*point2.y(), pow(point2.x(), 2), pow(point2.y(), 2);
-			
-			// Generate matrix and vectors
-			matrix += basis * basis.transpose();
-			xvector += point1.x() * basis;
-			yvector += point1.y() * basis;	
-		}
-	}
-	else if (degree == 3)
-	{
-		// Cubic mapping
-		for (ii=0; ii < epoCoords->size(); ii++)
-		{
-			QPointF point1 = refCoords->at(ii);
-			QPointF point2 = epoCoords->at(ii);
-			point1.setY(referenceWCS->nypix - point1.y());
-			
-			// Set the base
-			basis << pow(point2.x(), 3), pow(point2.y(), 3), pow(point2.x(), 2), pow(point2.y(), 2), point2.x(), point2.y(), 1;
-			
-			// Generate matrix and vectors
-			matrix += basis * basis.transpose();
-			xvector += point1.x() * basis;
-			yvector += point1.y() * basis;
-		}
-	}
-	
-//	std::cout << "matrix:" << matrix << "\n" << std::endl;
-//	std::cout << "x vector:" << xvector << "\n" << std::endl;
-//	std::cout << "y vector:" << yvector << "\n" << std::endl;
 }
 
 
@@ -283,7 +245,7 @@ void ComputeWCS::plateSolution()
 
 
 // TODO: Compute the residuals!!!
-void ComputeWCS::computeResiduals()
+void ComputeWCS::computeResiduals(int numPoints)
 {
 	// Initialize some variables
 	double sumn = 0;
@@ -292,11 +254,12 @@ void ComputeWCS::computeResiduals()
 	
 	// Loop over the pairs stored in the data model
 	int ii;
-	for (ii=0; ii < epoCoords->size(); ii++)
+	for (ii=0; ii < numPoints; ii++)
 	{
 		// Store the coordinate pairs
 		QPointF point1 = refCoords->at(ii);
 		QPointF point2 = epoCoords->at(ii);
+		// TODO: This should be taken to account only when mapping to celestial coordinates.
 		point1.setY(referenceWCS->nypix - point1.y());
 		
 		// Map EPO coordinates to FITS coordinates
@@ -374,19 +337,11 @@ Vector2d ComputeWCS::fitsToEpo(double x, double y)
 Vector2d ComputeWCS::epoToFits(QPointF *p)
 {
 	Vector2d coordinate;
-		
-	if (degree == 1)
-	{
-		// x_r = a*x + b*y + c
-		// y_r = d*x + f*b + g
-		coordinate(0) = xcoeff[0] * p->x() + xcoeff[1] * p->y() + xcoeff[2];
-		coordinate(1) = ycoeff[0] * p->x() + ycoeff[1] * p->y() + ycoeff[2];
-	}
-	else if (degree == 2)
-	{
-		coordinate(0) = xcoeff[0] + xcoeff[1] * p->x() + xcoeff[2] * p->y() + xcoeff[3] * p->x() * p->y() + xcoeff[4] * pow(p->x(), 2) + xcoeff[5] * pow(p->y(), 2);
-		coordinate(1) = ycoeff[0] + ycoeff[1] * p->x() + ycoeff[2] * p->y() + ycoeff[3] * p->x() * p->y() + ycoeff[4] * pow(p->x(), 2) + ycoeff[5] * pow(p->y(), 2);
-	} 
+
+	// x_r = a*x + b*y + c
+	// y_r = d*x + f*b + g
+	coordinate(0) = xcoeff[0] * p->x() + xcoeff[1] * p->y() + xcoeff[2];
+	coordinate(1) = ycoeff[0] * p->x() + ycoeff[1] * p->y() + ycoeff[2];
 	
 	return coordinate;
 }
@@ -396,16 +351,8 @@ Vector2d ComputeWCS::epoToFits(double x, double y)
 {
 	Vector2d coordinate;
 	
-	if (degree == 1)
-	{
-		coordinate(0) = xcoeff[0] * x + xcoeff[1] * y + xcoeff[2];
-		coordinate(1) = ycoeff[0] * x + ycoeff[1] * y + ycoeff[2];
-	}
-	else if (degree == 2)
-	{
-		coordinate(0) = xcoeff[0] + xcoeff[1] * x + xcoeff[2] * y + xcoeff[3] * x * y + xcoeff[4] * pow(x, 2) + xcoeff[5] * pow(y, 2);
-		coordinate(1) = ycoeff[0] + ycoeff[1] * x + ycoeff[2] * y + ycoeff[3] * x * y + ycoeff[4] * pow(x, 2) + ycoeff[5] * pow(y, 2);
-	}
+	coordinate(0) = xcoeff[0] * x + xcoeff[1] * y + xcoeff[2];
+	coordinate(1) = ycoeff[0] * x + ycoeff[1] * y + ycoeff[2];
 	
 	return coordinate;
 }
@@ -414,16 +361,8 @@ Vector2d ComputeWCS::epoToFits(Vector2d p)
 {
 	Vector2d coordinate;
 	
-	if (degree == 1)
-	{
-		coordinate(0) = xcoeff[0] * p[0] + xcoeff[1] * p[1] + xcoeff[2];
-		coordinate(1) = ycoeff[0] * p[0] + ycoeff[1] * p[1] + ycoeff[2];
-	}
-	else if (degree == 2)
-	{
-		coordinate(0) = xcoeff[0] + xcoeff[1] * p[0] + xcoeff[2] * p[1] + xcoeff[3] * p[0] * p[1] + xcoeff[4] * pow(p[0], 2) + xcoeff[5] * pow(p[1], 2);
-		coordinate(1) = ycoeff[0] + ycoeff[1] * p[0] + ycoeff[2] * p[1] + ycoeff[3] * p[0] * p[1] + ycoeff[4] * pow(p[0], 2) + ycoeff[5] * pow(p[1], 2);
-	}
+	coordinate(0) = xcoeff[0] * p[0] + xcoeff[1] * p[1] + xcoeff[2];
+	coordinate(1) = ycoeff[0] * p[0] + ycoeff[1] * p[1] + ycoeff[2];
 	
 	return coordinate;
 }

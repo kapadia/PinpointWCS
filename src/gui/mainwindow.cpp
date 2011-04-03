@@ -230,7 +230,7 @@ bool MainWindow::setupWorkspace()
 		connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
 		
 		// TODO: Testing coordinate info panel by setting some markers for the M101 data
-		testII();
+		testI();
 		
 		return true;
 	}

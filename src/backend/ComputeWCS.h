@@ -65,12 +65,12 @@ signals:
 	
 private:
 	// Methods
-	void initializeMatrixVectors(int d);
+	void initializeMatrixVectors();
 	void plateSolution();
 	Vector2d xi_eta(double xpix, double ypix);
 	Vector2d xi_eta(Vector2d pixel);
-	void computeSums();
-	void computeResiduals();
+	void computeSums(int numPoints);
+	void computeResiduals(int numPoints);
 	Vector2d epoToFits(QPointF *p);
 	Vector2d epoToFits(double x, double y);
 	Vector2d epoToFits(Vector2d p);
@@ -79,7 +79,6 @@ private:
 	QList<QPointF> *refCoords;
 	QList<QPointF> *epoCoords;
 
-	int degree;
 	MatrixXd matrix;
 	VectorXd xvector;
 	VectorXd yvector;
