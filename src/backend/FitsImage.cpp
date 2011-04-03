@@ -734,16 +734,6 @@ double* FitsImage::pix2sky(QPointF pos)
 	if (!wcs)
 		return world;
 	
-	// TESTING: Determining if libwcs reads pixel locations in the same manner as DS9
-	pix2wcs(wcs, 0.5, 893.5, &world[0], &world[1]);
-	QString ra;
-	QString dec;
-	
-	ra.sprintf("RA  = %.11f", world[0]);
-	dec.sprintf("Dec = %.11f", world[1]);
-	qDebug() << "x = 0.5\t" << ra;
-	qDebug() << "y = 893.5\t" << dec;
-	
 	// Get unbinned pixel
 	float xf, yf;
 	
@@ -757,9 +747,6 @@ double* FitsImage::pix2sky(QPointF pos)
 	// Now transform QGraphicsScene pixels to FITS pixels
 	xf = xf+0.5;
 	yf = (naxisn[1]-yf)+0.5;
-	
-//	xf = M*(pos.x()-1)+2-0.5;
-//	yf = naxisn[1]-(M*(pos.y()-1)-0.5);
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	
