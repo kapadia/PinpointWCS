@@ -124,6 +124,7 @@ private slots:
 	// Test function(s) for debugging
 	void testI();
 	void testII();
+	void testPixelMapping(ComputeWCS *cwcs);
 };
 
 

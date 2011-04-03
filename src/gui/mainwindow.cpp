@@ -230,7 +230,7 @@ bool MainWindow::setupWorkspace()
 		connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
 		
 		// TODO: Testing coordinate info panel by setting some markers for the M101 data
-		testI();
+		testII();
 		
 		return true;
 	}
@@ -488,13 +488,14 @@ void MainWindow::rotateMenuItems(GraphicsView *gv)
 	}
 }
 
-// FIXME: Memory Leak!!
+
 void MainWindow::promptMessage(bool status)
 {
 	// Set the status of the message box
 	msg->setStatus(status);
 	msg->show();
 }
+
 
 void MainWindow::testSlot()
 {
@@ -547,4 +548,24 @@ void MainWindow::testII()
 	
 	dataModel->setData(fitsScene, QPointF(589.43, 718.44));
 	dataModel->setData(epoScene, QPointF(589.43, 718.44));
+}
+
+
+void MainWindow::testPixelMapping(ComputeWCS *cwcs)
+{
+	// A couple mappings from EPO to FITS
+	Vector2d blah = cwcs->epoToFits(50, 60);
+	std::cout << blah[0] << "\t" << blah[1] << std::endl;
+	blah = cwcs->epoToFits(550, 340);
+	std::cout << blah[0] << "\t" << blah[1] << std::endl;
+	blah = cwcs->epoToFits(800, 721);
+	std::cout << blah[0] << "\t" << blah[1] << std::endl;
+	
+	// some mappings from FITS to EPO
+	blah = cwcs->fitsToEpo(80, 50);
+	std::cout << blah[0] << "\t" << blah[1] << std::endl;
+	blah = cwcs->fitsToEpo(249, 791);
+	std::cout << blah[0] << "\t" << blah[1] << std::endl;
+	blah = cwcs->fitsToEpo(657, 149);
+	std::cout << blah[0] << "\t" << blah[1] << std::endl;
 }

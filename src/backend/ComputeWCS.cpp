@@ -61,14 +61,11 @@ void ComputeWCS::initializeMatrixVectors()
 
 void ComputeWCS::computeTargetWCS()
 {
-
 	qDebug() << "Attempting to compute EPO WCS ...";
+	
 	// Check if enough points have been selected
-	// TODO: Put logic here to compute WCS based on size()-1 coordinate if 
-	//		 last QPointF = (-1, -1)
 	int numPoints;
 	if (epoCoords->size() >= 3)
-//	if (epoCoords->size() >= 3 && epoCoords->last() != QPointF(-1, -1))
 	{
 		// Determine the number of points to use
 		numPoints = refCoords->size();
@@ -83,16 +80,19 @@ void ComputeWCS::computeTargetWCS()
 		computeResiduals(numPoints);
 		
 		// Declare the CRPIX for the EPO image to be the center pixel
-		// Maybe this can eventually be set by the user
 		crpix << width / 2., height / 2.;
 		
-		// Determine corresponding pixel in the FITS image
+		// Determine corresponding pixel in the FITS image in QGraphicsScene space
 		Vector2d ref0 = epoToFits(crpix);
 		std::cout << "ref0:\t" << ref0 << std::endl;
+		
+		// Transform from QGraphicsScene pixels to FITS pixels
+		ref0 = gsPix2fitsPix(ref0);
+		
 		Vector2d xieta_0 = xi_eta(ref0);
 		std::cout << "xieta_0:\t" << xieta_0 << std::endl;
 		
-		// Determine the celestial coordinates for ref0
+		// Determine the celestial coordinates for ref0		
 		pix2wcs(referenceWCS, ref0[0], ref0[1], &crval[0], &crval[1]);
 
 		// Coordinate axis flipped, need to make adjustment
@@ -101,11 +101,11 @@ void ComputeWCS::computeTargetWCS()
 			crval = flip*crval;
 		
 		// Compute offset in x direction
-		Vector2d ref_x = epoToFits(crpix + v);
+		Vector2d ref_x = gsPix2fitsPix( epoToFits(crpix + v) );
 		Vector2d xieta_x = xi_eta(ref_x);
 		
 		// Compute offset in y direction
-		Vector2d ref_y = epoToFits(crpix + flip*v);
+		Vector2d ref_y = gsPix2fitsPix( epoToFits(crpix + flip*v) );
 		Vector2d xieta_y = xi_eta(ref_y);
 		
 		// Compute the cd matrix
@@ -188,7 +188,6 @@ struct WorldCoor* ComputeWCS::initTargetWCSII()
 }
 
 
-
 Vector2d ComputeWCS::xi_eta(double xpix, double ypix)
 {
 	const double pix[2] = {xpix, ypix};
@@ -218,10 +217,6 @@ void ComputeWCS::computeSums(int numPoints)
 	{
 		QPointF point1 = refCoords->at(ii);
 		QPointF point2 = epoCoords->at(ii);
-		
-		// Account the FITS flip
-		// TODO: This should be taken to account only when mapping to celestial coordinates.
-		point1.setY(referenceWCS->nypix - point1.y());
 		
 		// Set the base
 		basis << point2.x(), point2.y(), 1;
@@ -259,8 +254,6 @@ void ComputeWCS::computeResiduals(int numPoints)
 		// Store the coordinate pairs
 		QPointF point1 = refCoords->at(ii);
 		QPointF point2 = epoCoords->at(ii);
-		// TODO: This should be taken to account only when mapping to celestial coordinates.
-		point1.setY(referenceWCS->nypix - point1.y());
 		
 		// Map EPO coordinates to FITS coordinates
 		Vector2d fit = epoToFits(&point2);
@@ -278,7 +271,6 @@ void ComputeWCS::computeResiduals(int numPoints)
 	qDebug() << "RMS Y:" << rms_y;
 }
 
-// TODO: Compute the mapped coordinates
 QPointF ComputeWCS::fitsToEpo(QPointF *p)
 {
 	// TODO: Check that bd-af is nonzero
@@ -298,7 +290,7 @@ QPointF ComputeWCS::fitsToEpo(QPointF *p)
 	
 	// Find the difference
 	x0 = p->x() - xinverse[2];
-	y0 = referenceWCS->nypix - p->y() - yinverse[2];
+	y0 = p->y() - yinverse[2];
 	
 	epoCoord.setX(xinverse[0] * x0 + xinverse[1] * y0);
 	epoCoord.setY(yinverse[0] * x0 + yinverse[1] * y0);
@@ -306,7 +298,7 @@ QPointF ComputeWCS::fitsToEpo(QPointF *p)
 	return epoCoord;
 }
 
-
+	
 Vector2d ComputeWCS::fitsToEpo(double x, double y)
 {
 	// TODO: Check that bd-af is nonzero
@@ -326,7 +318,7 @@ Vector2d ComputeWCS::fitsToEpo(double x, double y)
 	
 	// Find the difference
 	x0 = x - xinverse[2];
-	y0 = referenceWCS->nypix - y - yinverse[2];
+	y0 = y - yinverse[2];
 	
 	epoCoord << xinverse[0] * x0 + xinverse[1] * y0, yinverse[0] * x0 + yinverse[1] * y0;	
 	return epoCoord;
@@ -364,5 +356,20 @@ Vector2d ComputeWCS::epoToFits(Vector2d p)
 	coordinate(0) = xcoeff[0] * p[0] + xcoeff[1] * p[1] + xcoeff[2];
 	coordinate(1) = ycoeff[0] * p[0] + ycoeff[1] * p[1] + ycoeff[2];
 	
+	return coordinate;
+}
+
+
+Vector2d ComputeWCS::gsPix2fitsPix(Vector2d p)
+{
+	Vector2d coordinate;
+	
+	// Transform from QGraphicsScene pixels to FITS pixels
+	coordinate(0) = p[0];
+	coordinate(1) = referenceWCS->nypix - p[1];
+	
+//	coordinate(0) = p[0] + 0.5;
+//	coordinate(1) = referenceWCS->nypix - p[1] + 0.5;
+
 	return coordinate;
 }

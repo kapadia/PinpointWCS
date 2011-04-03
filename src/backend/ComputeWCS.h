@@ -55,6 +55,10 @@ public:
 	double orientation;
 	QPointF fitsToEpo(QPointF *p);
 	Vector2d fitsToEpo(double x, double y);
+	Vector2d epoToFits(QPointF *p);
+	Vector2d epoToFits(double x, double y);
+	Vector2d epoToFits(Vector2d p);
+	Vector2d gsPix2fitsPix(Vector2d p);
 	
 public slots:
 	void computeTargetWCS();
@@ -71,9 +75,6 @@ private:
 	Vector2d xi_eta(Vector2d pixel);
 	void computeSums(int numPoints);
 	void computeResiduals(int numPoints);
-	Vector2d epoToFits(QPointF *p);
-	Vector2d epoToFits(double x, double y);
-	Vector2d epoToFits(Vector2d p);
 
 	// Attributes
 	QList<QPointF> *refCoords;
