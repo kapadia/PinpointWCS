@@ -367,9 +367,6 @@ Vector2d ComputeWCS::gsPix2fitsPix(Vector2d p)
 	// Transform from QGraphicsScene pixels to FITS pixels
 	coordinate(0) = p[0];
 	coordinate(1) = referenceWCS->nypix - p[1];
-	
-//	coordinate(0) = p[0] + 0.5;
-//	coordinate(1) = referenceWCS->nypix - p[1] + 0.5;
 
 	return coordinate;
 }

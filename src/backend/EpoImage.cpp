@@ -43,8 +43,10 @@ double* EpoImage::pix2sky(QPointF pos)
 	
 	// Get unbinned pixel
 	float xf, yf;
-	xf = M*(pos.x()-1)+2-0.5;
-	yf = naxisn[1]-(M*(pos.y()-1)-0.5);
+	
+	// Transform QGraphicsScene pixels to FITS pixels
+	xf = pos.x();
+	yf = naxisn[1]-pos.y();
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	

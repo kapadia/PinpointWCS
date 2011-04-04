@@ -36,11 +36,8 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	status = 0;
 	imagedata = NULL;
 	renderdata = NULL;
-	// TODO: Changed scaling to better match DS9. Change back when done!!!
-//	lowerPercentile = 0.0025;
-//	upperPercentile = 0.9975;
-	lowerPercentile = 0.0015;
-	upperPercentile = 0.9985;
+	lowerPercentile = 0.0025;
+	upperPercentile = 0.9975;
 	downsampled = false;
 	
 	// Open FITS file
