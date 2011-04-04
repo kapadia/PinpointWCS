@@ -162,7 +162,7 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	targetWCS = wcskinit(width, height, "RA--", "DEC-",
 						 crpix(0), crpix(1), crval(0), crval(1),
 						 cd, NULL, NULL,
-						 NULL, referenceWCS->equinox, NULL
+						 NULL, referenceWCS->equinox, referenceWCS->epoch
 	);
 	
 	// Set output coordinates, needed by pix2wcs
