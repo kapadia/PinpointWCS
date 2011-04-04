@@ -45,8 +45,8 @@ double* EpoImage::pix2sky(QPointF pos)
 	float xf, yf;
 	
 	// Transform QGraphicsScene pixels to FITS pixels
-	xf = pos.x();
-	yf = naxisn[1]-pos.y();
+	xf = pos.x() + 0.5;
+	yf = naxisn[1]-pos.y() + 0.5;
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	

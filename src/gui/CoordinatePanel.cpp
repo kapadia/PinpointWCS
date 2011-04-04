@@ -83,8 +83,8 @@ void CoordinatePanel::updateCoordinates(QPointF pos)
 	double *world = NULL;
 
 	// Format and display xy coordinates
-	x.sprintf("%.2f", pos.x());
-	y.sprintf("%.2f", pos.y());
+	x.sprintf("%.8f", pos.x());
+	y.sprintf("%.8f", pos.y());
 	ui.x_value->setText(x);
 	ui.y_value->setText(y);
 	

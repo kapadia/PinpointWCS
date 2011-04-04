@@ -262,7 +262,7 @@ bool FitsImage::verifyWCS()
 	}
 	
 	// Set output coordinates, needed by pix2wcs
-	wcsoutinit(targetWCS, "J2000");
+	wcsoutinit(wcs, "J2000");
 	
 	qDebug() << "WCS found!!!";\
 	return true;

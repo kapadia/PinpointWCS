@@ -159,7 +159,7 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 //	QString header = PinpointWCSUtils::createHeader(width, height, referenceWCS->equinox, referenceWCS->radecsys, crpix(0), crval(0), crpix(1), crval(1), cd);
 //	targetWCS = wcsinit(header.toStdString().c_str());
 
-	targetWCS = wcskinit(width, height, "RA--", "DEC-",
+	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
 						 crpix(0), crpix(1), crval(0), crval(1),
 						 cd, NULL, NULL,
 						 NULL, referenceWCS->equinox, referenceWCS->epoch
