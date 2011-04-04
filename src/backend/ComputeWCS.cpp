@@ -164,6 +164,9 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 						 cd, NULL, NULL,
 						 NULL, referenceWCS->equinox, NULL
 	);
+	
+	// Set output coordinates, needed by pix2wcs
+	wcsoutinit(targetWCS, "J2000");
 
 	return targetWCS;
 }
