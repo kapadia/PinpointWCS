@@ -203,6 +203,13 @@
     <addaction name="actionFit_Point"/>
     <addaction name="actionCentroid"/>
    </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew_Workspace"/>
+   </widget>
+   <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuImage"/>
@@ -485,6 +492,11 @@
    </property>
    <property name="text">
     <string>Sexagesimal</string>
+   </property>
+  </action>
+  <action name="actionNew_Workspace">
+   <property name="text">
+    <string>New Workspace</string>
    </property>
   </action>
  </widget>

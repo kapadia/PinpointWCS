@@ -59,10 +59,134 @@ MainWindow::MainWindow()
 	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
 	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
 	connect(ui.actionAbout_PinpointWCS, SIGNAL(triggered(bool)), aboutDialog, SLOT(exec()));
+	
+	// Teardown the workspace
+	ui.actionNew_Workspace->setEnabled(false);
+	connect(ui.actionNew_Workspace, SIGNAL(triggered(bool)), this, SLOT(teardownWorkspace()));
 }
 
 
 MainWindow::~MainWindow() {}
+
+bool MainWindow::teardownWorkspace()
+{
+	qDebug() << "Attempting to teardown workspace ...";
+	
+	// Reconnect dropLabels to signal
+	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
+	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
+		
+	// Flip the stacked widgets
+	ui.stackedWidget_1->setCurrentIndex(0);
+	ui.stackedWidget_2->setCurrentIndex(0);
+	
+	// Disable View Menu items
+	ui.actionInfo->setEnabled(false);
+	ui.actionCoordinates->setEnabled(false);
+	ui.actionImageAdjustments->setEnabled(false);
+	ui.actionCoordinate_Table->setEnabled(false);
+	ui.actionDegrees->setEnabled(false);
+	ui.actionDegrees->setChecked(false);
+	ui.actionSexagesimal->setEnabled(false);
+	
+	// Disable Image Menu items
+	ui.actionLinear_Stretch->setEnabled(false);
+	ui.actionLogarithm_Stretch->setEnabled(false);
+	ui.actionSquare_Root_Stretch->setEnabled(false);
+	ui.actionHyperbolic_Sine_Stretch->setEnabled(false);
+	ui.actionPower_Stretch->setEnabled(false);
+	ui.actionInvert->setEnabled(false);
+	ui.actionRotate_Clockwise->setEnabled(false);
+	ui.actionRotate_Counterclockwise->setEnabled(false);
+	
+	// TODO: Testing advanced options
+	// Disable some advanced options
+	//		ui.actionCentroid->setEnabled(false);
+	
+	// Disconnect some signals -- used for resizing panels
+	disconnect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
+	disconnect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoWcsInfoPanel, SLOT(parentResized(QSize)));		
+	disconnect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsCoordPanel, SLOT(parentResized(QSize)));
+	disconnect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoCoordPanel, SLOT(parentResized(QSize)));
+	disconnect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
+	disconnect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), this, SLOT(updateCoordPanelProperties()));
+	disconnect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsToolbar, SLOT(parentResized(QSize)));
+	
+	// Disconnect more signals -- used for updating info on panels
+	disconnect(fitsScene, SIGNAL(mousePositionChanged(QPointF)), fitsCoordPanel, SLOT(updateCoordinates(QPointF)));
+	disconnect(epoScene, SIGNAL(mousePositionChanged(QPointF)), epoCoordPanel, SLOT(updateCoordinates(QPointF)));
+	
+	// Disconnect yet more signals -- para comunicación entre los GraphicsScenes
+	disconnect(fitsScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), dataModel, SLOT(setData(GraphicsScene*, QPointF)));
+	disconnect(epoScene, SIGNAL(sceneDoubleClicked(GraphicsScene*, QPointF)), dataModel, SLOT(setData(GraphicsScene*, QPointF)));
+	
+	disconnect(fitsScene, SIGNAL(toggleNeighborScene(bool)), epoScene, SLOT(toggleClickable(bool)));
+	disconnect(epoScene, SIGNAL(toggleNeighborScene(bool)), fitsScene, SLOT(toggleClickable(bool)));
+	
+	disconnect(fitsScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
+	disconnect(epoScene, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF)));
+	disconnect(tableDelegate, SIGNAL(itemMoved(GraphicsScene*, QPointF, QPointF, QModelIndex*)), dataModel, SLOT(updateData(GraphicsScene*, QPointF, QPointF, QModelIndex*)));
+	
+	// Disconnect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
+	disconnect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
+	disconnect(ui.actionInvert, SIGNAL(triggered(bool)), fitsImage, SLOT(invert()));
+	disconnect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
+	disconnect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
+	disconnect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
+	
+	// Disconnect señales for the WCS format
+	disconnect(ui.actionDegrees, SIGNAL(toggled(bool)), fitsCoordPanel, SLOT(setWcsFormat(bool)));
+	disconnect(ui.actionDegrees, SIGNAL(toggled(bool)), epoCoordPanel, SLOT(setWcsFormat(bool)));
+	
+	// Disconnect more signals -- communicate between data model and ComputeWCS object
+	disconnect(dataModel, SIGNAL(compute()), computewcs, SLOT(computeTargetWCS()));
+	disconnect(computewcs, SIGNAL(wcs()), this, SLOT(enableExport()));
+	disconnect(computewcs, SIGNAL(nowcs()), this, SLOT(enableExport()));
+	
+	// Disconnect signals -- export options
+	disconnect(ui.actionFITS_Image, SIGNAL(triggered(bool)), exportwcs, SLOT(exportFITS()));
+	disconnect(ui.actionAstronomy_Visualization_Metadata, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVM()));
+	
+	// And more signals ...
+	disconnect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(toggle()));
+	
+	// Mouse dependent rotation menu items
+	disconnect(ui.graphicsView_1, SIGNAL(mouseEnterEvent(GraphicsView*)), this, SLOT(rotateMenuItems(GraphicsView*)));
+	disconnect(ui.graphicsView_2, SIGNAL(mouseEnterEvent(GraphicsView*)), this, SLOT(rotateMenuItems(GraphicsView*)));
+	
+	// Selecting corresponding items across scenes
+	disconnect(fitsScene, SIGNAL(selectionChanged()), fitsScene, SLOT(findSelectedItem()));
+	disconnect(fitsScene, SIGNAL(currentSelection(int)), epoScene, SLOT(matchSelectedItem(int)));
+	disconnect(epoScene, SIGNAL(selectionChanged()), epoScene, SLOT(findSelectedItem()));
+	disconnect(epoScene, SIGNAL(currentSelection(int)), fitsScene, SLOT(matchSelectedItem(int)));
+	disconnect(fitsScene, SIGNAL(clearCorrespondingSelection()), epoScene, SLOT(clearSelection()));
+	disconnect(epoScene, SIGNAL(clearCorrespondingSelection()), fitsScene, SLOT(clearSelection()));
+	
+	// Exporting signals and slots
+	disconnect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
+	
+	// TODO: Prediction and centroid signal and slots
+	disconnect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(testSlot()));
+	disconnect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
+	disconnect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
+	disconnect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
+	
+	// Disable from menu
+	ui.actionNew_Workspace->setEnabled(false);
+	
+	// Delete some objects last
+	delete fitsCoordPanel;
+	delete epoCoordPanel;
+	delete tableDelegate;
+	delete coordinateTableDialog;
+	delete computewcs;
+	delete exportwcs;	
+	delete stretchActionGroup;
+//	delete wcsFormatActionGroup;
+	delete msg;
+	
+	return true;
+}
 
 bool MainWindow::setupWorkspace()
 {
@@ -228,6 +352,9 @@ bool MainWindow::setupWorkspace()
 		connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
 		connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
 		connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
+		
+		// Enable the teardown menu item
+		ui.actionNew_Workspace->setEnabled(true);
 		
 		// TODO: Testing coordinate info panel by setting some markers for the M101 data
 		testII();

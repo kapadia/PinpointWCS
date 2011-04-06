@@ -25,6 +25,7 @@
 #include <QPropertyAnimation>
 #include <QAbstractTransition>
 #include <QSignalTransition>
+#include <QActionGroup>
 //#include <QtNetwork>
 
 #include "ui_PinpointWCS.h"
@@ -51,7 +52,7 @@ public:
 	// Constructor and Deconstructor
 	MainWindow();
 	~MainWindow();
-
+	
 private:
 	// User Interface Attributes
 	Ui::MainWindow ui;
@@ -62,6 +63,8 @@ private:
 	CoordinatePanel *fitsCoordPanel;
 	CoordinatePanel *epoCoordPanel;
 	FitsToolbar *fitsToolbar;
+	QActionGroup *stretchActionGroup;
+	QActionGroup *wcsFormatActionGroup;
 	MessageBox *msg;
 	
 	// Image Attributes
@@ -72,9 +75,6 @@ private:
 	QUndoStack *undoStack;
 	QAction *undoAction;
 	QAction *redoAction;
-	
-	// QAction Attributes
-	QActionGroup *stretchActionGroup;
 	
 	// Model, View, and Delegate Attributes
 	CoordinateModel *dataModel;
@@ -108,6 +108,7 @@ private:
 	
 private slots:
 	bool setupWorkspace();
+	bool teardownWorkspace();
 	bool loadEpoImage(QString& filename);
 	bool loadFitsImage(QString& filename);
 	void stretch(QAction *action);
