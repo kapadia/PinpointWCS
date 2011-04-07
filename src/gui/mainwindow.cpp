@@ -52,6 +52,21 @@ MainWindow::MainWindow()
 //	QLabel *msg = new QLabel(QString("PinpointWCS from the Chandra X-ray Observatory"));
 //	ui.statusbar->addWidget(msg);
 	
+	// Create a QActionGroup for the stretch menu items
+	stretchActionGroup = new QActionGroup(this);
+	stretchActionGroup->addAction(ui.actionLinear_Stretch);
+	stretchActionGroup->addAction(ui.actionLogarithm_Stretch);
+	stretchActionGroup->addAction(ui.actionSquare_Root_Stretch);
+	stretchActionGroup->addAction(ui.actionHyperbolic_Sine_Stretch);
+	stretchActionGroup->addAction(ui.actionPower_Stretch);
+	stretchActionGroup->setExclusive(true);
+	
+	// Create a QActionGroup for the WCS format options
+	wcsFormatActionGroup = new QActionGroup(this);
+	wcsFormatActionGroup->addAction(ui.actionDegrees);
+	wcsFormatActionGroup->addAction(ui.actionSexagesimal);
+	wcsFormatActionGroup->setExclusive(true);
+	
 	// Initialize dialogs
 	aboutDialog = new AboutDialog(this);
 	
@@ -71,7 +86,7 @@ MainWindow::~MainWindow() {}
 bool MainWindow::teardownWorkspace()
 {
 	qDebug() << "Attempting to teardown workspace ...";
-	
+
 	// Reconnect dropLabels to signal
 	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
 	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
@@ -79,30 +94,7 @@ bool MainWindow::teardownWorkspace()
 	// Flip the stacked widgets
 	ui.stackedWidget_1->setCurrentIndex(0);
 	ui.stackedWidget_2->setCurrentIndex(0);
-	
-	// Disable View Menu items
-	ui.actionInfo->setEnabled(false);
-	ui.actionCoordinates->setEnabled(false);
-	ui.actionImageAdjustments->setEnabled(false);
-	ui.actionCoordinate_Table->setEnabled(false);
-	ui.actionDegrees->setEnabled(false);
-	ui.actionDegrees->setChecked(false);
-	ui.actionSexagesimal->setEnabled(false);
-	
-	// Disable Image Menu items
-	ui.actionLinear_Stretch->setEnabled(false);
-	ui.actionLogarithm_Stretch->setEnabled(false);
-	ui.actionSquare_Root_Stretch->setEnabled(false);
-	ui.actionHyperbolic_Sine_Stretch->setEnabled(false);
-	ui.actionPower_Stretch->setEnabled(false);
-	ui.actionInvert->setEnabled(false);
-	ui.actionRotate_Clockwise->setEnabled(false);
-	ui.actionRotate_Counterclockwise->setEnabled(false);
-	
-	// TODO: Testing advanced options
-	// Disable some advanced options
-	//		ui.actionCentroid->setEnabled(false);
-	
+		
 	// Disconnect some signals -- used for resizing panels
 	disconnect(ui.graphicsView_1, SIGNAL(objectResized(QSize)), fitsWcsInfoPanel, SLOT(parentResized(QSize)));
 	disconnect(ui.graphicsView_2, SIGNAL(objectResized(QSize)), epoWcsInfoPanel, SLOT(parentResized(QSize)));		
@@ -171,8 +163,28 @@ bool MainWindow::teardownWorkspace()
 	disconnect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
 	disconnect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
 	
-	// Disable from menu
-	ui.actionNew_Workspace->setEnabled(false);
+	// Disable View Menu items
+	ui.actionInfo->setEnabled(false);
+	ui.actionCoordinates->setEnabled(false);
+	ui.actionImageAdjustments->setEnabled(false);
+	ui.actionCoordinate_Table->setEnabled(false);
+	ui.actionDegrees->setEnabled(false);
+	ui.actionDegrees->setChecked(false);
+	ui.actionSexagesimal->setEnabled(false);
+	
+	// Disable Image Menu items
+	ui.actionLinear_Stretch->setEnabled(false);
+	ui.actionLogarithm_Stretch->setEnabled(false);
+	ui.actionSquare_Root_Stretch->setEnabled(false);
+	ui.actionHyperbolic_Sine_Stretch->setEnabled(false);
+	ui.actionPower_Stretch->setEnabled(false);
+	ui.actionInvert->setEnabled(false);
+	ui.actionRotate_Clockwise->setEnabled(false);
+	ui.actionRotate_Counterclockwise->setEnabled(false);
+	
+	// TODO: Testing advanced options
+	// Disable some advanced options
+	//		ui.actionCentroid->setEnabled(false);
 	
 	// Delete some objects last
 	delete fitsCoordPanel;
@@ -181,9 +193,12 @@ bool MainWindow::teardownWorkspace()
 	delete coordinateTableDialog;
 	delete computewcs;
 	delete exportwcs;	
-	delete stretchActionGroup;
-//	delete wcsFormatActionGroup;
 	delete msg;
+	
+	// Disable from menu
+	ui.dropLabel_1->clean();
+	ui.dropLabel_2->clean();
+	ui.actionNew_Workspace->setEnabled(false);
 	
 	return true;
 }
@@ -243,21 +258,6 @@ bool MainWindow::setupWorkspace()
 		// TODO: Testing advanced options
 		// Enable some advanced options
 //		ui.actionCentroid->setEnabled(true);
-		
-		// Create a QActionGroup for the stretch menu items
-		QActionGroup *stretchActionGroup = new QActionGroup(this);
-		stretchActionGroup->addAction(ui.actionLinear_Stretch);
-		stretchActionGroup->addAction(ui.actionLogarithm_Stretch);
-		stretchActionGroup->addAction(ui.actionSquare_Root_Stretch);
-		stretchActionGroup->addAction(ui.actionHyperbolic_Sine_Stretch);
-		stretchActionGroup->addAction(ui.actionPower_Stretch);
-		stretchActionGroup->setExclusive(true);
-		
-		// Create a QActionGroup for the WCS format options
-		QActionGroup *wcsFormatActionGroup = new QActionGroup(this);
-		wcsFormatActionGroup->addAction(ui.actionDegrees);
-		wcsFormatActionGroup->addAction(ui.actionSexagesimal);
-		wcsFormatActionGroup->setExclusive(true);
 		
 		// Set up the WcsInfoPanel for each image
 		fitsWcsInfoPanel->parentResized(ui.graphicsView_1->size());

@@ -25,7 +25,7 @@ DropArea::DropArea(QWidget *parent)
 {	
 	// Set attributes of DropSite
 	ready = false;
-
+	
 	// Set attributes from QLabel
 	setAcceptDrops(true);
 	setFrameStyle(QFrame::Box | QFrame::Sunken);
@@ -50,12 +50,19 @@ DropArea::DropArea(QWidget *parent)
 DropArea::~DropArea() {}
 
 void DropArea::setFileExtensions(bool exts) {
+	defaultText = text();
 	if (exts == false)
 		extList << "fits";
 	else
 		extList << "jpg" << "jpeg" << "tif" << "tiff" << "png";
 }
 
+void DropArea::clean()
+{
+	setText(defaultText);
+	setBackgroundRole(QPalette::Window);
+	ready = false;
+}
 
 void DropArea::dragEnterEvent(QDragEnterEvent *event)
 {

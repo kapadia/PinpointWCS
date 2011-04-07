@@ -32,6 +32,7 @@ public:
 	DropArea(QWidget *parent = 0);
 	~DropArea();
 	void setFileExtensions(bool exts);
+	void clean();
 	bool ready;
 	QString filepath;
 
@@ -41,6 +42,7 @@ protected:
 	void dropEvent(QDropEvent *event);
 
 private:
+	QString defaultText;
 	QStringList extList;
 
 signals:
