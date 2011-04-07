@@ -49,8 +49,11 @@ DropArea::DropArea(QWidget *parent)
 
 DropArea::~DropArea() {}
 
-void DropArea::setFileExtensions(bool exts) {
+void DropArea::setup(bool exts) {
+	// Get the default txt
 	defaultText = text();
+	
+	// Set the accepted file extension
 	if (exts == false)
 		extList << "fits";
 	else

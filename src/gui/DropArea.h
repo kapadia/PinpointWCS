@@ -31,7 +31,7 @@ class DropArea : public QLabel
 public:
 	DropArea(QWidget *parent = 0);
 	~DropArea();
-	void setFileExtensions(bool exts);
+	void setup(bool exts);
 	void clean();
 	bool ready;
 	QString filepath;

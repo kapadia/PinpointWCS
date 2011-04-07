@@ -25,28 +25,9 @@ MainWindow::MainWindow()
 	// Set up the user interface
     ui.setupUi(this);
 	
-	// Initialize the data model and set up the undostack
-	dataModel = new CoordinateModel();
-	undoAction = dataModel->undoStack->createUndoAction(this, tr("&Undo"));
-	redoAction = dataModel->undoStack->createRedoAction(this, tr("&Redo"));
-	undoAction->setShortcut(QKeySequence::Undo);
-	redoAction->setShortcut(QKeySequence::Redo);
-	ui.menuEdit->addAction(undoAction);
-	ui.menuEdit->addAction(redoAction);
-		
-	// Initialize the WcsInfoPanels
-	fitsWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_1);
-	epoWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_2);
-	fitsWcsInfoPanel->hide();
-	epoWcsInfoPanel->hide();
-	
-	// Initialize the FitsToolbar
-	fitsToolbar = new FitsToolbar(ui.graphicsView_1);
-	fitsToolbar->hide();
-		
 	// Set up the DropSites to accept the correct extensions
-	ui.dropLabel_1->setFileExtensions(false);
-	ui.dropLabel_2->setFileExtensions(true);
+	ui.dropLabel_1->setup(false);
+	ui.dropLabel_2->setup(true);
 	
 	// Testing message on status bar
 //	QLabel *msg = new QLabel(QString("PinpointWCS from the Chandra X-ray Observatory"));
@@ -186,7 +167,17 @@ bool MainWindow::teardownWorkspace()
 	// Disable some advanced options
 	//		ui.actionCentroid->setEnabled(false);
 	
+	// Deconstruct the undostack and data model
+	ui.menuEdit->removeAction(redoAction);
+	ui.menuEdit->removeAction(undoAction);
+	delete undoAction;
+	delete redoAction;
+	delete dataModel;
+	
 	// Delete some objects last
+	delete fitsWcsInfoPanel;
+	delete epoWcsInfoPanel;
+	delete fitsToolbar;
 	delete epoImage;
 	delete epoScene;
 	delete fitsImage;
@@ -199,9 +190,11 @@ bool MainWindow::teardownWorkspace()
 	delete exportwcs;	
 	delete msg;
 	
-	// Disable from menu
+	// Reset the drop labels
 	ui.dropLabel_1->clean();
 	ui.dropLabel_2->clean();
+	
+	// Disable from menu
 	ui.actionNew_Workspace->setEnabled(false);
 	
 	return true;
@@ -221,6 +214,22 @@ bool MainWindow::setupWorkspace()
 		// Disconnect dropLabels from signal
 		disconnect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
 		disconnect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(setupWorkspace()));
+		
+		// Initialize the data model and set up the undostack
+		dataModel = new CoordinateModel();
+		undoAction = dataModel->undoStack->createUndoAction(this, tr("&Undo"));
+		redoAction = dataModel->undoStack->createRedoAction(this, tr("&Redo"));
+		undoAction->setShortcut(QKeySequence::Undo);
+		redoAction->setShortcut(QKeySequence::Redo);
+		ui.menuEdit->addAction(undoAction);
+		ui.menuEdit->addAction(redoAction);
+		
+		// Initialize the WcsInfoPanels
+		fitsWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_1);
+		epoWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_2);
+		
+		// Initialize the FitsToolbar
+		fitsToolbar = new FitsToolbar(ui.graphicsView_1);
 		
 		// Initialize the CoordinatePanels
 		fitsCoordPanel = new CoordinatePanel(fitsImage, ui.graphicsView_1);
@@ -283,7 +292,6 @@ bool MainWindow::setupWorkspace()
 		fitsToolbar->setSliderValues(fitsImage->vmin, fitsImage->vmax);
 		fitsToolbar->parentResized(ui.graphicsView_1->size());
 		buildImageAdjustmentMachine();
-		fitsToolbar->show();
 		
 		// Initialize MessageBox
 		msg = new MessageBox("Export Status", this);
