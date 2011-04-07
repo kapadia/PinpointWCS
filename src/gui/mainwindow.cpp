@@ -636,10 +636,8 @@ void MainWindow::promptMessage(bool status)
 }
 
 
-void MainWindow::testSlot()
-{
-	qDebug() << "Test Slot";
-	
+void MainWindow::predictEpoPoint()
+{	
 	// Get the last reference point in the data model
 	QPointF refCoord = dataModel->refCoords.last();
 	// Send the predicted coordinate to the data model via commands
@@ -647,9 +645,9 @@ void MainWindow::testSlot()
 	
 }
 
-void MainWindow::testSlotII(QPointF pos)
+void MainWindow::testSlot(QPointF pos)
 {
-	qDebug() << "Test Slot II";
+	qDebug() << "Test Slot";
 	
 	CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker*>(fitsScene->selectedItems()[0]);
 	dataModel->updateData(fitsScene, pos, item->pos());

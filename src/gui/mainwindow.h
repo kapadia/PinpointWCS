@@ -117,10 +117,10 @@ private slots:
 	void computeWCS();
 	void rotateMenuItems(GraphicsView *gv);
 	void promptMessage(bool status);
+	void predictEpoPoint();
 	
 	// A slots for testing ...
-	void testSlot();
-	void testSlotII(QPointF pos);
+	void testSlot(QPointF pos);
 	
 	// Test function(s) for debugging
 	void testI();
