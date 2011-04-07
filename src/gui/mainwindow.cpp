@@ -187,6 +187,10 @@ bool MainWindow::teardownWorkspace()
 	//		ui.actionCentroid->setEnabled(false);
 	
 	// Delete some objects last
+	delete epoImage;
+	delete epoScene;
+	delete fitsImage;
+	delete fitsScene;
 	delete fitsCoordPanel;
 	delete epoCoordPanel;
 	delete tableDelegate;
