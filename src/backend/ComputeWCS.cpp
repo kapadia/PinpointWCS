@@ -68,7 +68,10 @@ void ComputeWCS::computeTargetWCS()
 	if (epoCoords->size() >= 3)
 	{
 		// Determine the number of points to use
-		numPoints = refCoords->size();
+		if (epoCoords->last() == QPointF(-1, -1))
+			numPoints = refCoords->size()-1;
+		else 
+			numPoints = refCoords->size();
 
 		// Compute matrix and vectors
 		computeSums(numPoints);

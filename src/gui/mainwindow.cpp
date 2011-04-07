@@ -642,7 +642,6 @@ void MainWindow::testSlot()
 	
 	// Get the last reference point in the data model
 	QPointF refCoord = dataModel->refCoords.last();
-	
 	// Send the predicted coordinate to the data model via commands
 	dataModel->setData(epoScene, computewcs->fitsToEpo(&refCoord));
 	
