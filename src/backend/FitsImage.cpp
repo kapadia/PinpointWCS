@@ -209,7 +209,11 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	finishInitialization();
 }
 
-FitsImage::~FitsImage() {}
+FitsImage::~FitsImage()
+{
+	qDebug() << "~FitsImage";
+	free(imagedata);
+}
 
 bool FitsImage::verifyWCS()
 {

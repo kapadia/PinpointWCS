@@ -21,16 +21,16 @@
 #include "GraphicsScene.h"
 #include <math.h>
 
-GraphicsScene::GraphicsScene(QPixmap pix, bool ref, QObject *parent)
+GraphicsScene::GraphicsScene(QPixmap *pix, bool ref, QObject *parent)
 : QGraphicsScene(parent)
 {
 	reference = ref;
 	movingItem = 0;
-	setSceneRect(0, 0, pix.width(), pix.height());	
-	ptr_pixmap = addPixmap(pix);
+	setSceneRect(0, 0, pix->width(), pix->height());	
+	ptr_pixmap = addPixmap(*pix);
 	
 	// Compute the measure of the pixmap
-	measure = sqrt(pix.width() * pix.height());
+	measure = sqrt(pix->width() * pix->height());
 	
 	if (reference)
 		clickable = true;

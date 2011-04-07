@@ -30,7 +30,7 @@ class GraphicsScene : public QGraphicsScene
 	Q_OBJECT
 		
 public:
-	GraphicsScene(QPixmap pix, bool ref, QObject *parent = 0);
+	GraphicsScene(QPixmap *pix, bool ref, QObject *parent = 0);
 	~GraphicsScene();
 	bool reference;
 	float measure;
