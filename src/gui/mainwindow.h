@@ -43,6 +43,7 @@
 #include "ExportWCS.h"
 #include "AboutDialog.h"
 #include "MessageBox.h"
+#include "FITSThread.h"
  
 class MainWindow : public QMainWindow
 {
@@ -70,6 +71,7 @@ private:
 	// Image Attributes
 	FitsImage *fitsImage;
 	EpoImage *epoImage;
+	FITSThread fitsThread;
 	
 	// Undo and Redo Attributes
 	QUndoStack *undoStack;

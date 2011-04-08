@@ -360,16 +360,16 @@ bool MainWindow::setupWorkspace()
 		connect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 		
 		// TODO: Prediction and centroid signal and slots
-		connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(testSlot()));
-		connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
-		connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
-		connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
+		connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(predictEpoPoint()));
+//		connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
+//		connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
+//		connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
 		
 		// Enable the teardown menu item
 		ui.actionNew_Workspace->setEnabled(true);
 		
 		// TODO: Testing coordinate info panel by setting some markers for the M101 data
-		testII();
+//		testII();
 		
 		return true;
 	}
@@ -407,7 +407,7 @@ void MainWindow::stretch(QAction *action)
 }
 
 
-bool MainWindow::loadEpoImage(QString& filename)
+bool MainWindow::loadEpoImage(QString &filename)
 {
 	qDebug() << "Loading EPO image ...";
 	epoImage = new EpoImage(filename);
@@ -418,9 +418,11 @@ bool MainWindow::loadEpoImage(QString& filename)
 }
 
 
-bool MainWindow::loadFitsImage(QString& filename)
+bool MainWindow::loadFitsImage(QString &filename)
 {
 	qDebug() << "Loading FITS image ...";
+//	FITSThread fitsThread;
+//	fitsThread.setup(filename);
 	fitsImage = new FitsImage(filename);
 	// TODO: Make epoScene the same as this ...
 	fitsScene = new GraphicsScene(&(fitsImage->pixmap), true);

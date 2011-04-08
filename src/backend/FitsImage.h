@@ -47,7 +47,7 @@ class FitsImage : public PPWcsImage {
 	
 public:
 	// Methods
-	FitsImage(QString & fileName);
+	FitsImage(QString &fileName);
 	~FitsImage();
 	float minpixel, maxpixel, difference;
 	float vmin, vmax, lowerLimit, upperLimit;
