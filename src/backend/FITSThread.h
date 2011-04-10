@@ -32,13 +32,12 @@ class FITSThread : public QThread {
 	
 public:
 	FITSThread();
-	void setup(QString &f);
+	void setup(FitsImage *f);
 	
 protected:
 	void run();
-
+	
 private:
-	QString fitsFile;
 	FitsImage *fitsImage;
 };
 

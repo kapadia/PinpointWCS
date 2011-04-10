@@ -22,12 +22,12 @@
 FITSThread::FITSThread()
 {}
 
-void FITSThread::setup(QString &f)
+void FITSThread::setup(FitsImage *f)
 {
-	fitsFile = f;
+	fitsImage = f;
 }
 
 void FITSThread::run()
 {
-//	fitsImage = new FitsImage(fitsFile);
+	fitsImage->setup();
 }

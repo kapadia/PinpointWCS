@@ -49,6 +49,9 @@ public:
 	// Methods
 	FitsImage(QString &fileName);
 	~FitsImage();
+	bool setup();
+	
+	QString filename;
 	float minpixel, maxpixel, difference;
 	float vmin, vmax, lowerLimit, upperLimit;
 	bool downsampled;

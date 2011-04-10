@@ -28,8 +28,23 @@
 
 
 FitsImage::FitsImage(QString &fileName) : PPWcsImage()
-{	
+{
 	qDebug() << "Initializing FitsImage object ...";
+	
+	// Initialize some attributes
+	filename = fileName;
+	fptr = NULL;
+	status = 0;
+	imagedata = NULL;
+	renderdata = NULL;
+	lowerPercentile = 0.0025;
+	upperPercentile = 0.9975;
+	downsampled = false;
+}
+
+bool FitsImage::setup()
+{	
+	qDebug() << "Setting up FitsImage object ...";
 	
 	// Initialize some attributes
 	fptr = NULL;
@@ -41,11 +56,11 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	downsampled = false;
 	
 	// Open FITS file
-	fits_open_file(&fptr, fileName.toStdString().c_str(), READONLY, &status);
+	fits_open_file(&fptr, filename.toStdString().c_str(), READONLY, &status);
 	if (status)
 	{
 		fits_report_error(stderr, status);
-		return;
+		return false;
 	}
 	
 	// Check the number of HDUs
@@ -53,7 +68,7 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	if (status)
 	{
 		fits_report_error(stderr, status);
-		return;
+		return false;
 	}
 	
 	// Set number of images to zero
@@ -207,6 +222,8 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	
 	// Call finishInitialization from base class
 	finishInitialization();
+	
+	return true;
 }
 
 FitsImage::~FitsImage()

@@ -71,7 +71,7 @@ private:
 	// Image Attributes
 	FitsImage *fitsImage;
 	EpoImage *epoImage;
-	FITSThread fitsThread;
+	FITSThread *fitsThread;
 	
 	// Undo and Redo Attributes
 	QUndoStack *undoStack;
@@ -109,10 +109,12 @@ private:
 	void buildImageAdjustmentMachine();
 	
 private slots:
+	bool setupImages();
 	bool setupWorkspace();
 	bool teardownWorkspace();
+	bool startFITSThread(QString& filename);
+	bool loadFITSImage();
 	bool loadEpoImage(QString& filename);
-	bool loadFitsImage(QString& filename);
 	void stretch(QAction *action);
 	void updateCoordPanelProperties();
 	void enableExport();
