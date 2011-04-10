@@ -450,6 +450,7 @@ bool MainWindow::loadFITSImage()
 	disconnect(fitsThread, SIGNAL(finished()), this, SLOT(loadFITSImage()));
 	delete fitsThread;
 	
+	// Finish setting up the workspace
 	setupWorkspace();
 	
 	return true;
