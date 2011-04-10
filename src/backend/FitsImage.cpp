@@ -33,14 +33,20 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	
 	// Initialize some attributes
 	filename = fileName;
-	fptr = NULL;
 	status = 0;
-	imagedata = NULL;
-	renderdata = NULL;
 	lowerPercentile = 0.0025;
 	upperPercentile = 0.9975;
 	downsampled = false;
 }
+
+
+FitsImage::~FitsImage()
+{
+	qDebug() << "~FitsImage";
+	free(imagedata);
+	free(fptr);
+}
+
 
 bool FitsImage::setup()
 {	
@@ -48,12 +54,8 @@ bool FitsImage::setup()
 	
 	// Initialize some attributes
 	fptr = NULL;
-	status = 0;
 	imagedata = NULL;
 	renderdata = NULL;
-	lowerPercentile = 0.0025;
-	upperPercentile = 0.9975;
-	downsampled = false;
 	
 	// Open FITS file
 	fits_open_file(&fptr, filename.toStdString().c_str(), READONLY, &status);
@@ -226,11 +228,6 @@ bool FitsImage::setup()
 	return true;
 }
 
-FitsImage::~FitsImage()
-{
-	qDebug() << "~FitsImage";
-	free(imagedata);
-}
 
 bool FitsImage::verifyWCS()
 {
@@ -283,7 +280,7 @@ bool FitsImage::verifyWCS()
 	}
 	
 	// Set output coordinates, needed by pix2wcs
-	wcsoutinit(wcs, "J2000");
+	wcsoutinit(wcs, "FK5");
 	
 	qDebug() << "WCS found!!!";\
 	return true;
@@ -623,11 +620,15 @@ QPointF FitsImage::fpix2pix(QPointF fpix)
 
 float FitsImage::pixelIntensity(QPointF pos)
 {
-	float x, y, xf, yf;
-	x = pos.x();
-	y = pos.y();
-	xf = M*(x-1)+2-0.5;
-	yf = naxisn[1]-(M*(y-1))-0.5;
+	float xf, yf;
+	
+	// First unbin the pixel
+	xf = M*(pos.x()-1)+1;
+	yf = M*(pos.y()-1)+1;
+	
+	// Transform QGraphicsScene pixels to FITS pixels
+	xf = xf+0.5;
+	yf = (naxisn[1]-yf)+0.5;
 	
 	// Get the intensity of the pixel value (use for later)
 	int index = naxisn[0]*(floor(yf+0.5)-1) + (floor(xf+0.5)-1);
@@ -752,6 +753,8 @@ void FitsImage::fitCentroid(QPointF pos)
 
 double* FitsImage::pix2sky(QPointF pos)
 {	
+	qDebug() << "Pixel Intensity:\t" << pixelIntensity(pos);
+	
 	if (!wcs)
 		return world;
 	

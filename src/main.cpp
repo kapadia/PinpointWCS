@@ -23,8 +23,6 @@
 
 // TODO: Pass *QPointFs not QPointFs
 // FIXME: Something unusual when marking new point, undoing, then predicting.
-// FIXME: Compute WCS Correctly!!!
-
 
 int main(int argc, char *argv[])
 {
