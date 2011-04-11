@@ -90,6 +90,7 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 
 void GraphicsView::enterEvent(QEvent *event)
 {
+	// Reset some graphics view settings
 	setDragMode(QGraphicsView::NoDrag);
 	setFocus();
 	
@@ -100,6 +101,14 @@ void GraphicsView::enterEvent(QEvent *event)
 void GraphicsView::leaveEvent(QEvent *event)
 {
 	setDragMode(QGraphicsView::NoDrag);
+	
+	// Reset some graphics item settings
+	QList<QGraphicsItem*> list = scene()->items(Qt::AscendingOrder);
+	for (int i=2; i<list.size(); i++)
+	{
+		list.at(i)->setFlag(QGraphicsItem::ItemIsMovable, true);
+		list.at(i)->setFlag(QGraphicsItem::ItemIsSelectable, true);
+	}
 }
 
 void GraphicsView::wheelEvent(QWheelEvent *event)

@@ -21,6 +21,7 @@
 #define GRAPHICSVIEW_H
 
 #include <QGraphicsView>
+#include <QGraphicsItem>
 #include <QKeyEvent>
 
 QT_BEGIN_NAMESPACE

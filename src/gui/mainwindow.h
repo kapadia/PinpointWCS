@@ -74,7 +74,6 @@ private:
 	FITSThread *fitsThread;
 	
 	// Undo and Redo Attributes
-	QUndoStack *undoStack;
 	QAction *undoAction;
 	QAction *redoAction;
 	

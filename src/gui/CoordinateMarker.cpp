@@ -89,26 +89,6 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	painter->drawEllipse(-radius, -radius, radius*2, radius*2);
 }
 
-// Don't think we need these methods overridden
-/*
-void CoordinateMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-	QGraphicsItem::mousePressEvent(event);
-}
-
-
-void CoordinateMarker::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-	QGraphicsItem::mouseMoveEvent(event);
-}
-
-
-void CoordinateMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{	
-	QGraphicsItem::mouseReleaseEvent(event);
-}
-*/
-
 void CoordinateMarker::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
 	// TODO: Call prepareGeometryChange() when ready to implement this dynamic resizing feature.
@@ -116,13 +96,18 @@ void CoordinateMarker::wheelEvent(QGraphicsSceneWheelEvent *event)
 	QGraphicsItem::wheelEvent(event);
 }
 
+
 void CoordinateMarker::keyPressEvent(QKeyEvent *event)
 {
 	qDebug() << "keyPressEvent";
-	setFlag(QGraphicsItem::ItemIsMovable, false);
-	setFlag(QGraphicsItem::ItemIsSelectable, false);
+	if (event->key() == Qt::Key_Space)
+	{
+		setFlag(QGraphicsItem::ItemIsMovable, false);
+		setFlag(QGraphicsItem::ItemIsSelectable, false);
+	}
 	QGraphicsItem::keyPressEvent(event);
 }
+
 
 void CoordinateMarker::keyReleaseEvent(QKeyEvent *event)
 {
@@ -131,7 +116,8 @@ void CoordinateMarker::keyReleaseEvent(QKeyEvent *event)
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
 	QGraphicsItem::keyReleaseEvent(event);
 }
-	
+
+
 QVariant CoordinateMarker::itemChange(GraphicsItemChange change, const QVariant &value)
 {
 	/*
