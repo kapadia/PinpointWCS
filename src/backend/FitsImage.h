@@ -60,14 +60,14 @@ public:
 	QPixmap pixmap;
 	
 	// Public Methods
-	QPointF fpix2pix(QPointF fpix);
+	QPointF fpix2pix(QPointF pos);
 	
 public slots:
 	void setStretch(int s);
 	void setVmin(float minpix);
 	void setVmax(float maxpix);
 	void invert();
-	void fitCentroid(QPointF pos);
+	void getCentroid(QPointF pos);
 	double* pix2sky(QPointF pos);
 	
 signals:

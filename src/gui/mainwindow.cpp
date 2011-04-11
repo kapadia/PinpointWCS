@@ -279,7 +279,7 @@ bool MainWindow::setupWorkspace()
 	
 	// TODO: Testing advanced options
 	// Enable some advanced options
-//		ui.actionCentroid->setEnabled(true);
+	ui.actionCentroid->setEnabled(true);
 	
 	// Set up the WcsInfoPanel for each image
 	fitsWcsInfoPanel->parentResized(ui.graphicsView_1->size());
@@ -370,9 +370,9 @@ bool MainWindow::setupWorkspace()
 	
 	// TODO: Prediction and centroid signal and slots
 	connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(predictEpoPoint()));
-//		connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
-//		connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
-//		connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
+	connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
+	connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(getCentroid(QPointF)));
+	connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(updateWithCentroid(QPointF)));
 	
 	// Enable the teardown menu item
 	ui.actionNew_Workspace->setEnabled(true);
@@ -672,12 +672,16 @@ void MainWindow::predictEpoPoint()
 	
 }
 
-void MainWindow::testSlot(QPointF pos)
+
+void MainWindow::updateWithCentroid(QPointF pos)
+{
+	CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker*>(fitsScene->selectedItems()[0]);
+	dataModel->updateData(fitsScene, pos, item->pos());	
+}
+
+void MainWindow::testSlot()
 {
 	qDebug() << "Test Slot";
-	
-	CoordinateMarker *item = qgraphicsitem_cast<CoordinateMarker*>(fitsScene->selectedItems()[0]);
-	dataModel->updateData(fitsScene, pos, item->pos());
 }
 
 void MainWindow::testI()

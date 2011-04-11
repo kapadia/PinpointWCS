@@ -169,6 +169,7 @@ float CoordinateMarker::setPenWidth()
 {
 //	qDebug() << exp(0.001*radius);
 //	float s = std::max(0.04*measure/scale, 0.04*measure);
+	return 0.25;
 	return 0.03*radius;
 }
 

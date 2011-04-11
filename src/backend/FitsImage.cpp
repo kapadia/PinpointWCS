@@ -597,23 +597,18 @@ void FitsImage::invert()
 }
 
 // TODO: Double check this to make sure the mapping between pixels is correct.
-QPointF FitsImage::fpix2pix(QPointF fpix)
+QPointF FitsImage::fpix2pix(QPointF pos)
 {
-	float x, y, xf, yf;
-	x = fpix.x();
-	y = fpix.y();
+	float xf, yf;
 	
-	// Unbin the pixels, if image is not binned this will just return the same value
-	xf = M*(x-1)+2-0.5;
-	yf = naxisn[1]-(M*(y-1))-0.5;
+	// First unbin the pixel
+	xf = M*(pos.x()-1)+1;
+	yf = M*(pos.y()-1)+1;
 	
-	// Get the intensity of the pixel value (use for later)
-	int index = naxisn[0]*(floor(yf+0.5)-1) + (floor(xf+0.5)-1);
-//	qDebug() << "Pixel value: " << imagedata[index];
+	// Transform QGraphicsScene pixels to FITS pixels
+	xf = xf+0.5;
+	yf = (naxisn[1]-yf)+0.5;
 	
-	// Transformation takes into account pixel difference between
-	// FITS and other images, and a 1/2 pixel difference between
-	// FITS and QGraphicsView coordinates
 	return QPointF(xf, yf);
 }
 
@@ -630,129 +625,134 @@ float FitsImage::pixelIntensity(QPointF pos)
 	xf = xf+0.5;
 	yf = (naxisn[1]-yf)+0.5;
 	
-	// Get the intensity of the pixel value (use for later)
+	// Get the intensity of the pixel value
 	int index = naxisn[0]*(floor(yf+0.5)-1) + (floor(xf+0.5)-1);
 	
 	return imagedata[index];
 }
 
 
-void FitsImage::fitCentroid(QPointF pos)
+void FitsImage::getCentroid(QPointF pos)
 {
-	qDebug() << "fitCentroid starting at" << pos;
+	qDebug() << "getCentroid starting at" << pos;
 	
-	// Crawl within a predefined radius (say 10 pixels) to find the brightest
-	float maxpxl;
-	QPointF pxlPos;
-	QPointF maxpxlPos;
-	bool pxlChanged;
-	int ii = 0;
-	while(ii < 10)
+	// FIXME: This is not correct.
+	// Crawl within a predefined radius (say 10 pixels) to find the brightest pixel
+	float max;
+	QPointF intPos = pos;
+	QPointF maxPos = pos;
+	QPointF testPos;
+	bool changed;
+	
+	for (int ii=0; ii<10; ii++)
 	{
-		maxpxl = pixelIntensity(pos);
-		maxpxlPos = pos;
-		pxlChanged = false;
+		max = pixelIntensity(intPos);
+		changed = false;
 		
 		// Determine which neighboring pixel has largest intensity
-		pxlPos = maxpxlPos + QPointF(-1, -1);
-		qDebug() << "Pixel Position:\t" << pxlPos;
-		if (pixelIntensity(pxlPos) > maxpxl)
+		testPos = intPos + QPointF(-1, -1);
+		if (pixelIntensity(testPos) >= max)
 		{
-			maxpxl = pixelIntensity(pxlPos);
-			maxpxlPos = pxlPos;
-			pxlChanged = true;
+			max = pixelIntensity(testPos);
+			maxPos = testPos;
+			changed = true;
 		}
 		
-		pxlPos = maxpxlPos + QPointF(0, -1);
-		if (pixelIntensity(pxlPos) > maxpxl)
+		testPos = intPos + QPointF(0, -1);
+		if (pixelIntensity(testPos) >= max)
 		{
-			maxpxl = pixelIntensity(pxlPos);
-			maxpxlPos = pxlPos;
-			pxlChanged = true;
+			max = pixelIntensity(testPos);
+			maxPos = testPos;
+			changed = true;
 		}
 		
-		pxlPos = maxpxlPos + QPointF(1, -1);
-		if (pixelIntensity(pxlPos) > maxpxl)
+		testPos = intPos + QPointF(1, -1);
+		if (pixelIntensity(testPos) >= max)
 		{
-			maxpxl = pixelIntensity(pxlPos);
-			maxpxlPos = pxlPos;
-			pxlChanged = true;
+			max = pixelIntensity(testPos);
+			maxPos = testPos;
+			changed = true;
 		}
 		
-		pxlPos = maxpxlPos + QPointF(-1, 0);
-		if (pixelIntensity(pxlPos) > maxpxl)
+		testPos = intPos + QPointF(-1, 0);
+		if (pixelIntensity(testPos) >= max)
 		{
-			maxpxl = pixelIntensity(pxlPos);
-			maxpxlPos = pxlPos;
-			pxlChanged = true;
+			max = pixelIntensity(testPos);
+			maxPos = testPos;
+			changed = true;
 		}
 		
-		pxlPos = maxpxlPos + QPointF(1, 0);
-		if (pixelIntensity(pxlPos) > maxpxl)
+		testPos = intPos + QPointF(1, 0);
+		if (pixelIntensity(testPos) >= max)
 		{
-			maxpxl = pixelIntensity(pxlPos);
-			maxpxlPos = pxlPos;
-			pxlChanged = true;
+			max = pixelIntensity(testPos);
+			maxPos = testPos;
+			changed = true;
 		}
 		
-		pxlPos = maxpxlPos + QPointF(-1, 1);
-		if (pixelIntensity(pxlPos) > maxpxl)
+		testPos = intPos + QPointF(-1, 1);
+		if (pixelIntensity(testPos) >= max)
 		{
-			maxpxl = pixelIntensity(pxlPos);
-			maxpxlPos = pxlPos;
-			pxlChanged = true;
+			max = pixelIntensity(testPos);
+			maxPos = testPos;
+			changed = true;
 		}
 		
-		pxlPos = maxpxlPos + QPointF(0, 1);
-		if (pixelIntensity(pxlPos) > maxpxl)
+		testPos = intPos + QPointF(0, 1);
+		if (pixelIntensity(testPos) >= max)
 		{
-			maxpxl = pixelIntensity(pxlPos);
-			maxpxlPos = pxlPos;
-			pxlChanged = true;
+			max = pixelIntensity(testPos);
+			maxPos = testPos;
+			changed = true;
 		}
 		
-		pxlPos = maxpxlPos + QPointF(1, 1);
-		if (pixelIntensity(pxlPos) > maxpxl)
+		testPos = intPos + QPointF(1, 1);
+		if (pixelIntensity(testPos) >= max)
 		{
-			maxpxl = pixelIntensity(pxlPos);
-			maxpxlPos = pxlPos;
-			pxlChanged = true;
+			max = pixelIntensity(testPos);
+			maxPos = testPos;
+			changed = true;
 		}
 		
-		if (!pxlChanged)
+		intPos = maxPos;
+		
+		if (!changed)
 			break;
-		
-		ii++;
 	}
+	
+	// Set the position to that found by walking
+	pos = maxPos;
 	
 	// Prep data for centroid algorithm
 	float *im;
 	im = (float *) malloc(9 * sizeof(float));
 	
 	// Copy intensity values to array
-	im[0] = pixelIntensity(maxpxlPos + QPointF(-1, -1));
-	im[1] = pixelIntensity(maxpxlPos + QPointF(0, -1));
-	im[2] = pixelIntensity(maxpxlPos + QPointF(1, -1));
-	im[3] = pixelIntensity(maxpxlPos + QPointF(-1, 0));
-	im[4] = pixelIntensity(maxpxlPos + QPointF(0, 0));
-	im[5] = pixelIntensity(maxpxlPos + QPointF(1, 0));
-	im[6] = pixelIntensity(maxpxlPos + QPointF(-1, 1));
-	im[7] = pixelIntensity(maxpxlPos + QPointF(0, 1));
-	im[8] = pixelIntensity(maxpxlPos + QPointF(1, 1));
+	im[0] = pixelIntensity(pos + QPointF(-1, -1));
+	im[1] = pixelIntensity(pos + QPointF(0, -1));
+	im[2] = pixelIntensity(pos + QPointF(1, -1));
+	im[3] = pixelIntensity(pos + QPointF(-1, 0));
+	im[4] = pixelIntensity(pos + QPointF(0, 0));
+	im[5] = pixelIntensity(pos + QPointF(1, 0));
+	im[6] = pixelIntensity(pos + QPointF(-1, 1));
+	im[7] = pixelIntensity(pos + QPointF(0, 1));
+	im[8] = pixelIntensity(pos + QPointF(1, 1));
 	
 	float xcen, ycen;
 	PinpointWCSUtils::cen3x3(im, &xcen, &ycen);
 	free(im);
 	
 	// Map coordinate to image
-	maxpxlPos = maxpxlPos + QPointF(-1+xcen, -1+ycen);
-	
-	// maxpxlPos is the location of the max pixel
-	emit centroid(maxpxlPos);
+	pos.setX(floor(pos.x())+0.5);
+	pos.setY(floor(pos.y())+0.5);
+	pos = pos + QPointF(-1+xcen, -1+ycen);
+
+//	qDebug() << "Centroid:\t" << xcen << "\t" << ycen;
+	emit centroid(pos);
 }
 
 double* FitsImage::pix2sky(QPointF pos)
-{	
+{		
 	qDebug() << "Pixel Intensity:\t" << pixelIntensity(pos);
 	
 	if (!wcs)

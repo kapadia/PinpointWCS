@@ -122,9 +122,10 @@ private slots:
 	void rotateMenuItems(GraphicsView *gv);
 	void promptMessage(bool status);
 	void predictEpoPoint();
+	void updateWithCentroid(QPointF pos);
 	
 	// A slots for testing ...
-	void testSlot(QPointF pos);
+	void testSlot();
 	
 	// Test function(s) for debugging
 	void testI();
