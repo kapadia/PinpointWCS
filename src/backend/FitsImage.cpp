@@ -636,7 +636,6 @@ void FitsImage::getCentroid(QPointF pos)
 {
 	qDebug() << "getCentroid starting at" << pos;
 	
-	// FIXME: This is not correct.
 	// Crawl within a predefined radius (say 10 pixels) to find the brightest pixel
 	float max;
 	QPointF intPos = pos;
@@ -747,7 +746,6 @@ void FitsImage::getCentroid(QPointF pos)
 	pos.setY(floor(pos.y())+0.5);
 	pos = pos + QPointF(-1+xcen, -1+ycen);
 
-//	qDebug() << "Centroid:\t" << xcen << "\t" << ycen;
 	emit centroid(pos);
 }
 

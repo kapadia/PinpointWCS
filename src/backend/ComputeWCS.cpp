@@ -129,15 +129,6 @@ void ComputeWCS::computeTargetWCS()
 		
 		// Broadcast computation
 		emit wcs();
-		
-//		std::cout.precision(15);
-//		qDebug() << "*** EPO WCS ***";
-//		std::cout << "Reference Pixel:\t" << crpix << std::endl;
-//		std::cout << "Reference Value:\t" << crval << std::endl;
-//		std::cout << "CD Matrix:\t" << cdmatrix << std::endl;
-//		std::cout << "Scale:\t" << scale << std::endl;
-//		std::cout << "Orientation:\t" << orientation << std::endl;
-		
 		return;
 	}
 	
@@ -157,10 +148,6 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	cd[1] = cdmatrix(1);
 	cd[2] = cdmatrix(2);
 	cd[3] = cdmatrix(3);
-	
-	// TESTING: Create a FITS header to feed into wcsinit
-//	QString header = PinpointWCSUtils::createHeader(width, height, referenceWCS->equinox, referenceWCS->radecsys, crpix(0), crval(0), crpix(1), crval(1), cd);
-//	targetWCS = wcsinit(header.toStdString().c_str());
 
 	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
 						 crpix(0), crpix(1), crval(0), crval(1),
@@ -204,6 +191,7 @@ Vector2d ComputeWCS::xi_eta(double xpix, double ypix)
 	return intermediate;
 }
 
+
 Vector2d ComputeWCS::xi_eta(Vector2d pixel)
 {
 	const double pix[2] = {pixel(0), pixel(1)};
@@ -213,6 +201,7 @@ Vector2d ComputeWCS::xi_eta(Vector2d pixel)
 	Vector2d intermediate(interworld[0], interworld[1]);
 	return intermediate;
 }
+
 
 void ComputeWCS::computeSums(int numPoints)
 {
@@ -245,7 +234,6 @@ void ComputeWCS::plateSolution()
 }
 
 
-// TODO: Compute the residuals!!!
 void ComputeWCS::computeResiduals(int numPoints)
 {
 	// Initialize some variables
@@ -272,10 +260,8 @@ void ComputeWCS::computeResiduals(int numPoints)
 	
 	rms_x = sqrt(sumx2 / sumn);
 	rms_y = sqrt(sumy2 / sumn);
-	
-	qDebug() << "RMS X:" << rms_x;
-	qDebug() << "RMS Y:" << rms_y;
 }
+
 
 QPointF ComputeWCS::fitsToEpo(QPointF *p)
 {

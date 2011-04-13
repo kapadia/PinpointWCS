@@ -83,8 +83,10 @@ void CoordinatePanel::updateCoordinates(QPointF pos)
 	double *world = NULL;
 
 	// Format and display xy coordinates
-	x.sprintf("%.2f", pos.x());
-	y.sprintf("%.2f", pos.y());
+	// TODO: Figure out how to reserve enough space so that the numbers
+	// don't shift when a new digit is needed.
+	x.sprintf("%7.2f", pos.x());
+	y.sprintf("%7.2f", pos.y());
 	ui.x_value->setText(x);
 	ui.y_value->setText(y);
 	
@@ -114,7 +116,10 @@ void CoordinatePanel::updateCoordinates(QPointF pos)
 			ui.ra_value->setText(rastr);
 			ui.dec_value->setText(decstr);
 		}
-	
-
+	}
+	else
+	{
+		ui.ra_value->setText("-");
+		ui.dec_value->setText("-");
 	}
 }
