@@ -378,7 +378,7 @@ bool MainWindow::setupWorkspace()
 	ui.actionNew_Workspace->setEnabled(true);
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-//		testII();
+	testI();
 	
 	return true;
 }
@@ -588,7 +588,7 @@ void MainWindow::enableExport()
 		
 		// Create EPO WCS object and load WCS to panel and export object
 		epoImage->wcs = computewcs->initTargetWCS();
-		epoWcsInfoPanel->loadWCS(epoImage->wcs);
+		epoWcsInfoPanel->loadWCS(epoImage->wcs, computewcs->rms_x, computewcs->rms_y);
 		exportwcs->setWCS(epoImage->wcs);
 	}
 	else

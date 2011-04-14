@@ -33,8 +33,7 @@ class WcsInfoPanel : public QFrame
 	public:
 		WcsInfoPanel(bool ref, QWidget *parent = 0);
 		~WcsInfoPanel();
-		Ui::WcsInfoPanel ui;
-		void loadWCS(struct WorldCoor* wcs);
+		void loadWCS(struct WorldCoor* wcs, double rms_x = NULL, double rms_y = NULL);
 		void clear();
 		
 	public slots:
@@ -42,7 +41,9 @@ class WcsInfoPanel : public QFrame
 		
 	private:
 		// Attributes
-
+		Ui::WcsInfoPanel ui;
+		bool reference;
+		
 		// Methods
 		void updateFontSize(QFont font);
 	};

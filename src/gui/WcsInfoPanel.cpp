@@ -47,6 +47,7 @@ WcsInfoPanel::WcsInfoPanel(bool ref, QWidget *parent)
 	font.setPointSize(11);
 	updateFontSize(font);
 	
+	reference = ref;
 	// Specifics settings for FITS and EPO
 	if (ref)
 	{
@@ -54,7 +55,7 @@ WcsInfoPanel::WcsInfoPanel(bool ref, QWidget *parent)
 	}
 	else
 	{
-		ui.misc1->setText("Orientation");
+		ui.misc1->setText("Orientation:");
 		ui.misc1_input2->clear();
 	}
 }
@@ -88,7 +89,7 @@ void WcsInfoPanel::updateFontSize(QFont font)
 }
 
 
-void WcsInfoPanel::loadWCS(struct WorldCoor* wcs)
+void WcsInfoPanel::loadWCS(struct WorldCoor* wcs, double rms_x, double rms_y)
 {
 	// Write some data to the WcsInfoPanels
 	QString radesys;
@@ -101,10 +102,6 @@ void WcsInfoPanel::loadWCS(struct WorldCoor* wcs)
 	QString crval2;
 	QString crpix1;
 	QString crpix2;
-	QString cd11;
-	QString cd12;
-	QString cd21;
-	QString cd22;
 	
 	radesys.sprintf("%s", wcs->radecsys);
 	equinox.sprintf("%.1f", wcs->equinox);
@@ -116,10 +113,6 @@ void WcsInfoPanel::loadWCS(struct WorldCoor* wcs)
 	crval2.sprintf("%.2f", wcs->yref);
 	crpix1.sprintf("%.2f", wcs->xrefpix);
 	crpix2.sprintf("%.2f", wcs->yrefpix);
-	cd11.sprintf("%.6f", wcs->cd[0]);
-	cd12.sprintf("%.6f", wcs->cd[1]);
-	cd21.sprintf("%.6f", wcs->cd[2]);
-	cd22.sprintf("%.6f", wcs->cd[3]);
 	
 	ui.radesys_input->setText(radesys);
 	ui.equinox_input->setText(equinox);
@@ -131,10 +124,39 @@ void WcsInfoPanel::loadWCS(struct WorldCoor* wcs)
 	ui.crval2_input->setText(crval2);
 	ui.crpix1_input->setText(crpix1);
 	ui.crpix2_input->setText(crpix2);
-	ui.misc1_input1->setText(cd11);
-	ui.misc1_input2->setText(cd12);
-	ui.misc2_input1->setText(cd21);
-	ui.misc2_input2->setText(cd22);
+	
+	if (reference)
+	{
+		QString cd11;
+		QString cd12;
+		QString cd21;
+		QString cd22;
+		
+		cd11.sprintf("%.6f", wcs->cd[0]);
+		cd12.sprintf("%.6f", wcs->cd[1]);
+		cd21.sprintf("%.6f", wcs->cd[2]);
+		cd22.sprintf("%.6f", wcs->cd[3]);
+		
+		ui.misc1_input1->setText(cd11);
+		ui.misc1_input2->setText(cd12);
+		ui.misc2_input1->setText(cd21);
+		ui.misc2_input2->setText(cd22);
+	}
+	else
+	{
+		QString orientation;
+		orientation.sprintf("%.2f", wcs->rot);
+		ui.misc1_input1->setText(orientation);
+		if (rms_x != NULL)
+		{
+			QString rms1, rms2;
+			rms1.sprintf("%.2f px", rms_x);
+			rms2.sprintf("%.2f px", rms_y);
+
+			ui.misc2_input1->setText(rms1);
+			ui.misc2_input2->setText(rms2);
+		}
+	}
 }
 
 
@@ -151,9 +173,11 @@ void WcsInfoPanel::clear()
 	ui.crpix1_input->setText("-");
 	ui.crpix2_input->setText("-");
 	ui.misc1_input1->setText("-");
-	ui.misc1_input2->setText("-");
 	ui.misc2_input1->setText("-");
-	ui.misc2_input2->setText("-");
+	ui.misc2_input2->setText("-");	
+	if (reference)
+		ui.misc1_input2->setText("-");
+
 }
 
 

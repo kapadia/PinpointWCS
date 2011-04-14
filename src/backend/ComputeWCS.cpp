@@ -37,6 +37,8 @@ ComputeWCS::ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoo
 	mappingExists = false;
 	width = w;
 	height = h;
+	rms_x = NULL;
+	rms_y = NULL;
 	
 	// Flip matrix
 	flip << 0, 1, 1, 0;
