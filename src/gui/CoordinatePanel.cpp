@@ -48,6 +48,16 @@ CoordinatePanel::CoordinatePanel(PPWcsImage *im, QWidget *parent)
 	QFont font;
 	font.setPointSize(10);
 	updateFontSize(font);
+	xs = new QTextStream();
+	xs->setRealNumberNotation(QTextStream::FixedNotation);
+	xs->setRealNumberPrecision(2);
+	xs->setFieldWidth(7);
+	xs->setFieldAlignment(QTextStream::AlignLeft);
+	ys = new QTextStream();
+	ys->setRealNumberNotation(QTextStream::FixedNotation);
+	ys->setRealNumberPrecision(2);
+	ys->setFieldWidth(7);
+	ys->setFieldAlignment(QTextStream::AlignLeft);
 }
 
 CoordinatePanel::~CoordinatePanel() {}
@@ -83,10 +93,11 @@ void CoordinatePanel::updateCoordinates(QPointF pos)
 	double *world = NULL;
 
 	// Format and display xy coordinates
-	// TODO: Figure out how to reserve enough space so that the numbers
-	// don't shift when a new digit is needed.
-	x.sprintf("%7.2f", pos.x());
-	y.sprintf("%7.2f", pos.y());
+	xs->setString(&x);
+	*xs << pos.x();
+	ys->setString(&y);
+	*ys << pos.y();
+	
 	ui.x_value->setText(x);
 	ui.y_value->setText(y);
 	

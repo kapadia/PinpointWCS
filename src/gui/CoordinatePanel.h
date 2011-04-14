@@ -21,6 +21,7 @@
 #define COORDINATE_PANEL_H
 
 #include <QFrame>
+#include <QTextStream>
 #include "PPWcsImage.h"
 #include "ui_CoordinatePanel.h"
 
@@ -42,6 +43,8 @@ class CoordinatePanel : public QFrame
 		// Attributes
 		PPWcsImage *image;
 		bool wcsFormat;
+		QTextStream *xs;
+		QTextStream *ys;
 		
 		// Methods
 		void updateFontSize(QFont font);

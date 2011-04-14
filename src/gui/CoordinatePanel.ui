@@ -35,6 +35,12 @@
    </item>
    <item>
     <widget class="QLabel" name="x_value">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>-</string>
      </property>
@@ -49,6 +55,12 @@
    </item>
    <item>
     <widget class="QLabel" name="y_value">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>-</string>
      </property>
@@ -63,6 +75,12 @@
    </item>
    <item>
     <widget class="QLabel" name="ra_value">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>-</string>
      </property>
@@ -77,6 +95,12 @@
    </item>
    <item>
     <widget class="QLabel" name="dec_value">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>-</string>
      </property>

@@ -615,20 +615,24 @@ QPointF FitsImage::fpix2pix(QPointF pos)
 
 float FitsImage::pixelIntensity(QPointF pos)
 {
-	float xf, yf;
-	
-	// First unbin the pixel
-	xf = M*(pos.x()-1)+1;
-	yf = M*(pos.y()-1)+1;
-	
-	// Transform QGraphicsScene pixels to FITS pixels
-	xf = xf+0.5;
-	yf = (naxisn[1]-yf)+0.5;
-	
-	// Get the intensity of the pixel value
-	int index = naxisn[0]*(floor(yf+0.5)-1) + (floor(xf+0.5)-1);
-	
-	return imagedata[index];
+	if (pos.x() < naxisn[0] && pos.y() < naxisn[1])
+	{
+		float xf, yf;
+		
+		// First unbin the pixel
+		xf = M*(pos.x()-1)+1;
+		yf = M*(pos.y()-1)+1;
+		
+		// Transform QGraphicsScene pixels to FITS pixels
+		xf = xf+0.5;
+		yf = (naxisn[1]-yf)+0.5;
+		
+		// Get the intensity of the pixel value
+		int index = naxisn[0]*(floor(yf+0.5)-1) + (floor(xf+0.5)-1);
+		
+		return imagedata[index];
+	}
+	return 0;
 }
 
 
