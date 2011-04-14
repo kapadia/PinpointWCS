@@ -234,8 +234,8 @@ bool MainWindow::setupWorkspace()
 	ui.menuEdit->addAction(redoAction);
 	
 	// Initialize the WcsInfoPanels
-	fitsWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_1);
-	epoWcsInfoPanel = new WcsInfoPanel(ui.graphicsView_2);
+	fitsWcsInfoPanel = new WcsInfoPanel(true, ui.graphicsView_1);
+	epoWcsInfoPanel = new WcsInfoPanel(false, ui.graphicsView_2);
 	
 	// Initialize the FitsToolbar
 	fitsToolbar = new FitsToolbar(ui.graphicsView_1);

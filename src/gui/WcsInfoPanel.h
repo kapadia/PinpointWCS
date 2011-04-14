@@ -31,7 +31,7 @@ class WcsInfoPanel : public QFrame
 		Q_OBJECT
 		
 	public:
-		WcsInfoPanel(QWidget *parent = 0);
+		WcsInfoPanel(bool ref, QWidget *parent = 0);
 		~WcsInfoPanel();
 		Ui::WcsInfoPanel ui;
 		void loadWCS(struct WorldCoor* wcs);

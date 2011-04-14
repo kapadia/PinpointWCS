@@ -53,6 +53,7 @@ public:
 	Matrix2d cdmatrix;
 	double scale;
 	double orientation;
+	double rms_x, rms_y;
 	QPointF fitsToEpo(QPointF *p);
 	Vector2d fitsToEpo(double x, double y);
 	Vector2d epoToFits(QPointF *p);
@@ -86,7 +87,6 @@ private:
 	VectorXd xcoeff;
 	VectorXd ycoeff;
 	VectorXd basis;
-	double rms_x, rms_y;
 	struct WorldCoor *referenceWCS;
 		
 	// Common calculation variables

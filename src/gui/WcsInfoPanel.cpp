@@ -22,7 +22,7 @@
 
 #include "WcsInfoPanel.h"
 
-WcsInfoPanel::WcsInfoPanel(QWidget *parent)
+WcsInfoPanel::WcsInfoPanel(bool ref, QWidget *parent)
 : QFrame(parent)
 {
 	// Set up user interface from the Designer file
@@ -46,6 +46,17 @@ WcsInfoPanel::WcsInfoPanel(QWidget *parent)
 	QFont font;
 	font.setPointSize(11);
 	updateFontSize(font);
+	
+	// Specifics settings for FITS and EPO
+	if (ref)
+	{
+		ui.misc2->clear();
+	}
+	else
+	{
+		ui.misc1->setText("Orientation");
+		ui.misc1_input2->clear();
+	}
 }
 
 WcsInfoPanel::~WcsInfoPanel() {}
@@ -62,14 +73,15 @@ void WcsInfoPanel::updateFontSize(QFont font)
     ui.crval1_input->setFont(font);
     ui.crpix->setFont(font);
     ui.crpix1_input->setFont(font);
-    ui.cd->setFont(font);
-    ui.cd_11_input->setFont(font);
-    ui.cd_21_input->setFont(font);
+    ui.misc1->setFont(font);
+	ui.misc2->setFont(font);
+    ui.misc1_input1->setFont(font);
+    ui.misc2_input1->setFont(font);
     ui.naxis2_input->setFont(font);
     ui.crval2_input->setFont(font);
     ui.crpix2_input->setFont(font);
-    ui.cd_12_input->setFont(font);
-    ui.cd_22_input->setFont(font);
+    ui.misc1_input2->setFont(font);
+    ui.misc2_input2->setFont(font);
     ui.ctype->setFont(font);
     ui.ctype1_input->setFont(font);
     ui.ctype2_input->setFont(font);
@@ -119,10 +131,10 @@ void WcsInfoPanel::loadWCS(struct WorldCoor* wcs)
 	ui.crval2_input->setText(crval2);
 	ui.crpix1_input->setText(crpix1);
 	ui.crpix2_input->setText(crpix2);
-	ui.cd_11_input->setText(cd11);
-	ui.cd_12_input->setText(cd12);
-	ui.cd_21_input->setText(cd21);
-	ui.cd_22_input->setText(cd22);
+	ui.misc1_input1->setText(cd11);
+	ui.misc1_input2->setText(cd12);
+	ui.misc2_input1->setText(cd21);
+	ui.misc2_input2->setText(cd22);
 }
 
 
@@ -138,10 +150,10 @@ void WcsInfoPanel::clear()
 	ui.crval2_input->setText("-");
 	ui.crpix1_input->setText("-");
 	ui.crpix2_input->setText("-");
-	ui.cd_11_input->setText("-");
-	ui.cd_12_input->setText("-");
-	ui.cd_21_input->setText("-");
-	ui.cd_22_input->setText("-");
+	ui.misc1_input1->setText("-");
+	ui.misc1_input2->setText("-");
+	ui.misc2_input1->setText("-");
+	ui.misc2_input2->setText("-");
 }
 
 
