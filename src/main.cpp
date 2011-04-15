@@ -20,6 +20,7 @@
 #include <QApplication>
 #include "mainwindow.h"
 #include <time.h>
+#include "version.h"
 
 // TODO: Pass *QPointFs not QPointFs
 // FIXME: Something unusual when marking new point, undoing, then predicting.
@@ -34,8 +35,10 @@ int main(int argc, char *argv[])
 	
 	// Initialize application
 	QApplication app(argc, argv);
-	app.setOrganizationName("Smithsonian Astrophysical Observatory");
 	app.setApplicationName("PinpointWCS");
+	app.setApplicationVersion(VERSION);
+	app.setOrganizationName("Smithsonian Astrophysical Observatory");
+	app.setOrganizationDomain("http://www.cfa.harvard.edu/~akapadia/pinpointwcs");
 	
 	/*
 	// Set style sheet
