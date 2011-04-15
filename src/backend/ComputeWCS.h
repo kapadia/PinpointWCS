@@ -27,7 +27,7 @@
 #include "wcs.h"
 
 #define _USE_MATH_DEFINES
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 class ComputeWCS : public QObject
 {

@@ -1,7 +1,7 @@
 // This file is part of Eigen, a lightweight C++ template library
-// for linear algebra. Eigen itself is part of the KDE project.
+// for linear algebra.
 //
-// Copyright (C) 2008 Gael Guennebaud <g.gael@free.fr>
+// Copyright (C) 2008 Gael Guennebaud <gael.guennebaud@inria.fr>
 //
 // Eigen is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -28,16 +28,25 @@
 /** Stores a sparse set of values as a list of values and a list of indices.
   *
   */
-template<typename Scalar>
+template<typename _Scalar,typename _Index>
 class CompressedStorage
 {
-    typedef typename NumTraits<Scalar>::Real RealScalar;
   public:
+
+    typedef _Scalar Scalar;
+    typedef _Index Index;
+
+  protected:
+
+    typedef typename NumTraits<Scalar>::Real RealScalar;
+
+  public:
+
     CompressedStorage()
       : m_values(0), m_indices(0), m_size(0), m_allocatedSize(0)
     {}
 
-    CompressedStorage(std::size_t size)
+    CompressedStorage(size_t size)
       : m_values(0), m_indices(0), m_size(0), m_allocatedSize(0)
     {
       resize(size);
@@ -52,8 +61,8 @@ class CompressedStorage
     CompressedStorage& operator=(const CompressedStorage& other)
     {
       resize(other.size());
-	  std::memcpy(m_values, other.m_values, m_size * sizeof(Scalar));
-	  std::memcpy(m_indices, other.m_indices, m_size * sizeof(int));
+      memcpy(m_values, other.m_values, m_size * sizeof(Scalar));
+      memcpy(m_indices, other.m_indices, m_size * sizeof(Index));
       return *this;
     }
 
@@ -71,9 +80,9 @@ class CompressedStorage
       delete[] m_indices;
     }
 
-    void reserve(std::size_t size)
+    void reserve(size_t size)
     {
-      std::size_t newAllocatedSize = m_size + size;
+      size_t newAllocatedSize = m_size + size;
       if (newAllocatedSize > m_allocatedSize)
         reallocate(newAllocatedSize);
     }
@@ -84,32 +93,32 @@ class CompressedStorage
         reallocate(m_size);
     }
 
-    void resize(std::size_t size, float reserveSizeFactor = 0)
+    void resize(size_t size, float reserveSizeFactor = 0)
     {
       if (m_allocatedSize<size)
-        reallocate(size + std::size_t(reserveSizeFactor*size));
+        reallocate(size + size_t(reserveSizeFactor*size));
       m_size = size;
     }
 
-    void append(const Scalar& v, int i)
+    void append(const Scalar& v, Index i)
     {
-      int id = m_size;
+      Index id = static_cast<Index>(m_size);
       resize(m_size+1, 1);
       m_values[id] = v;
       m_indices[id] = i;
     }
 
-    inline std::size_t size() const { return m_size; }
-    inline std::size_t allocatedSize() const { return m_allocatedSize; }
+    inline size_t size() const { return m_size; }
+    inline size_t allocatedSize() const { return m_allocatedSize; }
     inline void clear() { m_size = 0; }
 
-    inline Scalar& value(std::size_t i) { return m_values[i]; }
-    inline const Scalar& value(std::size_t i) const { return m_values[i]; }
+    inline Scalar& value(size_t i) { return m_values[i]; }
+    inline const Scalar& value(size_t i) const { return m_values[i]; }
 
-    inline int& index(std::size_t i) { return m_indices[i]; }
-    inline const int& index(std::size_t i) const { return m_indices[i]; }
+    inline Index& index(size_t i) { return m_indices[i]; }
+    inline const Index& index(size_t i) const { return m_indices[i]; }
 
-    static CompressedStorage Map(int* indices, Scalar* values, std::size_t size)
+    static CompressedStorage Map(Index* indices, Scalar* values, size_t size)
     {
       CompressedStorage res;
       res.m_indices = indices;
@@ -117,30 +126,30 @@ class CompressedStorage
       res.m_allocatedSize = res.m_size = size;
       return res;
     }
-    
+
     /** \returns the largest \c k such that for all \c j in [0,k) index[\c j]\<\a key */
-    inline int searchLowerIndex(int key) const
+    inline Index searchLowerIndex(Index key) const
     {
       return searchLowerIndex(0, m_size, key);
     }
-    
+
     /** \returns the largest \c k in [start,end) such that for all \c j in [start,k) index[\c j]\<\a key */
-    inline int searchLowerIndex(std::size_t start, std::size_t end, int key) const
+    inline Index searchLowerIndex(size_t start, size_t end, Index key) const
     {
       while(end>start)
       {
-        std::size_t mid = (end+start)>>1;
+        size_t mid = (end+start)>>1;
         if (m_indices[mid]<key)
           start = mid+1;
         else
           end = mid;
       }
-      return start;
+      return static_cast<Index>(start);
     }
-    
+
     /** \returns the stored value at index \a key
       * If the value does not exist, then the value \a defaultValue is returned without any insertion. */
-    inline Scalar at(int key, Scalar defaultValue = Scalar(0)) const
+    inline Scalar at(Index key, Scalar defaultValue = Scalar(0)) const
     {
       if (m_size==0)
         return defaultValue;
@@ -148,33 +157,33 @@ class CompressedStorage
         return m_values[m_size-1];
       // ^^  optimization: let's first check if it is the last coefficient
       // (very common in high level algorithms)
-      const std::size_t id = searchLowerIndex(0,m_size-1,key);
+      const size_t id = searchLowerIndex(0,m_size-1,key);
       return ((id<m_size) && (m_indices[id]==key)) ? m_values[id] : defaultValue;
     }
-    
+
     /** Like at(), but the search is performed in the range [start,end) */
-    inline Scalar atInRange(std::size_t start, std::size_t end, int key, Scalar defaultValue = Scalar(0)) const
+    inline Scalar atInRange(size_t start, size_t end, Index key, Scalar defaultValue = Scalar(0)) const
     {
-      if (start==end)
+      if (start>=end)
         return Scalar(0);
       else if (end>start && key==m_indices[end-1])
         return m_values[end-1];
       // ^^  optimization: let's first check if it is the last coefficient
       // (very common in high level algorithms)
-      const std::size_t id = searchLowerIndex(start,end-1,key);
+      const size_t id = searchLowerIndex(start,end-1,key);
       return ((id<end) && (m_indices[id]==key)) ? m_values[id] : defaultValue;
     }
-    
+
     /** \returns a reference to the value at index \a key
       * If the value does not exist, then the value \a defaultValue is inserted
       * such that the keys are sorted. */
-    inline Scalar& atWithInsertion(int key, Scalar defaultValue = Scalar(0))
+    inline Scalar& atWithInsertion(Index key, Scalar defaultValue = Scalar(0))
     {
-      std::size_t id = searchLowerIndex(0,m_size,key);
+      size_t id = searchLowerIndex(0,m_size,key);
       if (id>=m_size || m_indices[id]!=key)
       {
         resize(m_size+1,1);
-        for (std::size_t j=m_size-1; j>id; --j)
+        for (size_t j=m_size-1; j>id; --j)
         {
           m_indices[j] = m_indices[j-1];
           m_values[j] = m_values[j-1];
@@ -184,14 +193,14 @@ class CompressedStorage
       }
       return m_values[id];
     }
-    
-    void prune(Scalar reference, RealScalar epsilon = precision<RealScalar>())
+
+    void prune(Scalar reference, RealScalar epsilon = NumTraits<RealScalar>::dummy_precision())
     {
-      std::size_t k = 0;
-      std::size_t n = size();
-      for (std::size_t i=0; i<n; ++i)
+      size_t k = 0;
+      size_t n = size();
+      for (size_t i=0; i<n; ++i)
       {
-        if (!ei_isMuchSmallerThan(value(i), reference, epsilon))
+        if (!internal::isMuchSmallerThan(value(i), reference, epsilon))
         {
           value(k) = value(i);
           index(k) = index(i);
@@ -203,14 +212,14 @@ class CompressedStorage
 
   protected:
 
-    inline void reallocate(std::size_t size)
+    inline void reallocate(size_t size)
     {
       Scalar* newValues  = new Scalar[size];
-      int* newIndices = new int[size];
-      std::size_t copySize = std::min(size, m_size);
+      Index* newIndices = new Index[size];
+      size_t copySize = std::min(size, m_size);
       // copy
-	  std::memcpy(newValues,  m_values,  copySize * sizeof(Scalar));
-	  std::memcpy(newIndices, m_indices, copySize * sizeof(int));
+      memcpy(newValues,  m_values,  copySize * sizeof(Scalar));
+      memcpy(newIndices, m_indices, copySize * sizeof(Index));
       // delete old stuff
       delete[] m_values;
       delete[] m_indices;
@@ -221,9 +230,9 @@ class CompressedStorage
 
   protected:
     Scalar* m_values;
-    int* m_indices;
-    std::size_t m_size;
-    std::size_t m_allocatedSize;
+    Index* m_indices;
+    size_t m_size;
+    size_t m_allocatedSize;
 
 };
 

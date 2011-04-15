@@ -229,8 +229,8 @@ void ComputeWCS::computeSums(int numPoints)
 void ComputeWCS::plateSolution()
 {	
 	// Solve the linear system
-	matrix.lu().solve(xvector, &xcoeff);
-	matrix.lu().solve(yvector, &ycoeff);
+	xcoeff = matrix.lu().solve(xvector);
+	ycoeff = matrix.lu().solve(yvector);
 	
 	mappingExists = true;
 }
