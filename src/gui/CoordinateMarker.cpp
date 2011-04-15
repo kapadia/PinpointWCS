@@ -132,30 +132,15 @@ QVariant CoordinateMarker::itemChange(GraphicsItemChange change, const QVariant 
 
 void CoordinateMarker::setRadius()
 {
-	/*
 	measure = qobject_cast<GraphicsScene*> (scene())->measure;
-	scale = qobject_cast<GraphicsView*> (scene()->views().at(0))->scaling();
-	float a, b, c, xmin, xmax, rmin, rmax;
-	
-	rmin = 0.03*measure;
-	rmax = 0.3*measure;
-	xmin = measure/MAXZOOM;
-	xmax = measure/MINZOOM;
-	c = xmax-xmin;
-	a = (rmax-rmin)/c;
-	b = (rmin*xmax-rmax*xmin)/c;
-	if (scale > 2)
-		return a*(measure/2)+b;
-	return a*(measure/scale)+b;
-	 */
-	radius = 30;
+	radius = measure*0.018;
 }
 
 float CoordinateMarker::setPenWidth()
 {
 //	qDebug() << exp(0.001*radius);
 //	float s = std::max(0.04*measure/scale, 0.04*measure);
-	return 0.25;
-	return 0.03*radius;
+	float scale = qobject_cast<GraphicsView*> (scene()->views().at(0))->scaling();
+	return (0.5 + 0.02*radius)/scale;
 }
 

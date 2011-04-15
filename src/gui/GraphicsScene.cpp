@@ -131,15 +131,11 @@ void GraphicsScene::signalItemMoved(CoordinateMarker *m, QPointF oldPos)
 
 
 float GraphicsScene::computeRadii()
-{
-	float radius;
-	
+{	
 	// Use the measure and zoom factor to determine the radius in a
 	// manner that is consistent with the full range of image dimensions
-	radius = qobject_cast<GraphicsView*> (views().at(0))->scaling();
-	
+	float radius = qobject_cast<GraphicsView*> (views().at(0))->scaling();	
 	qDebug() << "Radius: " << radius;
-	
 	return radius;
 }
 
