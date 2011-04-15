@@ -34,8 +34,16 @@ public:
 	// Public Methods
 	EpoImage(QString filename);
 	~EpoImage();
-
 	double* pix2sky(QPointF pos);
+
+public slots:
+	void invert();
+	
+signals:
+	void pixmapChanged(QPixmap *pm);
+	
+private:
+	bool inverted;
 };
 
 #endif

@@ -38,7 +38,6 @@ public:
 	struct WorldCoor *wcs;
 	QPixmap *pixmap;
 	int M;	// Downsampling factor
-	
 	virtual double *pix2sky(QPointF pos);
 	
 protected:

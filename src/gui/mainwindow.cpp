@@ -106,6 +106,7 @@ bool MainWindow::teardownWorkspace()
 	disconnect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
 	disconnect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
 	disconnect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
+	disconnect(epoImage, SIGNAL(pixmapChanged(QPixmap*)), epoScene, SLOT(updatePixmap(QPixmap*)));
 	
 	// Disconnect señales for the WCS format
 	disconnect(ui.actionDegrees, SIGNAL(toggled(bool)), fitsCoordPanel, SLOT(setWcsFormat(bool)));
@@ -331,10 +332,10 @@ bool MainWindow::setupWorkspace()
 	
 	// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
 	connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
-	connect(ui.actionInvert, SIGNAL(triggered(bool)), fitsImage, SLOT(invert()));
 	connect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
 	connect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
 	connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
+	connect(epoImage, SIGNAL(pixmapChanged(QPixmap*)), epoScene, SLOT(updatePixmap(QPixmap*)));
 	
 	// Connect señales for the WCS format
 	connect(ui.actionDegrees, SIGNAL(toggled(bool)), fitsCoordPanel, SLOT(setWcsFormat(bool)));
@@ -637,20 +638,24 @@ void MainWindow::rotateMenuItems(GraphicsView *gv)
 		// Disconnect slots
 		disconnect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCW()));
 		disconnect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCCW()));
+		disconnect(ui.actionInvert, SIGNAL(triggered(bool)), epoImage, SLOT(invert()));
 		
 		// Connect slots
 		connect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCW()));
 		connect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCCW()));
+		connect(ui.actionInvert, SIGNAL(triggered(bool)), fitsImage, SLOT(invert()));
 	}
 	else
 	{		
 		// Disconnect slots
 		disconnect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCW()));
 		disconnect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCCW()));
+		disconnect(ui.actionInvert, SIGNAL(triggered(bool)), fitsImage, SLOT(invert()));
 		
 		// Connect slots
 		connect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCW()));
 		connect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCCW()));
+		connect(ui.actionInvert, SIGNAL(triggered(bool)), epoImage, SLOT(invert()));
 	}
 }
 

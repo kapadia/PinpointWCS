@@ -588,9 +588,9 @@ void FitsImage::setVmax(float maxpix)
 
 void FitsImage::invert()
 {
-	qDebug() << "Inverting";
+	qDebug() << "Inverting FITS Image ...";
 	QImage image = pixmap.toImage();
-	image.invertPixels();
+	image.invertPixels(QImage::InvertRgb);
 	pixmap = QPixmap::fromImage(image, Qt::DiffuseDither);
 	inverted = !inverted;
 	emit pixmapChanged(&pixmap);

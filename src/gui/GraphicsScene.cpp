@@ -114,11 +114,7 @@ void GraphicsScene::toggleClickable(bool sendSignal)
 
 void GraphicsScene::updatePixmap(QPixmap *pm)
 {
-	qDebug() << pm;
-	// Update the pixmap
 	ptr_pixmap->setPixmap(*pm);
-//	delete ptr_pixmap;
-//	ptr_pixmap = addPixmap(*pm);
 }
 
 
