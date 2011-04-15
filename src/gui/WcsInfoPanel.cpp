@@ -146,7 +146,7 @@ void WcsInfoPanel::loadWCS(struct WorldCoor* wcs, double rms_x, double rms_y)
 	{
 		QString orientation;
 		orientation.sprintf("%.2f", wcs->rot);
-		ui.misc1_input1->setText(orientation);
+		ui.misc1_input1->setText(orientation + QChar(176));
 		if (rms_x != NULL)
 		{
 			QString rms1, rms2;

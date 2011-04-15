@@ -117,26 +117,21 @@ void GraphicsScene::updatePixmap(QPixmap *pm)
 	qDebug() << pm;
 	// Update the pixmap
 	ptr_pixmap->setPixmap(*pm);
-//	delete ptr_pixmap;
-//	ptr_pixmap = addPixmap(*pm);
 }
 
 
 void GraphicsScene::signalItemMoved(CoordinateMarker *m, QPointF oldPos)
 {
 	// Broadcast the item moved and its old position
-//	emit itemMoved(qgraphicsitem_cast<CoordinateMarker *>(m), oldPos);
 	emit itemMoved(this, m->scenePos(), oldPos);
 }
 
 
 float GraphicsScene::computeRadii()
 {
-	float radius;
-	
 	// Use the measure and zoom factor to determine the radius in a
 	// manner that is consistent with the full range of image dimensions
-	radius = qobject_cast<GraphicsView*> (views().at(0))->scaling();
+	float radius = qobject_cast<GraphicsView*> (views().at(0))->scaling();
 	
 	qDebug() << "Radius: " << radius;
 	
