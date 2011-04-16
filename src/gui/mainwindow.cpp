@@ -186,6 +186,9 @@ bool MainWindow::teardownWorkspace()
 	delete computewcs;
 	delete exportwcs;	
 	delete msg;
+	teardownWcsInfoPanelMachine();
+	teardownImageAdjustmentMachine();
+	teardownCoordPanelMachine();
 	
 	// Reset the drop labels
 	ui.dropLabel_1->clean();
@@ -375,7 +378,7 @@ bool MainWindow::setupWorkspace()
 	ui.actionNew_Workspace->setEnabled(true);
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-	testI();
+//	testI();
 	
 	return true;
 }
@@ -455,7 +458,7 @@ bool MainWindow::loadFITSImage()
 
 void MainWindow::buildWcsInfoPanelMachine()
 {
-	// Intialize machine and states
+	// Initialize machine and states
 	WcsInfoPanelMachine = new QStateMachine;
 	WcsInfoPanelOn = new QState(WcsInfoPanelMachine);
 	WcsInfoPanelOff = new QState(WcsInfoPanelMachine);
@@ -492,6 +495,16 @@ void MainWindow::buildWcsInfoPanelMachine()
 	WcsInfoPanelMachine->start();
 }
 
+
+void MainWindow::teardownWcsInfoPanelMachine()
+{
+	WcsInfoPanelMachine->stop();
+	delete WcsInfoPanelOn;
+	delete WcsInfoPanelOff;
+	delete WcsInfoPanelMachine;
+}
+
+
 void MainWindow::buildImageAdjustmentMachine()
 {
 	// Initialize machine and states
@@ -526,6 +539,16 @@ void MainWindow::buildImageAdjustmentMachine()
 	
 }
 
+
+void MainWindow::teardownImageAdjustmentMachine()
+{
+	imageAdjustmentMachine->stop();
+	delete imageAdjustmentPanelOn;
+	delete imageAdjustmentPanelOff;
+	delete imageAdjustmentMachine;
+}
+
+
 void MainWindow::buildCoordPanelMachine()
 {
 	// Initialize machine and states
@@ -553,6 +576,14 @@ void MainWindow::buildCoordPanelMachine()
 	CoordPanelMachine->start();
 }
 
+
+void MainWindow::teardownCoordPanelMachine()
+{
+	CoordPanelMachine->stop();
+	delete CoordPanelOn;
+	delete CoordPanelOff;
+	delete CoordPanelMachine;
+}
 
 void MainWindow::updateCoordPanelProperties()
 {

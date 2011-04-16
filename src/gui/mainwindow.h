@@ -106,6 +106,9 @@ private:
 	void buildWcsInfoPanelMachine();
 	void buildCoordPanelMachine();
 	void buildImageAdjustmentMachine();
+	void teardownWcsInfoPanelMachine();
+	void teardownCoordPanelMachine();
+	void teardownImageAdjustmentMachine();
 	
 private slots:
 	bool setupImages();
