@@ -615,21 +615,18 @@ QPointF FitsImage::fpix2pix(QPointF pos)
 
 float FitsImage::pixelIntensity(QPointF pos)
 {
-	if (pos.x() < naxisn[0] && pos.y() < naxisn[1])
+	if (pos.x() > 0 && pos.x() < width && pos.y() > 0 && pos.y() < height)
 	{
 		float xf, yf;
 		
-		// First unbin the pixel
-		xf = M*(pos.x()-1)+1;
-		yf = M*(pos.y()-1)+1;
-		
 		// Transform QGraphicsScene pixels to FITS pixels
-		xf = xf+0.5;
-		yf = (naxisn[1]-yf)+0.5;
+		// Pixels do not need to be unbinned since this function
+		// calls value from the downsampled array.
+		xf = pos.x()+0.5;
+		yf = (height-pos.y())+0.5;
 		
 		// Get the intensity of the pixel value
-		int index = naxisn[0]*(floor(yf+0.5)-1) + (floor(xf+0.5)-1);
-		
+		int index = width*(floor(yf+0.5)-1) + (floor(xf+0.5)-1);
 		return imagedata[index];
 	}
 	return 0;
@@ -755,7 +752,7 @@ void FitsImage::getCentroid(QPointF pos)
 
 double* FitsImage::pix2sky(QPointF pos)
 {		
-	qDebug() << "Pixel Intensity:\t" << pixelIntensity(pos);
+//	qDebug() << "Pixel Intensity:\t" << pixelIntensity(pos);
 	
 	if (!wcs)
 		return world;
