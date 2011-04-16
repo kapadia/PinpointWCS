@@ -751,9 +751,7 @@ void FitsImage::getCentroid(QPointF pos)
 }
 
 double* FitsImage::pix2sky(QPointF pos)
-{		
-//	qDebug() << "Pixel Intensity:\t" << pixelIntensity(pos);
-	
+{	
 	if (!wcs)
 		return world;
 	

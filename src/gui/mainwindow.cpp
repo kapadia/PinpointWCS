@@ -139,11 +139,11 @@ bool MainWindow::teardownWorkspace()
 	// Exporting signals and slots
 	disconnect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 	
-	// TODO: Prediction and centroid signal and slots
-	disconnect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(testSlot()));
+	// Prediction and centroid signal and slots
+	disconnect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(predictEpoPoint()));
 	disconnect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
-	disconnect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
-	disconnect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
+	disconnect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(getCentroid(QPointF)));
+	disconnect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(updateWithCentroid(QPointF)));
 	
 	// Disable View Menu items
 	ui.actionInfo->setEnabled(false);
@@ -163,10 +163,6 @@ bool MainWindow::teardownWorkspace()
 	ui.actionInvert->setEnabled(false);
 	ui.actionRotate_Clockwise->setEnabled(false);
 	ui.actionRotate_Counterclockwise->setEnabled(false);
-	
-	// TODO: Testing advanced options
-	// Disable some advanced options
-	//		ui.actionCentroid->setEnabled(false);
 	
 	// Deconstruct the undostack and data model
 	ui.menuEdit->removeAction(redoAction);
@@ -369,7 +365,7 @@ bool MainWindow::setupWorkspace()
 	// Exporting signals and slots
 	connect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 	
-	// TODO: Prediction and centroid signal and slots
+	// Prediction and centroid signal and slots
 	connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(predictEpoPoint()));
 	connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
 	connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(getCentroid(QPointF)));
