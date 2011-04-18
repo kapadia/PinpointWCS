@@ -71,7 +71,15 @@ void ComputeWCS::computeTargetWCS()
 	{
 		// Determine the number of points to use
 		if (epoCoords->last() == QPointF(-1, -1))
+		{
+			if (epoCoords->size() == 3)
+			{
+				epoWCS = false;
+				emit nowcs();
+				return;
+			}
 			numPoints = refCoords->size()-1;
+		}
 		else 
 			numPoints = refCoords->size();
 
