@@ -18,6 +18,8 @@
  */
 
 #include <QDebug>
+#include <QList>
+#include <QGraphicsItem>
 #include "GraphicsScene.h"
 #include <math.h>
 
@@ -93,12 +95,24 @@ void GraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void GraphicsScene::keyPressEvent(QKeyEvent *event)
 {
+	if (event->key() == Qt::Key_Space)
+	{
+		QList<QGraphicsItem*> itemlist = items();
+		for (int i=0; i<itemlist.size(); i++)
+			itemlist.at(i)->setFlag(QGraphicsItem::ItemIsMovable, false);
+	}
 	QGraphicsScene::keyPressEvent(event);
 }
 
 
 void GraphicsScene::keyReleaseEvent(QKeyEvent *event)
 {
+	if (event->key() == Qt::Key_Space)
+	{
+		QList<QGraphicsItem*> itemlist = items();
+		for (int i=0; i<itemlist.size(); i++)
+			itemlist.at(i)->setFlag(QGraphicsItem::ItemIsMovable, true);
+	}
 	QGraphicsScene::keyReleaseEvent(event);
 }
 

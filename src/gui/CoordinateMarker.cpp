@@ -91,7 +91,6 @@ void CoordinateMarker::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 void CoordinateMarker::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-	// TODO: Call prepareGeometryChange() when ready to implement this dynamic resizing feature.
 	prepareGeometryChange();
 	QGraphicsItem::wheelEvent(event);
 }
@@ -99,21 +98,12 @@ void CoordinateMarker::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 void CoordinateMarker::keyPressEvent(QKeyEvent *event)
 {
-	qDebug() << "keyPressEvent";
-	if (event->key() == Qt::Key_Space)
-	{
-		setFlag(QGraphicsItem::ItemIsMovable, false);
-		setFlag(QGraphicsItem::ItemIsSelectable, false);
-	}
 	QGraphicsItem::keyPressEvent(event);
 }
 
 
 void CoordinateMarker::keyReleaseEvent(QKeyEvent *event)
 {
-	qDebug() << "keyReleaseEvent";
-	setFlag(QGraphicsItem::ItemIsMovable, true);
-	setFlag(QGraphicsItem::ItemIsSelectable, true);
 	QGraphicsItem::keyReleaseEvent(event);
 }
 
