@@ -397,13 +397,13 @@
   </action>
   <action name="actionInvert">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Invert</string>
+    <string>Invert ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>

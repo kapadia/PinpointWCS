@@ -145,8 +145,8 @@ void WcsInfoPanel::loadWCS(struct WorldCoor* wcs, double rms_x, double rms_y)
 	else
 	{
 		QString orientation;
-		orientation.sprintf("%.2f", wcs->rot);
-		ui.misc1_input1->setText(orientation + QChar(176));
+		orientation.sprintf("%.6f EofN", (wcs->rot-360));
+		ui.misc1_input1->setText(orientation);
 		if (rms_x != NULL)
 		{
 			QString rms1, rms2;
@@ -183,7 +183,7 @@ void WcsInfoPanel::clear()
 
 void WcsInfoPanel::parentResized(QSize sz)
 {
-	resize(sz.width(), 55);
+	resize(sz.width(), 60);
 	qDebug() << sz.width();
 	float fontsize = 1./80. * (sz.width() - 390) + 7;
 	QFont font;

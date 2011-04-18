@@ -278,9 +278,9 @@ void ExportWCS::exportAVM()
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Publisher.MetadataVersion");
 				
 				// Clean the existing CXC Metadata
-				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolver");
-				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolverVersion");
-				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolverRevision");
+//				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolver");
+//				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolverVersion");
+//				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolverRevision");
 				
 				// Initialize QStrings to format the WCS data
 				QString equinox;
@@ -350,9 +350,9 @@ void ExportWCS::exportAVM()
 				avm.SetProperty(kXMP_NS_AVM, "avm:MetadataVersion", AVM_VERSION, 0);
 				
 				// Set CXC Metadata :)
-				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolver", "PinpointWCS developed by the Chandra X-ray Center", 0);
-				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolverVersion", VERSION, 0);
-				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolverRevision", REVISION, 0);
+//				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolver", "PinpointWCS developed by the Chandra X-ray Center", 0);
+//				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolverVersion", VERSION, 0);
+//				avm.SetProperty(kXMP_NS_CXC, "cxc:WCSResolverRevision", REVISION, 0);
 				
 				// Write XMP object to file
 				if (epoimage.CanPutXMP(avm))

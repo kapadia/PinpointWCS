@@ -106,6 +106,7 @@ bool MainWindow::teardownWorkspace()
 	disconnect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
 	disconnect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
 	disconnect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
+	disconnect(epoImage, SIGNAL(pixmapChanged(QPixmap*)), epoScene, SLOT(updatePixmap(QPixmap*)));
 	
 	// Disconnect señales for the WCS format
 	disconnect(ui.actionDegrees, SIGNAL(toggled(bool)), fitsCoordPanel, SLOT(setWcsFormat(bool)));
@@ -138,11 +139,11 @@ bool MainWindow::teardownWorkspace()
 	// Exporting signals and slots
 	disconnect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 	
-	// TODO: Prediction and centroid signal and slots
-	disconnect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(testSlot()));
+	// Prediction and centroid signal and slots
+	disconnect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(predictEpoPoint()));
 	disconnect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
-	disconnect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(fitCentroid(QPointF)));
-	disconnect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(testSlotII(QPointF)));
+	disconnect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(getCentroid(QPointF)));
+	disconnect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(updateWithCentroid(QPointF)));
 	
 	// Disable View Menu items
 	ui.actionInfo->setEnabled(false);
@@ -162,10 +163,6 @@ bool MainWindow::teardownWorkspace()
 	ui.actionInvert->setEnabled(false);
 	ui.actionRotate_Clockwise->setEnabled(false);
 	ui.actionRotate_Counterclockwise->setEnabled(false);
-	
-	// TODO: Testing advanced options
-	// Disable some advanced options
-	//		ui.actionCentroid->setEnabled(false);
 	
 	// Deconstruct the undostack and data model
 	ui.menuEdit->removeAction(redoAction);
@@ -189,6 +186,9 @@ bool MainWindow::teardownWorkspace()
 	delete computewcs;
 	delete exportwcs;	
 	delete msg;
+	teardownWcsInfoPanelMachine();
+	teardownImageAdjustmentMachine();
+	teardownCoordPanelMachine();
 	
 	// Reset the drop labels
 	ui.dropLabel_1->clean();
@@ -331,10 +331,10 @@ bool MainWindow::setupWorkspace()
 	
 	// Connect even more signals -- Menu items and Sliders for FitsImage and GraphicsScene
 	connect(stretchActionGroup, SIGNAL(triggered(QAction*)), this, SLOT(stretch(QAction*)));
-	connect(ui.actionInvert, SIGNAL(triggered(bool)), fitsImage, SLOT(invert()));
 	connect(fitsToolbar, SIGNAL(updateVmin(float)), fitsImage, SLOT(setVmin(float)));
 	connect(fitsToolbar, SIGNAL(updateVmax(float)), fitsImage, SLOT(setVmax(float)));
 	connect(fitsImage, SIGNAL(pixmapChanged(QPixmap*)), fitsScene, SLOT(updatePixmap(QPixmap*)));
+	connect(epoImage, SIGNAL(pixmapChanged(QPixmap*)), epoScene, SLOT(updatePixmap(QPixmap*)));
 	
 	// Connect señales for the WCS format
 	connect(ui.actionDegrees, SIGNAL(toggled(bool)), fitsCoordPanel, SLOT(setWcsFormat(bool)));
@@ -368,7 +368,7 @@ bool MainWindow::setupWorkspace()
 	// Exporting signals and slots
 	connect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 	
-	// TODO: Prediction and centroid signal and slots
+	// Prediction and centroid signal and slots
 	connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(predictEpoPoint()));
 	connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
 	connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(getCentroid(QPointF)));
@@ -378,7 +378,7 @@ bool MainWindow::setupWorkspace()
 	ui.actionNew_Workspace->setEnabled(true);
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-	testI();
+//	testI();
 	
 	return true;
 }
@@ -458,7 +458,7 @@ bool MainWindow::loadFITSImage()
 
 void MainWindow::buildWcsInfoPanelMachine()
 {
-	// Intialize machine and states
+	// Initialize machine and states
 	WcsInfoPanelMachine = new QStateMachine;
 	WcsInfoPanelOn = new QState(WcsInfoPanelMachine);
 	WcsInfoPanelOff = new QState(WcsInfoPanelMachine);
@@ -495,6 +495,16 @@ void MainWindow::buildWcsInfoPanelMachine()
 	WcsInfoPanelMachine->start();
 }
 
+
+void MainWindow::teardownWcsInfoPanelMachine()
+{
+	WcsInfoPanelMachine->stop();
+	delete WcsInfoPanelOn;
+	delete WcsInfoPanelOff;
+	delete WcsInfoPanelMachine;
+}
+
+
 void MainWindow::buildImageAdjustmentMachine()
 {
 	// Initialize machine and states
@@ -529,6 +539,16 @@ void MainWindow::buildImageAdjustmentMachine()
 	
 }
 
+
+void MainWindow::teardownImageAdjustmentMachine()
+{
+	imageAdjustmentMachine->stop();
+	delete imageAdjustmentPanelOn;
+	delete imageAdjustmentPanelOff;
+	delete imageAdjustmentMachine;
+}
+
+
 void MainWindow::buildCoordPanelMachine()
 {
 	// Initialize machine and states
@@ -556,6 +576,14 @@ void MainWindow::buildCoordPanelMachine()
 	CoordPanelMachine->start();
 }
 
+
+void MainWindow::teardownCoordPanelMachine()
+{
+	CoordPanelMachine->stop();
+	delete CoordPanelOn;
+	delete CoordPanelOff;
+	delete CoordPanelMachine;
+}
 
 void MainWindow::updateCoordPanelProperties()
 {
@@ -637,20 +665,24 @@ void MainWindow::rotateMenuItems(GraphicsView *gv)
 		// Disconnect slots
 		disconnect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCW()));
 		disconnect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCCW()));
+		disconnect(ui.actionInvert, SIGNAL(triggered(bool)), epoImage, SLOT(invert()));
 		
 		// Connect slots
 		connect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCW()));
 		connect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCCW()));
+		connect(ui.actionInvert, SIGNAL(triggered(bool)), fitsImage, SLOT(invert()));
 	}
 	else
 	{		
 		// Disconnect slots
 		disconnect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCW()));
 		disconnect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_1, SLOT(rotateCCW()));
+		disconnect(ui.actionInvert, SIGNAL(triggered(bool)), fitsImage, SLOT(invert()));
 		
 		// Connect slots
 		connect(ui.actionRotate_Clockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCW()));
 		connect(ui.actionRotate_Counterclockwise, SIGNAL(triggered()), ui.graphicsView_2, SLOT(rotateCCW()));
+		connect(ui.actionInvert, SIGNAL(triggered(bool)), epoImage, SLOT(invert()));
 	}
 }
 

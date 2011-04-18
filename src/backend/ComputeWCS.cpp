@@ -229,8 +229,8 @@ void ComputeWCS::computeSums(int numPoints)
 void ComputeWCS::plateSolution()
 {	
 	// Solve the linear system
-	matrix.lu().solve(xvector, &xcoeff);
-	matrix.lu().solve(yvector, &ycoeff);
+	xcoeff = matrix.lu().solve(xvector);
+	ycoeff = matrix.lu().solve(yvector);
 	
 	mappingExists = true;
 }
@@ -276,7 +276,7 @@ QPointF ComputeWCS::fitsToEpo(QPointF *p)
 	m << xcoeff(0), xcoeff(1), ycoeff(0), ycoeff(1);
 	
 	// Take the inverse
-	m = m.inverse();
+	m = m.inverse().eval();
 	Vector3d xinverse;
 	Vector3d yinverse;
 	xinverse << m(0,0), m(0,1), xcoeff[2];

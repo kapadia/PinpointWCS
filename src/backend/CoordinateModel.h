@@ -67,7 +67,6 @@ public:
 public slots:
 	void setData(GraphicsScene *s, QPointF coord);
 	void updateData(GraphicsScene *scene, QPointF newCoord, QPointF oldCoord, QModelIndex *index=0);
-//	void updateData(GraphicsScene *scene, QPointF newCoord, QPointF oldCoord, QModelIndex index);
 	
 protected:
 	void emitDataChanged(const QModelIndex &index1, const QModelIndex &index2);

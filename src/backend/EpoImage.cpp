@@ -28,6 +28,7 @@ EpoImage::EpoImage(QString filename) : PPWcsImage()
 	naxisn[0] = pixmap->width();
 	naxisn[1] = pixmap->height();
 	
+	inverted = false;
 	// Call finishInit from base class
 	finishInitialization();
 }
@@ -35,7 +36,16 @@ EpoImage::EpoImage(QString filename) : PPWcsImage()
 EpoImage::~EpoImage()
 {}
 
-// FIXME: Pixel mapping not correct.  Find reason!!!
+void EpoImage::invert()
+{
+	qDebug() << "Inverting EPO Image ...";
+	QImage image = pixmap->toImage();
+	image.invertPixels(QImage::InvertRgb);
+	*pixmap = QPixmap::fromImage(image, Qt::DiffuseDither);
+	inverted = !inverted;
+	emit pixmapChanged(pixmap);
+}
+
 double* EpoImage::pix2sky(QPointF pos)
 {
 	if (!wcs)
@@ -49,10 +59,6 @@ double* EpoImage::pix2sky(QPointF pos)
 	yf = naxisn[1]-pos.y() + 0.5;
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
-	
-	// TODO: Support galatic coordinates
-	if (wcs->syswcs != WCS_J2000)
-		wcscon(wcs->syswcs, WCS_J2000, wcs->equinox, wcs->eqout, &world[0], &world[1], wcs->epoch);
 	
 	// Perhaps the transformationStatus needs to be checked ...
 	return world;

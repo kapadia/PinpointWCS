@@ -139,6 +139,6 @@ void CoordinateMarker::setRadius()
 float CoordinateMarker::setPenWidth()
 {
 	float scale = qobject_cast<GraphicsView*> (scene()->views().at(0))->scaling();
-	return (0.5 + 0.01*radius)/scale;
+	return (0.5 + 0.02*radius)/scale;
 }
 
