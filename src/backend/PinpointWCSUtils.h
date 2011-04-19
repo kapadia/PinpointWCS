@@ -32,16 +32,6 @@ namespace PinpointWCSUtils
 	
 	// Functions for checking WCS
 	void dumpWCS(struct WorldCoor *wcs);
-	QString createHeader(int width,
-						 int height,
-						 double equinox,
-						 char* radecsys,
-						 double crpix1,
-						 double crval1,
-						 double crpix2,
-						 double crval2,
-						 double cd[4]
-						 );
 };
 
 #endif

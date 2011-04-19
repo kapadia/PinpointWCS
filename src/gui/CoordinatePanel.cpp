@@ -118,10 +118,8 @@ void CoordinatePanel::updateCoordinates(QPointF pos)
 			ui.dec_value->setText(decstr);
 		}
 		else {
-			QString rastr;
-			QString decstr;
-			rastr.sprintf("%.8f", world[0]);
-			decstr.sprintf("%.8f", world[1]);
+			QString rastr = QString("%1").arg(world[0], 0, 'f', 8);
+			QString decstr = QString("%1").arg(world[1], 0, 'f', 8);
 			
 			// Set the text
 			ui.ra_value->setText(rastr);

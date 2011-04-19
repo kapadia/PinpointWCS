@@ -92,27 +92,16 @@ void WcsInfoPanel::updateFontSize(QFont font)
 void WcsInfoPanel::loadWCS(struct WorldCoor* wcs, double rms_x, double rms_y)
 {
 	// Write some data to the WcsInfoPanels
-	QString radesys;
-	QString equinox;
-	QString ctype1;
-	QString ctype2;
-	QString naxis1;
-	QString naxis2;
-	QString crval1;
-	QString crval2;
-	QString crpix1;
-	QString crpix2;
-	
-	radesys.sprintf("%s", wcs->radecsys);
-	equinox.sprintf("%.1f", wcs->equinox);
-	ctype1.sprintf("%s", wcs->c1type);
-	ctype2.sprintf("%s", wcs->c2type);
-	naxis1.sprintf("%.2f", wcs->nxpix);
-	naxis2.sprintf("%.2f", wcs->nypix);
-	crval1.sprintf("%.2f", wcs->xref);
-	crval2.sprintf("%.2f", wcs->yref);
-	crpix1.sprintf("%.2f", wcs->xrefpix);
-	crpix2.sprintf("%.2f", wcs->yrefpix);
+	QString radesys = QString("%1").arg(wcs->radecsys);
+	QString equinox = QString("%1").arg(wcs->equinox, 0, 'f', 1);
+	QString ctype1 = QString("%1").arg(wcs->c1type);
+	QString ctype2 = QString("%1").arg(wcs->c2type);
+	QString naxis1 = QString("%1").arg(wcs->nxpix, 0, 'f', 2);
+	QString naxis2 = QString("%1").arg(wcs->nypix, 0, 'f', 2);
+	QString crval1 = QString("%1").arg(wcs->xref, 0, 'f', 2);
+	QString crval2 = QString("%1").arg(wcs->yref, 0, 'f', 2);
+	QString crpix1 = QString("%1").arg(wcs->xrefpix, 0, 'f', 2);
+	QString crpix2 = QString("%1").arg(wcs->yrefpix, 0, 'f', 2);
 	
 	ui.radesys_input->setText(radesys);
 	ui.equinox_input->setText(equinox);
@@ -127,15 +116,10 @@ void WcsInfoPanel::loadWCS(struct WorldCoor* wcs, double rms_x, double rms_y)
 	
 	if (reference)
 	{
-		QString cd11;
-		QString cd12;
-		QString cd21;
-		QString cd22;
-		
-		cd11.sprintf("%.6f", wcs->cd[0]);
-		cd12.sprintf("%.6f", wcs->cd[1]);
-		cd21.sprintf("%.6f", wcs->cd[2]);
-		cd22.sprintf("%.6f", wcs->cd[3]);
+		QString cd11 = QString("%1").arg(wcs->cd[0], 0, 'f', 6);
+		QString cd12 = QString("%1").arg(wcs->cd[1], 0, 'f', 6);
+		QString cd21 = QString("%1").arg(wcs->cd[2], 0, 'f', 6);
+		QString cd22 = QString("%1").arg(wcs->cd[3], 0, 'f', 6);
 		
 		ui.misc1_input1->setText(cd11);
 		ui.misc1_input2->setText(cd12);
@@ -144,15 +128,12 @@ void WcsInfoPanel::loadWCS(struct WorldCoor* wcs, double rms_x, double rms_y)
 	}
 	else
 	{
-		QString orientation;
-		orientation.sprintf("%.6f", (wcs->rot-360));
-		ui.misc1_input1->setText(orientation+QChar(176));
+		QString orientation = QString("%1%2").arg((wcs->rot-360), 0, 'f', 6).arg(QChar(176));
+		ui.misc1_input1->setText(orientation);
 		if (rms_x != NULL)
 		{
-			QString rms1, rms2;
-			rms1.sprintf("%.2f px", rms_x);
-			rms2.sprintf("%.2f px", rms_y);
-
+			QString rms1 = QString("%1 px").arg(rms_x, 0, 'f', 2);
+			QString rms2 = QString("%1 px").arg(rms_y, 0, 'f', 2);
 			ui.misc2_input1->setText(rms1);
 			ui.misc2_input2->setText(rms2);
 		}

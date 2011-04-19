@@ -141,27 +141,16 @@ void ExportWCS::exportFITS()
 	if (fits_update_key(fptr, TSTRING, "WCSNAME", &wcsname, NULL, &status))
 		emit exportResults(false);
 	
-	// Initialize QStrings for some numeric values
-	QString equinox;
-	QString crpix1;
-	QString crval1;
-	QString crpix2;
-	QString crval2;
-	QString cd11;
-	QString cd12;
-	QString cd21;
-	QString cd22;
-	
 	// Format values to specific digits
-	equinox.sprintf("%.1f", wcs->equinox);
-	crpix1.sprintf("%.11f", wcs->xrefpix);
-	crval1.sprintf("%.11f", wcs->xref);
-	crpix2.sprintf("%.11f", wcs->yrefpix);
-	crval2.sprintf("%.11f", wcs->yref);
-	cd11.sprintf("%.11f", wcs->cd[0]);
-	cd12.sprintf("%.11f", wcs->cd[1]);
-	cd21.sprintf("%.11f", wcs->cd[2]);
-	cd22.sprintf("%.11f", wcs->cd[3]);
+	QString equinox = QString("%1").arg(wcs->equinox, 0, 'f', 1);
+	QString crpix1 = QString("%1").arg(wcs->xrefpix, 0, 'f', 11);
+	QString crval1 = QString("%1").arg(wcs->xref, 0, 'f', 11);
+	QString crpix2 = QString("%1").arg(wcs->yrefpix, 0, 'f', 11);
+	QString crval2 = QString("%1").arg(wcs->yref, 0, 'f', 11);
+	QString cd11 = QString("%1").arg(wcs->cd[0], 0, 'f', 11);
+	QString cd12 = QString("%1").arg(wcs->cd[1], 0, 'f', 11);
+	QString cd21 = QString("%1").arg(wcs->cd[2], 0, 'f', 11);
+	QString cd22 = QString("%1").arg(wcs->cd[3], 0, 'f', 11);
 
 	if (fits_update_key(fptr, TSTRING, "EQUINOX", (void*) equinox.toStdString().c_str(), NULL, &status))
 		emit exportResults(false);
@@ -283,40 +272,21 @@ void ExportWCS::exportAVM()
 //				avm.DeleteProperty(kXMP_NS_CXC, "cxc:WCSResolverRevision");
 				
 				// Initialize QStrings to format the WCS data
-				QString equinox;
-				QString crval1;
-				QString crval2;
-				QString crpix1;
-				QString crpix2;
-				QString scale1;
-				QString scale2;
-				QString orientation;
-				QString cd11;
-				QString cd12;
-				QString cd21;
-				QString cd22;
-				QString width;
-				QString height;
-				QString spatialnotes;
-				QString metadatadate;
-				
-				// Format values to specific digits
-				equinox.sprintf("%.1f", wcs->equinox);
-				crval1.sprintf("%.11f", wcs->xref);
-				crval2.sprintf("%.11f", wcs->yref);
-				crpix1.sprintf("%.11f", wcs->xrefpix);
-				crpix2.sprintf("%.11f", wcs->yrefpix);
-				scale1.sprintf("%.11f", -1*computewcs->scale); // Following FITS convention of 1st value negative
-				scale2.sprintf("%.11f", computewcs->scale);
-				orientation.sprintf("%.11f", computewcs->orientation);
-				cd11.sprintf("%.11f", wcs->cd[0]);
-				cd12.sprintf("%.11f", wcs->cd[1]);
-				cd21.sprintf("%.11f", wcs->cd[2]);
-				cd22.sprintf("%.11f", wcs->cd[3]);
-				width.sprintf("%.2f", computewcs->width);
-				height.sprintf("%.2f", computewcs->height);
-				spatialnotes.sprintf("World Coordinate System resolved using PinpointWCS %s revision %s by the Chandra X-ray Center", VERSION, REVISION);
-				
+				QString equinox = QString("%1").arg(wcs->equinox, 0, 'f', 1);
+				QString crval1 = QString("%1").arg(wcs->xref, 0, 'f', 11);
+				QString crval2 = QString("%1").arg(wcs->yref, 0, 'f', 11);
+				QString crpix1 = QString("%1").arg(wcs->xrefpix, 0, 'f', 11);
+				QString crpix2 = QString("%1").arg(wcs->yrefpix, 0, 'f', 11);
+				QString scale1 = QString("%1").arg(-1*computewcs->scale, 0, 'f', 11);
+				QString scale2 = QString("%1").arg(computewcs->scale, 0, 'f', 11);
+				QString orientation = QString("%1").arg(computewcs->orientation, 0, 'f', 11);
+				QString cd11 = QString("%1").arg(wcs->cd[0], 0, 'f', 11);
+				QString cd12 = QString("%1").arg(wcs->cd[1], 0, 'f', 11);
+				QString cd21 = QString("%1").arg(wcs->cd[2], 0, 'f', 11);
+				QString cd22 = QString("%1").arg(wcs->cd[3], 0, 'f', 11);
+				QString width = QString("%1").arg(computewcs->width, 0, 'f', 2);
+				QString height = QString("%1").arg(computewcs->height, 0, 'f', 2);
+				QString spatialnotes = QString("World Coordinate System resolved using PinpointWCS %1 revision %2 by the Chandra X-ray Center").arg(VERSION).arg(REVISION);
 				
 				// Begin modifying AVM
 				XMP_OptionBits itemOptions;

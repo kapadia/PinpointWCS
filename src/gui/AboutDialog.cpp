@@ -30,9 +30,8 @@ AboutDialog::AboutDialog(QWidget *parent)
     ui.setupUi(this);
 	
 	// Get version and revision info from version.h
-	version = new QString;
-	version->sprintf("Version %s\n(rev %s)", VERSION, REVISION);
-	ui.version->setText(*version);
+	QString version = QString("Version %1\n(rev %2)").arg(VERSION).arg(REVISION);
+	ui.version->setText(version);
 	
 	// Set the logo
 	logo = new QPixmap;

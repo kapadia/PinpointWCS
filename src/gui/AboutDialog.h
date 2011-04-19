@@ -38,7 +38,6 @@ public:
 	Ui::AboutDialog ui;
 	
 private:
-	QString *version;
 	QPixmap *logo;
 	
 };
