@@ -29,18 +29,20 @@ CoordinateMarker::CoordinateMarker(QModelIndex &idx, QGraphicsItem *parent)
 {
 	qDebug() << "Initializing CoordinateMarker object ...";
 	setZValue(2);
+	setRadius();
 	setOpacity(100.0);
+	
 	setSelected(true);
 	setFocus();
 	setEnabled(true);
-	setRadius();
+	
 	index = new QPersistentModelIndex(idx);
 	
 	// Set some flags
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
-	setFlag(QGraphicsItem::ItemIsMovable, true);
+	setFlag(QGraphicsItem::ItemIsMovable, false);
 	setFlag(QGraphicsItem::ItemIsFocusable, true);
-//	setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+	//	setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 	setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
 }
 
@@ -96,6 +98,12 @@ void CoordinateMarker::wheelEvent(QGraphicsSceneWheelEvent *event)
 }
 
 
+void CoordinateMarker::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+	QGraphicsItem::mousePressEvent(event);
+}
+
+
 void CoordinateMarker::keyPressEvent(QKeyEvent *event)
 {
 	QGraphicsItem::keyPressEvent(event);
@@ -117,6 +125,12 @@ QVariant CoordinateMarker::itemChange(GraphicsItemChange change, const QVariant 
 		s->itemChange(this);
 	}
 	 */
+	if (change == QGraphicsItem::ItemSelectedChange)
+		if (value == true)
+			setFlag(ItemIsMovable, true);
+		else
+			setFlag(ItemIsMovable, false);
+		
 	return QGraphicsItem::itemChange(change, value);
 }
 

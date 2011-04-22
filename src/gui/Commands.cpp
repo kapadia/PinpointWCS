@@ -146,8 +146,11 @@ MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVari
 	newPos = newValue.toPointF();
 	oldPos = oldValue.toPointF();
 	scene = s;
+	
+	// TODO: Check that this code does not introduce the bug causing
+	//		 two markers to move at once.
 	marker = qgraphicsitem_cast<CoordinateMarker*>(scene->itemAt(newPos));
-
+	
 	if (marker == 0)
 	{
 		QList<QGraphicsItem*> markers = scene->selectedItems();

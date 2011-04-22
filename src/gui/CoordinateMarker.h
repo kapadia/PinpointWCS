@@ -48,6 +48,7 @@ protected:
 	void wheelEvent(QGraphicsSceneWheelEvent *event);
 	void keyPressEvent(QKeyEvent *event);
 	void keyReleaseEvent(QKeyEvent *event);
+	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 	
 private:
