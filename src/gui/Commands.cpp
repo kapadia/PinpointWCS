@@ -131,10 +131,6 @@ void AddCommand::undo()
 	
 	// Broadcast some info
 	dataModel->emitDataChanged(index1, index2);
-	
-	// FIXME: Checking data model
-	qDebug() << dataModel->refCoords;
-	qDebug() << dataModel->epoCoords;
 }
 
 
@@ -169,7 +165,6 @@ MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVari
 			marker = qgraphicsitem_cast<CoordinateMarker*>(scene->selectedItems()[0]);
 		}
 	}
-
 	dataModel = model;
 }
 

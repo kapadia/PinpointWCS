@@ -166,7 +166,7 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	);
 	
 	// Set output coordinates, needed by pix2wcs
-	wcsoutinit(targetWCS, "J2000");
+	wcsoutinit(targetWCS, "FK5");
 
 	return targetWCS;
 }
@@ -181,12 +181,22 @@ struct WorldCoor* ComputeWCS::initTargetWCSII()
 	// Determine the reference image's reference pixel from the frame of reference of the epo image
 	crpix = fitsToEpo(referenceWCS->crpix[0], referenceWCS->crpix[1]);
 	
-	targetWCS = wcskinit(width, height, "RA--", "DEC-",
+	std::cout << "crpix:\t" << crpix(0) << "\t" << crpix(1) << std::endl;
+	/*
+	targetWCS = wcskinit(referenceWCS->nxpix, referenceWCS->nypix, "RA---TAN", "DEC--TAN",
 						 crpix(0), crpix(1), referenceWCS->crval[0], referenceWCS->crval[1],
-						 referenceWCS->cd, referenceWCS->cdelt[0], referenceWCS->cdelt[1],
-						 referenceWCS->rot, referenceWCS->equinox, referenceWCS->epoch
-						 );
-
+						 NULL, scale, -scale,
+						 orientation, referenceWCS->equinox, referenceWCS->epoch
+	);
+*/
+	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
+						 crpix(0), crpix(1), referenceWCS->crval[0], referenceWCS->crval[1],
+						 referenceWCS->cd, NULL, NULL,
+						 NULL, referenceWCS->equinox, referenceWCS->epoch
+	);
+	
+	// Set output coordinates
+	wcsoutinit(targetWCS, "FK5");
 	return targetWCS;
 }
 
@@ -312,7 +322,7 @@ Vector2d ComputeWCS::fitsToEpo(double x, double y)
 	m << xcoeff(0), xcoeff(1), ycoeff(0), ycoeff(1);
 	
 	// Take the inverse
-	m = m.inverse();
+	m = m.inverse().eval();
 	Vector3d xinverse;
 	Vector3d yinverse;
 	xinverse << m(0,0), m(0,1), xcoeff[2];
