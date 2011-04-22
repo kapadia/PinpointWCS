@@ -148,7 +148,7 @@ void ComputeWCS::computeTargetWCS()
 
 
 // FIXME: Fix and make work with galatic coordinates
-struct WorldCoor* ComputeWCS::initTargetWCS()
+struct WorldCoor* ComputeWCS::initTargetWCSII()
 {
 	qDebug() << "initTargetWCS()";
 	struct WorldCoor *targetWCS;
@@ -173,7 +173,7 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 
 
 // TODO: Try copying WCS over and only changing the reference pixel
-struct WorldCoor* ComputeWCS::initTargetWCSII()
+struct WorldCoor* ComputeWCS::initTargetWCS()
 {
 	qDebug() << "initTargetWCSII()";
 	struct WorldCoor *targetWCS;
@@ -190,9 +190,9 @@ struct WorldCoor* ComputeWCS::initTargetWCSII()
 	);
 */
 	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
-						 crpix(0), crpix(1), referenceWCS->crval[0], referenceWCS->crval[1],
-						 referenceWCS->cd, NULL, NULL,
-						 NULL, referenceWCS->equinox, referenceWCS->epoch
+						 crpix(0), height-crpix(1), referenceWCS->crval[0], referenceWCS->crval[1],
+						 NULL, scale, -scale,
+						 360-orientation, referenceWCS->equinox, referenceWCS->epoch
 	);
 	
 	// Set output coordinates
