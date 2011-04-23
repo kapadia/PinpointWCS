@@ -48,16 +48,6 @@ CoordinatePanel::CoordinatePanel(PPWcsImage *im, QWidget *parent)
 	QFont font;
 	font.setPointSize(10);
 	updateFontSize(font);
-	xs = new QTextStream();
-	xs->setRealNumberNotation(QTextStream::FixedNotation);
-	xs->setRealNumberPrecision(2);
-	xs->setFieldWidth(7);
-	xs->setFieldAlignment(QTextStream::AlignLeft);
-	ys = new QTextStream();
-	ys->setRealNumberNotation(QTextStream::FixedNotation);
-	ys->setRealNumberPrecision(2);
-	ys->setFieldWidth(7);
-	ys->setFieldAlignment(QTextStream::AlignLeft);
 }
 
 CoordinatePanel::~CoordinatePanel() {}
@@ -88,15 +78,9 @@ void CoordinatePanel::setWcsFormat(bool format)
 void CoordinatePanel::updateCoordinates(QPointF pos)
 {
 	// Initialize variables
-	QString x;
-	QString y;
 	double *world = NULL;
-
-	// Format and display xy coordinates
-	xs->setString(&x);
-	*xs << pos.x();
-	ys->setString(&y);
-	*ys << pos.y();
+	QString x = QString("%1").arg(pos.x(), 8, 'f', 3);
+	QString y = QString("%1").arg(pos.y(), 8, 'f', 3);
 	
 	ui.x_value->setText(x);
 	ui.y_value->setText(y);

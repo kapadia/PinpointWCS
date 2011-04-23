@@ -43,6 +43,9 @@ GraphicsScene::GraphicsScene(QPixmap *pix, bool ref, QObject *parent)
 	centralItem = new QGraphicsRectItem;
 //	centralItem->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
 	centralItem->setRect(sceneRect());
+	centralItem->setFlag(QGraphicsItem::ItemIsMovable, false);
+	centralItem->setFlag(QGraphicsItem::ItemIsSelectable, false);
+//	centralItem->setFlag(QGraphicsItem::ItemIsFocusable, false);
 	addItem(centralItem);
 }
 
@@ -97,7 +100,7 @@ void GraphicsScene::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Space)
 	{
-		QList<QGraphicsItem*> itemlist = items();
+		QList<QGraphicsItem*> itemlist = centralItem->childItems();
 		for (int i=0; i<itemlist.size(); i++)
 			itemlist.at(i)->setFlag(QGraphicsItem::ItemIsMovable, false);
 	}
@@ -109,7 +112,7 @@ void GraphicsScene::keyReleaseEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Space)
 	{
-		QList<QGraphicsItem*> itemlist = items();
+		QList<QGraphicsItem*> itemlist = centralItem->childItems();
 		for (int i=0; i<itemlist.size(); i++)
 			itemlist.at(i)->setFlag(QGraphicsItem::ItemIsMovable, true);
 	}

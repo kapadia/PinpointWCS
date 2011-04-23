@@ -89,7 +89,7 @@
    <item>
     <widget class="QLabel" name="dec">
      <property name="text">
-      <string>DEC:</string>
+      <string>Dec:</string>
      </property>
     </widget>
    </item>

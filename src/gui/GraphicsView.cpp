@@ -103,8 +103,9 @@ void GraphicsView::leaveEvent(QEvent *event)
 	setDragMode(QGraphicsView::NoDrag);
 	
 	// Reset some graphics item settings
-	QList<QGraphicsItem*> list = scene()->items(Qt::AscendingOrder);
-	for (int i=2; i<list.size(); i++)
+	GraphicsScene *s = qobject_cast<GraphicsScene*> (scene());
+	QList<QGraphicsItem*> list = s->centralItem->childItems();
+	for (int i=0; i<list.size(); i++)
 	{
 		list.at(i)->setFlag(QGraphicsItem::ItemIsMovable, true);
 		list.at(i)->setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -119,6 +120,7 @@ void GraphicsView::wheelEvent(QWheelEvent *event)
 void GraphicsView::scaleView(qreal scaleFactor)
 {
 	qreal factor = matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
+	
 	if (factor < MINZOOM || factor > MAXZOOM)
 		return;	
 	scale(scaleFactor, scaleFactor);

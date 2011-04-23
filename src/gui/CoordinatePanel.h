@@ -43,8 +43,6 @@ class CoordinatePanel : public QFrame
 		// Attributes
 		PPWcsImage *image;
 		bool wcsFormat;
-		QTextStream *xs;
-		QTextStream *ys;
 		
 		// Methods
 		void updateFontSize(QFont font);

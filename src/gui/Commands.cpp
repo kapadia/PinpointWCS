@@ -154,7 +154,7 @@ MoveCommand::MoveCommand(GraphicsScene *s, const QVariant &newValue, const QVari
 		{
 			// Loop through the CoordinateMarkers, checking the indices
 			QList<QGraphicsItem*> markers = scene->items();
-			for (int i=0; i < markers.size(); ++i)
+			for (int i=0; i < markers.size(); i++)
 			{
 				marker = qgraphicsitem_cast<CoordinateMarker*>(markers.at(i));
 				if (marker->index->row() == index->row())

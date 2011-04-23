@@ -15,7 +15,7 @@ LIBS += -L../XMP-Toolkit-SDK-5.1.2/public/libraries/macintosh/release
 LIBS += -lXMPCoreStaticRelease -lXMPFilesStaticRelease
 LIBS += -framework CoreServices
 DEFINES +=  MAC_ENV="1"
-QT += network
+#QT += network
 
 
 # Input
@@ -29,7 +29,7 @@ HEADERS += version.h \
            backend/FITSThread.h \
            backend/PinpointWCSUtils.h \
            backend/PPWcsImage.h \
-           backend/RemoteData.h \
+#          backend/RemoteData.h \
            gui/AboutDialog.h \
            gui/Commands.h \
            gui/CoordinateMarker.h \
@@ -58,7 +58,7 @@ SOURCES += main.cpp \
            backend/FITSThread.cpp \
            backend/PinpointWCSUtils.cpp \
            backend/PPWcsImage.cpp \
-           backend/RemoteData.cpp \
+#          backend/RemoteData.cpp \
            gui/AboutDialog.cpp \
            gui/Commands.cpp \
            gui/CoordinateMarker.cpp \
