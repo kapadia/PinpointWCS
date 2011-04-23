@@ -280,10 +280,10 @@ void ExportWCS::exportAVM()
 				QString scale1 = QString("%1").arg(-1*computewcs->scale, 0, 'f', 11);
 				QString scale2 = QString("%1").arg(computewcs->scale, 0, 'f', 11);
 				QString orientation = QString("%1").arg(computewcs->orientation, 0, 'f', 11);
-				QString cd11 = QString("%1").arg(wcs->cd[0], 0, 'f', 11);
-				QString cd12 = QString("%1").arg(wcs->cd[1], 0, 'f', 11);
-				QString cd21 = QString("%1").arg(wcs->cd[2], 0, 'f', 11);
-				QString cd22 = QString("%1").arg(wcs->cd[3], 0, 'f', 11);
+//				QString cd11 = QString("%1").arg(wcs->cd[0], 0, 'f', 11);
+//				QString cd12 = QString("%1").arg(wcs->cd[1], 0, 'f', 11);
+//				QString cd21 = QString("%1").arg(wcs->cd[2], 0, 'f', 11);
+//				QString cd22 = QString("%1").arg(wcs->cd[3], 0, 'f', 11);
 				QString width = QString("%1").arg(computewcs->width, 0, 'f', 2);
 				QString height = QString("%1").arg(computewcs->height, 0, 'f', 2);
 				QString spatialnotes = QString("World Coordinate System resolved using PinpointWCS %1 revision %2 by the Chandra X-ray Center").arg(VERSION).arg(REVISION);
@@ -308,10 +308,10 @@ void ExportWCS::exportAVM()
 				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Quality", "Full", 0);
 				avm.SetLocalizedText(kXMP_NS_AVM, "avm:Spatial.Notes", "x-default", "x-default", spatialnotes.toStdString(), 0);
 //				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.FITSheader", "SPATIAL FITS HEADER TEST", 0);
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd11.toStdString());
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd12.toStdString());
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd21.toStdString());
-				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd22.toStdString());
+//				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd11.toStdString());
+//				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd12.toStdString());
+//				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd21.toStdString());
+//				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd22.toStdString());
 				
 				// Set Publisher Metadata
 				XMP_DateTime updatedTime;

@@ -39,7 +39,6 @@ public:
 	ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoor *refWCS, double w, double h);
 	~ComputeWCS();
 	struct WorldCoor* initTargetWCS();
-	struct WorldCoor* initTargetWCSII();
 	
 	// Public Attributes
 	bool epoWCS;

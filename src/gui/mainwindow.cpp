@@ -378,7 +378,7 @@ bool MainWindow::setupWorkspace()
 	ui.actionNew_Workspace->setEnabled(true);
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-	testI();
+//	testII();
 	
 	return true;
 }

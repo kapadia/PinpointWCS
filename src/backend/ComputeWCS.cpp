@@ -17,7 +17,6 @@
  *
  */
 
-// FIXME: Compute WCS Correctly!!!
 
 #include <math.h>
 #include <Eigen/LU>
@@ -147,10 +146,8 @@ void ComputeWCS::computeTargetWCS()
 }
 
 
-// FIXME: Fix and make work with galatic coordinates
-struct WorldCoor* ComputeWCS::initTargetWCSII()
+struct WorldCoor* ComputeWCS::initTargetWCS()
 {
-	qDebug() << "initTargetWCS()";
 	struct WorldCoor *targetWCS;
 	double *cd;
 	cd = (double *) malloc(4 * sizeof(double));
@@ -158,41 +155,14 @@ struct WorldCoor* ComputeWCS::initTargetWCSII()
 	cd[1] = cdmatrix(1);
 	cd[2] = cdmatrix(2);
 	cd[3] = cdmatrix(3);
-
-	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
-						 crpix(0), crpix(1), crval(0), crval(1),
-						 cd, NULL, NULL,
-						 NULL, referenceWCS->equinox, referenceWCS->epoch
-	);
-	
-	// Set output coordinates, needed by pix2wcs
-	wcsoutinit(targetWCS, "FK5");
-
-	return targetWCS;
-}
-
-
-// TODO: Try copying WCS over and only changing the reference pixel
-struct WorldCoor* ComputeWCS::initTargetWCS()
-{
-	qDebug() << "initTargetWCSII()";
-	struct WorldCoor *targetWCS;
 	
 	// Determine the reference image's reference pixel from the frame of reference of the epo image
 	crpix = fitsToEpo(referenceWCS->crpix[0], referenceWCS->crpix[1]);
-	
-	std::cout << "crpix:\t" << crpix(0) << "\t" << crpix(1) << std::endl;
-	/*
-	targetWCS = wcskinit(referenceWCS->nxpix, referenceWCS->nypix, "RA---TAN", "DEC--TAN",
-						 crpix(0), crpix(1), referenceWCS->crval[0], referenceWCS->crval[1],
-						 NULL, scale, -scale,
-						 orientation, referenceWCS->equinox, referenceWCS->epoch
-	);
-*/
+
 	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
-						 crpix(0), height-crpix(1), referenceWCS->crval[0], referenceWCS->crval[1],
-						 NULL, scale, -scale,
-						 360-orientation, referenceWCS->equinox, referenceWCS->epoch
+						 crpix(0), height-crpix(1)+1, referenceWCS->crval[0], referenceWCS->crval[1],
+						 cd, NULL, NULL,
+						 NULL, referenceWCS->equinox, referenceWCS->epoch
 	);
 	
 	// Set output coordinates
