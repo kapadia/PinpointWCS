@@ -30,7 +30,9 @@ MessageBox::MessageBox(const QString &title, QWidget *parent, Qt::WindowFlags f)
 }
 
 MessageBox::~MessageBox()
-{}
+{
+	delete icon;
+}
 
 void MessageBox::setStatus(bool status)
 {

@@ -165,6 +165,8 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 						 NULL, referenceWCS->equinox, referenceWCS->epoch
 	);
 	
+	free(cd);
+	
 	// Set output coordinates
 	wcsoutinit(targetWCS, "FK5");
 	return targetWCS;
@@ -232,8 +234,7 @@ void ComputeWCS::computeResiduals(int numPoints)
 	double sumy2 = 0;
 	
 	// Loop over the pairs stored in the data model
-	int ii;
-	for (ii=0; ii < numPoints; ii++)
+	for (int ii=0; ii < numPoints; ii++)
 	{
 		// Store the coordinate pairs
 		QPointF point1 = refCoords->at(ii);

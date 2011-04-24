@@ -29,7 +29,10 @@ PPWcsImage::PPWcsImage()
 	M = 1;
 }
 
-PPWcsImage::~PPWcsImage() {}
+PPWcsImage::~PPWcsImage()
+{
+	free(world);
+}
 
 void PPWcsImage::finishInitialization()
 {

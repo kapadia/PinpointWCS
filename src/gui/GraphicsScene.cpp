@@ -50,7 +50,10 @@ GraphicsScene::GraphicsScene(QPixmap *pix, bool ref, QObject *parent)
 }
 
 
-GraphicsScene::~GraphicsScene() {}
+GraphicsScene::~GraphicsScene()
+{
+	delete ptr_pixmap;
+}
 
 
 void GraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

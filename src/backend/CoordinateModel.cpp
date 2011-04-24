@@ -37,7 +37,10 @@ CoordinateModel::CoordinateModel(QList<QPointF> r, QList<QPointF> e, QObject *pa
 }
 
 CoordinateModel::~CoordinateModel()
-{}
+{
+	delete undoStack;
+	delete p;
+}
 
 int CoordinateModel::rowCount(const QModelIndex &parent) const
 {

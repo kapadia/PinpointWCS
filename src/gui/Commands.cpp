@@ -123,6 +123,7 @@ void AddCommand::undo()
 	
 	// Remove CoordinateMarker from GraphicsScene
 	scene->removeItem(marker);
+	delete marker;
 	scene->toggleClickable(true);
 	scene->update();
 	

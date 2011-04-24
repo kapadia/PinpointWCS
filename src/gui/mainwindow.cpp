@@ -463,6 +463,12 @@ void MainWindow::buildWcsInfoPanelMachine()
 	WcsInfoPanelOn = new QState(WcsInfoPanelMachine);
 	WcsInfoPanelOff = new QState(WcsInfoPanelMachine);
 	
+	WcsFitsPanelOn = new QPropertyAnimation(fitsWcsInfoPanel, "pos");
+	WcsEpoPanelOn = new QPropertyAnimation(epoWcsInfoPanel, "pos");
+	WcsFitsPanelOff = new QPropertyAnimation(fitsWcsInfoPanel, "pos");
+	WcsEpoPanelOff = new QPropertyAnimation(epoWcsInfoPanel, "pos");
+	WcsFitsToolbarOn = new QPropertyAnimation(fitsToolbar, "pos");
+	
 	// Set the initial state of the machine
 	WcsInfoPanelMachine->setInitialState(WcsInfoPanelOff);
 	
@@ -482,14 +488,14 @@ void MainWindow::buildWcsInfoPanelMachine()
 	
 	// Set transition from on state to off state
 	QAbstractTransition *t1 = WcsInfoPanelOn->addTransition(ui.actionInfo, SIGNAL(toggled(bool)), WcsInfoPanelOff);
-	t1->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
-	t1->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
+	t1->addAnimation(WcsFitsPanelOn);
+	t1->addAnimation(WcsEpoPanelOn);
 	
 	// Set transition from off state to on state
 	QAbstractTransition *t2 = WcsInfoPanelOff->addTransition(ui.actionInfo, SIGNAL(toggled(bool)), WcsInfoPanelOn);
-	t2->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
-	t2->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
-	t2->addAnimation(new QPropertyAnimation(fitsToolbar, "pos"));
+	t2->addAnimation(WcsFitsPanelOff);
+	t2->addAnimation(WcsEpoPanelOff);
+	t2->addAnimation(WcsFitsToolbarOn);
 	
 	// Start the machine
 	WcsInfoPanelMachine->start();
@@ -499,6 +505,12 @@ void MainWindow::buildWcsInfoPanelMachine()
 void MainWindow::teardownWcsInfoPanelMachine()
 {
 	WcsInfoPanelMachine->stop();
+	delete WcsFitsPanelOn;
+	delete WcsEpoPanelOn;
+	delete WcsFitsPanelOff;
+	delete WcsEpoPanelOff;
+	delete WcsFitsToolbarOn;
+	
 	delete WcsInfoPanelOn;
 	delete WcsInfoPanelOff;
 	delete WcsInfoPanelMachine;
@@ -511,6 +523,11 @@ void MainWindow::buildImageAdjustmentMachine()
 	imageAdjustmentMachine = new QStateMachine;
 	imageAdjustmentPanelOn = new QState(imageAdjustmentMachine);
 	imageAdjustmentPanelOff = new QState(imageAdjustmentMachine);
+	
+	ImgFitsToolbarOff = new QPropertyAnimation(fitsToolbar, "pos");
+	ImgFitsToolbarOn = new QPropertyAnimation(fitsToolbar, "pos");
+	ImgFitsPanelOn = new QPropertyAnimation(fitsWcsInfoPanel, "pos");
+	ImgEpoPanelOn = new QPropertyAnimation(epoWcsInfoPanel, "pos");
 	
 	// Set initial state of the machine
 	imageAdjustmentMachine->setInitialState(imageAdjustmentPanelOn);
@@ -526,13 +543,13 @@ void MainWindow::buildImageAdjustmentMachine()
 	
 	// Set transition from on state to off state
 	QAbstractTransition *t1 = imageAdjustmentPanelOn->addTransition(ui.actionImageAdjustments, SIGNAL(toggled(bool)), imageAdjustmentPanelOff);
-	t1->addAnimation(new QPropertyAnimation(fitsToolbar, "pos"));
+	t1->addAnimation(ImgFitsToolbarOff);
 	
 	// Set transition from off state to on state
 	QAbstractTransition *t2 = imageAdjustmentPanelOff->addTransition(ui.actionImageAdjustments, SIGNAL(toggled(bool)), imageAdjustmentPanelOn);
-	t2->addAnimation(new QPropertyAnimation(fitsToolbar, "pos"));
-	t2->addAnimation(new QPropertyAnimation(fitsWcsInfoPanel, "pos"));
-	t2->addAnimation(new QPropertyAnimation(epoWcsInfoPanel, "pos"));
+	t2->addAnimation(ImgFitsToolbarOn);
+	t2->addAnimation(ImgFitsPanelOn);
+	t2->addAnimation(ImgEpoPanelOn);
 	
 	// Start the machine
 	imageAdjustmentMachine->start();
@@ -543,6 +560,11 @@ void MainWindow::buildImageAdjustmentMachine()
 void MainWindow::teardownImageAdjustmentMachine()
 {
 	imageAdjustmentMachine->stop();
+	delete ImgFitsToolbarOff;
+	delete ImgFitsToolbarOn; 
+	delete ImgFitsPanelOn;
+	delete ImgEpoPanelOn;
+	
 	delete imageAdjustmentPanelOn;
 	delete imageAdjustmentPanelOff;
 	delete imageAdjustmentMachine;
@@ -556,6 +578,11 @@ void MainWindow::buildCoordPanelMachine()
 	CoordPanelOn = new QState(CoordPanelMachine);
 	CoordPanelOff = new QState(CoordPanelMachine);
 	
+	CoordFitsPanelOff = new QPropertyAnimation(fitsCoordPanel, "pos");
+	CoordEpoPanelOff = new QPropertyAnimation(epoCoordPanel, "pos");
+	CoordFitsPanelOn = new QPropertyAnimation(fitsCoordPanel, "pos");
+	CoordEpoPanelOn = new QPropertyAnimation(epoCoordPanel, "pos");
+	
 	// Set initial state of the machine
 	CoordPanelMachine->setInitialState(CoordPanelOn);
 	
@@ -564,13 +591,13 @@ void MainWindow::buildCoordPanelMachine()
 	
 	// Set transition from the on state to the off state
 	QAbstractTransition *t1 = CoordPanelOn->addTransition(ui.actionCoordinates, SIGNAL(triggered()), CoordPanelOff);
-	t1->addAnimation(new QPropertyAnimation(fitsCoordPanel, "pos"));
-	t1->addAnimation(new QPropertyAnimation(epoCoordPanel, "pos"));
+	t1->addAnimation(CoordFitsPanelOff);
+	t1->addAnimation(CoordEpoPanelOff);
 	
 	// Set transition from the off state to the on state
 	QAbstractTransition *t2 = CoordPanelOff->addTransition(ui.actionCoordinates, SIGNAL(triggered()), CoordPanelOn);
-	t2->addAnimation(new QPropertyAnimation(fitsCoordPanel, "pos"));
-	t2->addAnimation(new QPropertyAnimation(epoCoordPanel, "pos"));
+	t2->addAnimation(CoordFitsPanelOn);
+	t2->addAnimation(CoordEpoPanelOn);
 	
 	// Start the machine
 	CoordPanelMachine->start();
@@ -580,6 +607,12 @@ void MainWindow::buildCoordPanelMachine()
 void MainWindow::teardownCoordPanelMachine()
 {
 	CoordPanelMachine->stop();
+	
+	delete CoordFitsPanelOff;
+	delete CoordEpoPanelOff;
+	delete CoordFitsPanelOn; 
+	delete CoordEpoPanelOn;
+	
 	delete CoordPanelOn;
 	delete CoordPanelOff;
 	delete CoordPanelMachine;
@@ -747,24 +780,4 @@ void MainWindow::testII()
 	
 	dataModel->setData(fitsScene, QPointF(589.43, 718.44));
 	dataModel->setData(epoScene, QPointF(589.43, 718.44));
-}
-
-
-void MainWindow::testPixelMapping(ComputeWCS *cwcs)
-{
-	// A couple mappings from EPO to FITS
-	Vector2d blah = cwcs->epoToFits(50, 60);
-	std::cout << blah[0] << "\t" << blah[1] << std::endl;
-	blah = cwcs->epoToFits(550, 340);
-	std::cout << blah[0] << "\t" << blah[1] << std::endl;
-	blah = cwcs->epoToFits(800, 721);
-	std::cout << blah[0] << "\t" << blah[1] << std::endl;
-	
-	// some mappings from FITS to EPO
-	blah = cwcs->fitsToEpo(80, 50);
-	std::cout << blah[0] << "\t" << blah[1] << std::endl;
-	blah = cwcs->fitsToEpo(249, 791);
-	std::cout << blah[0] << "\t" << blah[1] << std::endl;
-	blah = cwcs->fitsToEpo(657, 149);
-	std::cout << blah[0] << "\t" << blah[1] << std::endl;
 }

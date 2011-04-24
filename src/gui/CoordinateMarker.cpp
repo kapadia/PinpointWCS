@@ -46,7 +46,10 @@ CoordinateMarker::CoordinateMarker(QModelIndex &idx, QGraphicsItem *parent)
 	setFlag(QGraphicsItem::ItemSendsScenePositionChanges, true);
 }
 
-CoordinateMarker::~CoordinateMarker() {}
+CoordinateMarker::~CoordinateMarker()
+{
+	delete index;
+}
 
 QRectF CoordinateMarker::boundingRect() const
 {

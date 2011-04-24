@@ -99,6 +99,23 @@ private:
 	QState *imageAdjustmentPanelOn;
 	QState *imageAdjustmentPanelOff;
 	
+	// Animation Attributes
+	QPropertyAnimation *WcsFitsPanelOn;
+	QPropertyAnimation *WcsFitsPanelOff;
+	QPropertyAnimation *WcsEpoPanelOn;
+	QPropertyAnimation *WcsEpoPanelOff;
+	QPropertyAnimation *WcsFitsToolbarOn;
+	
+	QPropertyAnimation *ImgFitsToolbarOff;
+	QPropertyAnimation *ImgFitsToolbarOn; 
+	QPropertyAnimation *ImgFitsPanelOn;
+	QPropertyAnimation *ImgEpoPanelOn;
+	
+	QPropertyAnimation *CoordFitsPanelOff;
+	QPropertyAnimation *CoordEpoPanelOff;
+	QPropertyAnimation *CoordFitsPanelOn;
+	QPropertyAnimation *CoordEpoPanelOn;
+	
 	// Dialogs
 	AboutDialog *aboutDialog;
 	
@@ -132,7 +149,6 @@ private slots:
 	// Test function(s) for debugging
 	void testI();
 	void testII();
-	void testPixelMapping(ComputeWCS *cwcs);
 };
 
 

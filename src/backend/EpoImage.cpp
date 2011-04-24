@@ -34,7 +34,9 @@ EpoImage::EpoImage(QString filename) : PPWcsImage()
 }
 
 EpoImage::~EpoImage()
-{}
+{
+	delete pixmap;
+}
 
 void EpoImage::invert()
 {
