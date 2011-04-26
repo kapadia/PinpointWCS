@@ -246,7 +246,7 @@ void ExportWCS::exportAVM()
 				std::string avmprefix;
 				std::string cxcprefix;
 				SXMPMeta::RegisterNamespace(kXMP_NS_AVM, "avm", &avmprefix);
-				SXMPMeta::RegisterNamespace(kXMP_NS_CXC, "cxc", &cxcprefix);
+//				SXMPMeta::RegisterNamespace(kXMP_NS_CXC, "cxc", &cxcprefix);
 				
 				// Clean the existing Coordinate Metadata
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.CoordinateFrame");
@@ -260,7 +260,7 @@ void ExportWCS::exportAVM()
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.Quality");
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.Notes");
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.FITSheader");
-				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.CDMatrix");
+				avm.DeleteProperty(kXMP_NS_AVM, "avm:Spatial.CDMatrix");	// Just in case some outdated AVM is stored
 				
 				// Clean existing Publisher Metadata
 				avm.DeleteProperty(kXMP_NS_AVM, "avm:Publisher.MetadataDate");
@@ -274,16 +274,12 @@ void ExportWCS::exportAVM()
 				// Initialize QStrings to format the WCS data
 				QString equinox = QString("%1").arg(wcs->equinox, 0, 'f', 1);
 				QString crval1 = QString("%1").arg(wcs->xref, 0, 'f', 11);
-				QString crval2 = QString("%1").arg(wcs->yref, 0, 'f', 11);
-				QString crpix1 = QString("%1").arg(wcs->xrefpix, 0, 'f', 11);
-				QString crpix2 = QString("%1").arg(wcs->yrefpix, 0, 'f', 11);
+				QString crval2 = QString("%1").arg(wcs->yref, 0, 'f', 11);				
+				QString crpix1 = QString("%1").arg(wcs->xrefpix - 0.5, 0, 'f', 11);
+				QString crpix2 = QString("%1").arg(wcs->nypix - wcs->yrefpix + 0.5, 0, 'f', 11);
 				QString scale1 = QString("%1").arg(-1*computewcs->scale, 0, 'f', 11);
 				QString scale2 = QString("%1").arg(computewcs->scale, 0, 'f', 11);
 				QString orientation = QString("%1").arg(computewcs->orientation, 0, 'f', 11);
-//				QString cd11 = QString("%1").arg(wcs->cd[0], 0, 'f', 11);
-//				QString cd12 = QString("%1").arg(wcs->cd[1], 0, 'f', 11);
-//				QString cd21 = QString("%1").arg(wcs->cd[2], 0, 'f', 11);
-//				QString cd22 = QString("%1").arg(wcs->cd[3], 0, 'f', 11);
 				QString width = QString("%1").arg(computewcs->width, 0, 'f', 2);
 				QString height = QString("%1").arg(computewcs->height, 0, 'f', 2);
 				QString spatialnotes = QString("World Coordinate System resolved using PinpointWCS %1 revision %2 by the Chandra X-ray Center\n\n").arg(VERSION).arg(REVISION);
@@ -321,10 +317,6 @@ void ExportWCS::exportAVM()
 				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Quality", "Full", 0);
 				avm.SetLocalizedText(kXMP_NS_AVM, "avm:Spatial.Notes", "x-default", "x-default", spatialnotes.toStdString(), 0);
 //				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.FITSheader", "SPATIAL FITS HEADER TEST", 0);
-//				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd11.toStdString());
-//				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd12.toStdString());
-//				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd21.toStdString());
-//				avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd22.toStdString());
 				
 				// Set Publisher Metadata
 				XMP_DateTime updatedTime;
