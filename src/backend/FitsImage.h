@@ -33,7 +33,8 @@ QT_END_NAMESPACE
 
 #include "PPWcsImage.h"
 
-#define DOWNSAMPLE_SIZE 2048
+//#define DOWNSAMPLE_SIZE 2048
+#define DOWNSAMPLE_SIZE 6144
 
 #define LINEAR_STRETCH 0
 #define LOG_STRETCH 1

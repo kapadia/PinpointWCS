@@ -378,7 +378,7 @@ bool MainWindow::setupWorkspace()
 	ui.actionNew_Workspace->setEnabled(true);
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-//	testII();
+	testIII();
 	
 	return true;
 }
@@ -765,7 +765,7 @@ void MainWindow::testI()
 	dataModel->setData(epoScene, QPointF(394.76, 569.78));
 }
 
-// TESTING: Using a TIFF derived from the original FITS as a control
+// TESTING: Using EPO image derived from FITS image - M101
 void MainWindow::testII()
 {
 	// Pixel should be the usual FITS pixels to EPO pixels transformation.
@@ -780,4 +780,21 @@ void MainWindow::testII()
 	
 	dataModel->setData(fitsScene, QPointF(589.43, 718.44));
 	dataModel->setData(epoScene, QPointF(589.43, 718.44));
+}
+
+
+// TESTING: Using EPO image derived from FITS image - Butterfly Nebula
+void MainWindow::testIII()
+{
+	dataModel->setData(fitsScene, QPointF(4155.51, 1051.50));
+	dataModel->setData(epoScene, QPointF(4155.51, 1051.50));
+	
+	dataModel->setData(fitsScene, QPointF(3159.51, 3354.50));
+	dataModel->setData(epoScene, QPointF(3159.51, 3354.50));
+
+	dataModel->setData(fitsScene, QPointF(787.31, 2169.28));
+	dataModel->setData(epoScene, QPointF(787.31, 2169.28));
+
+	dataModel->setData(fitsScene, QPointF(778.51, 2690.50));
+	dataModel->setData(epoScene, QPointF(778.51, 2690.50));
 }

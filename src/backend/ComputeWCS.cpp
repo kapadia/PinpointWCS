@@ -156,11 +156,11 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	cd[2] = cdmatrix(2);
 	cd[3] = cdmatrix(3);
 	
-	// Determine the reference image's reference pixel from the frame of reference of the epo image
+	// Determine the reference image's reference pixel from the frame of reference of the EPO image
 	crpix = fitsToEpo(referenceWCS->crpix[0], referenceWCS->crpix[1]);
-
+	
 	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
-						 crpix(0), height-crpix(1)+1, referenceWCS->crval[0], referenceWCS->crval[1],
+						 crpix(0), crpix(1), referenceWCS->crval[0], referenceWCS->crval[1],
 						 cd, NULL, NULL,
 						 NULL, referenceWCS->equinox, referenceWCS->epoch
 	);

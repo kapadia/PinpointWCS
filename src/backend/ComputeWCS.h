@@ -45,6 +45,8 @@ public:
 	bool mappingExists;
 	
 	// EPO Attributes
+	QList<QPointF> *refCoords;
+	QList<QPointF> *epoCoords;
 	double width;
 	double height;
 	Vector2d crpix;
@@ -77,9 +79,6 @@ private:
 	void computeResiduals(int numPoints);
 
 	// Attributes
-	QList<QPointF> *refCoords;
-	QList<QPointF> *epoCoords;
-
 	MatrixXd matrix;
 	VectorXd xvector;
 	VectorXd yvector;
