@@ -202,6 +202,8 @@
     </property>
     <addaction name="actionFit_Point"/>
     <addaction name="actionCentroid"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen_in_DS9"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -497,6 +499,14 @@
   <action name="actionNew_Workspace">
    <property name="text">
     <string>New Workspace</string>
+   </property>
+  </action>
+  <action name="actionOpen_in_DS9">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Open in DS9</string>
    </property>
   </action>
  </widget>

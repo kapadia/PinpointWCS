@@ -20,6 +20,7 @@ build/
 *.a
 *.fit
 *.fits
+*.swp
 
 # Shell Scripts
 #*.sh
@@ -29,3 +30,9 @@ XMP-Toolkit-SDK-*/intermediate/
 XMP-Toolkit-SDK-*/public/libraries/
 cfitsio/include/
 cfitsio/lib/
+xpa-2.1.13/doc
+xpa-2.1.13/man
+xpa-2.1.13/bin
+xpa-2.1.13/include
+xpa-2.1.13/share
+xpa-2.1.13/lib

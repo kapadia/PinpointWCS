@@ -26,6 +26,7 @@
 #include <QAbstractTransition>
 #include <QSignalTransition>
 #include <QActionGroup>
+#include <QProcess>
 //#include <QtNetwork>
 
 #include "ui_PinpointWCS.h"
@@ -67,6 +68,7 @@ private:
 	QActionGroup *stretchActionGroup;
 	QActionGroup *wcsFormatActionGroup;
 	MessageBox *msg;
+	QProcess *process;
 	
 	// Image Attributes
 	FitsImage *fitsImage;
@@ -142,9 +144,10 @@ private slots:
 	void promptMessage(bool status);
 	void predictEpoPoint();
 	void updateWithCentroid(QPointF pos);
+	void openDS9();
 	
 	// A slots for testing ...
-	void testSlot();
+	void testSlot(QProcess::ProcessState state);
 	
 	// Test function(s) for debugging
 	void testI();

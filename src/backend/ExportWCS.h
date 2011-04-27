@@ -37,6 +37,9 @@ class ExportWCS : public QObject {
 public:
 	ExportWCS(QString *f, QPixmap *p, ComputeWCS *cwcs);
 	~ExportWCS();
+	QString saveas;
+	bool fitsexport;
+	
 	void setWCS(struct WorldCoor *w);
 	void clearWCS();
 	

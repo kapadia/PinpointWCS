@@ -19,6 +19,9 @@
 
 #include <QDebug>
 #include "mainwindow.h"
+#include <xpa.h>
+
+#define NXPA 1
 
 MainWindow::MainWindow()
 {
@@ -368,17 +371,19 @@ bool MainWindow::setupWorkspace()
 	// Exporting signals and slots
 	connect(exportwcs, SIGNAL(exportResults(bool)), this, SLOT(promptMessage(bool)));
 	
-	// Prediction and centroid signal and slots
+	// Prediction, centroid and DS9 signal and slots
 	connect(ui.actionFit_Point, SIGNAL(triggered(bool)), this, SLOT(predictEpoPoint()));
 	connect(ui.actionCentroid, SIGNAL(triggered(bool)), fitsScene, SLOT(selectedItemPos()));
 	connect(fitsScene, SIGNAL(itemPos(QPointF)), fitsImage, SLOT(getCentroid(QPointF)));
 	connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(updateWithCentroid(QPointF)));
+	connect(ui.actionOpen_in_DS9, SIGNAL(triggered()), this, SLOT(openDS9()));
+	
 	
 	// Enable the teardown menu item
 	ui.actionNew_Workspace->setEnabled(true);
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-//	testII();
+//	testI();
 	
 	return true;
 }
@@ -722,6 +727,10 @@ void MainWindow::rotateMenuItems(GraphicsView *gv)
 
 void MainWindow::promptMessage(bool status)
 {
+	// Enable the menu item for DS9 interation
+	if (exportwcs->fitsexport)
+		ui.actionOpen_in_DS9->setEnabled(true);
+	
 	// Set the status of the message box
 	msg->setStatus(status);
 	msg->show();
@@ -744,9 +753,48 @@ void MainWindow::updateWithCentroid(QPointF pos)
 	dataModel->updateData(fitsScene, pos, item->pos());	
 }
 
-void MainWindow::testSlot()
+
+void MainWindow::openDS9()
 {
-	qDebug() << "Test Slot";
+	process = new QProcess(this);
+	connect(process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(testSlot(QProcess::ProcessState)));
+	process->start("\"/Applications/SAOImage DS9.app/Contents/MacOS/ds9\"");
+}
+
+void MainWindow::testSlot(QProcess::ProcessState state)
+{
+	qDebug() << "Test Slot " << state;
+	
+	if (state == QProcess::Running)
+	{
+		int got;
+		char *names[NXPA];
+		char *msgs[NXPA];
+		
+		QString s1 = "file " + fitsImage->filename;
+		QString s2 = "file " + exportwcs->saveas;
+		
+		char *orig, *exported;
+		orig = new char[s1.toStdString().size()+1];
+		exported = new char[s2.toStdString().size()+1];
+
+		strcpy(orig, s1.toStdString().c_str());
+		strcpy(exported, s2.toStdString().c_str());
+		
+		while(!XPASet(NULL, "ds9", orig, "", NULL, 0, names, msgs, NXPA))
+			continue;
+        got = XPASet(NULL, "ds9", "frame new", "", NULL, 0, names, msgs, NXPA);
+        got = XPASet(NULL, "ds9", exported, "", NULL, 0, names, msgs, NXPA);
+        got = XPASet(NULL, "ds9", "tile", "", NULL, 0, names, msgs, NXPA);
+        got = XPASet(NULL, "ds9", "match frames wcs", "", NULL, 0, names, msgs, NXPA);
+        got = XPASet(NULL, "ds9", "mode crosshair", "", NULL, 0, names, msgs, NXPA);
+        got = XPASet(NULL, "ds9", "lock crosshair wcs", "", NULL, 0, names, msgs, NXPA);
+		
+		free(orig);
+		free(exported);
+	}
+	else if (state == QProcess::NotRunning)
+		disconnect(process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(testSlot(QProcess::ProcessState)));
 }
 
 void MainWindow::testI()

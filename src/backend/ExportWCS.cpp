@@ -50,6 +50,7 @@ ExportWCS::ExportWCS(QString *f, QPixmap *p, ComputeWCS *cwcs)
 	filename = f;
 	pixmap = p;
 	computewcs = cwcs;
+	fitsexport = false;
 }
 
 
@@ -80,7 +81,7 @@ void ExportWCS::exportFITS()
 	QImage im = pixmap->toImage();
 	
 	// Prompt user for filename
-	QString saveas = QFileDialog::getSaveFileName(NULL, "Export FITS Image", *filename+"_ppwcs.fits", "Images(*.fit *.fits)", NULL, NULL);
+	saveas = QFileDialog::getSaveFileName(NULL, "Export FITS Image", *filename+"_ppwcs.fits", "Images(*.fit *.fits)", NULL, NULL);
 	
 	// Initialize FITS image parameters
 	int bitpix = BYTE_IMG;
@@ -145,7 +146,7 @@ void ExportWCS::exportFITS()
 	QString equinox = QString("%1").arg(wcs->equinox, 0, 'f', 1);
 	QString crpix1 = QString("%1").arg(wcs->xrefpix, 0, 'f', 11);
 	QString crval1 = QString("%1").arg(wcs->xref, 0, 'f', 11);
-	QString crpix2 = QString("%1").arg(wcs->yrefpix, 0, 'f', 11);
+	QString crpix2 = QString("%1").arg(wcs->nypix - wcs->yrefpix + 1, 0, 'f', 11);
 	QString crval2 = QString("%1").arg(wcs->yref, 0, 'f', 11);
 	QString cd11 = QString("%1").arg(wcs->cd[0], 0, 'f', 11);
 	QString cd12 = QString("%1").arg(wcs->cd[1], 0, 'f', 11);
@@ -188,6 +189,8 @@ void ExportWCS::exportFITS()
 	// Close FITS file
 	if (fits_close_file(fptr, &status))
 		emit exportResults(false);
+	
+	fitsexport = true;
 	
 	emit exportResults(true);
 }
