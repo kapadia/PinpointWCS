@@ -41,7 +41,7 @@ MainWindow::MainWindow()
 	stretchActionGroup->addAction(ui.actionLinear_Stretch);
 	stretchActionGroup->addAction(ui.actionLogarithm_Stretch);
 	stretchActionGroup->addAction(ui.actionSquare_Root_Stretch);
-	stretchActionGroup->addAction(ui.actionHyperbolic_Sine_Stretch);
+	stretchActionGroup->addAction(ui.actionInverseHyperbolic_Sine_Stretch);
 	stretchActionGroup->addAction(ui.actionPower_Stretch);
 	stretchActionGroup->setExclusive(true);
 	
@@ -161,7 +161,7 @@ bool MainWindow::teardownWorkspace()
 	ui.actionLinear_Stretch->setEnabled(false);
 	ui.actionLogarithm_Stretch->setEnabled(false);
 	ui.actionSquare_Root_Stretch->setEnabled(false);
-	ui.actionHyperbolic_Sine_Stretch->setEnabled(false);
+	ui.actionInverseHyperbolic_Sine_Stretch->setEnabled(false);
 	ui.actionPower_Stretch->setEnabled(false);
 	ui.actionInvert->setEnabled(false);
 	ui.actionRotate_Clockwise->setEnabled(false);
@@ -274,7 +274,7 @@ bool MainWindow::setupWorkspace()
 	ui.actionLinear_Stretch->setEnabled(true);
 	ui.actionLogarithm_Stretch->setEnabled(true);
 	ui.actionSquare_Root_Stretch->setEnabled(true);
-	ui.actionHyperbolic_Sine_Stretch->setEnabled(true);
+	ui.actionInverseHyperbolic_Sine_Stretch->setEnabled(true);
 	ui.actionPower_Stretch->setEnabled(true);
 	ui.actionInvert->setEnabled(true);
 	ui.actionRotate_Clockwise->setEnabled(true);
@@ -406,7 +406,7 @@ void MainWindow::stretch(QAction *action)
 		if (fitsImage->stretch != SQRT_STRETCH)
 			fitsImage->setStretch(SQRT_STRETCH);
 	}
-	else if (action == ui.actionHyperbolic_Sine_Stretch)
+	else if (action == ui.actionInverseHyperbolic_Sine_Stretch)
 	{
 		if (fitsImage->stretch != ARCSINH_STRETCH)
 			fitsImage->setStretch(ARCSINH_STRETCH);

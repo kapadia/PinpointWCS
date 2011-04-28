@@ -182,7 +182,7 @@
     <addaction name="actionLinear_Stretch"/>
     <addaction name="actionLogarithm_Stretch"/>
     <addaction name="actionSquare_Root_Stretch"/>
-    <addaction name="actionHyperbolic_Sine_Stretch"/>
+    <addaction name="actionInverseHyperbolic_Sine_Stretch"/>
     <addaction name="actionPower_Stretch"/>
     <addaction name="separator"/>
     <addaction name="actionInvert"/>
@@ -369,7 +369,7 @@
     <string>Ctrl+3</string>
    </property>
   </action>
-  <action name="actionHyperbolic_Sine_Stretch">
+  <action name="actionInverseHyperbolic_Sine_Stretch">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -377,7 +377,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Hyperbolic Sine Stretch</string>
+    <string>Inverse Hyperbolic Sine Stretch</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+4</string>
