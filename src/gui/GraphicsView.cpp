@@ -34,7 +34,9 @@ GraphicsView::GraphicsView(QWidget *parent)
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setRenderHint(QPainter::Antialiasing);
-	setDragMode(NoDrag);
+//	setDragMode(NoDrag);
+	// Testing: Testing panning by default
+	setDragMode(ScrollHandDrag);
 	setTransformationAnchor(AnchorViewCenter);
 	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 	
@@ -62,8 +64,11 @@ void GraphicsView::resizeEvent(QResizeEvent *event)
 
 void GraphicsView::keyPressEvent(QKeyEvent *event)
 {
+	// Testing: Testing panning by default
+	/*
 	if (event->key() == Qt::Key_Space)
 		setDragMode(ScrollHandDrag);
+	 */
 	/*
 	else if(event->modifiers() == Qt::NoModifier && event->key() == Qt::Key_R)
 	{
@@ -82,8 +87,11 @@ void GraphicsView::keyPressEvent(QKeyEvent *event)
 
 void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 {
+	// Testing: Testing panning by default
+	/*
 	if (event->key() == Qt::Key_Space)
 		setDragMode(NoDrag);
+	 */
 	QGraphicsView::keyReleaseEvent(event);
 }
 
@@ -91,7 +99,8 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 void GraphicsView::enterEvent(QEvent *event)
 {
 	// Reset some graphics view settings
-	setDragMode(QGraphicsView::NoDrag);
+	// Testing: Testing panning by default
+//	setDragMode(QGraphicsView::NoDrag);
 	setFocus();
 	
 	// Signal a mouseEnterEvent
@@ -100,7 +109,8 @@ void GraphicsView::enterEvent(QEvent *event)
 
 void GraphicsView::leaveEvent(QEvent *event)
 {
-	setDragMode(QGraphicsView::NoDrag);
+	// Testing: Testing panning by default
+//	setDragMode(QGraphicsView::NoDrag);
 	
 	// Reset some graphics item settings
 	GraphicsScene *s = qobject_cast<GraphicsScene*> (scene());
