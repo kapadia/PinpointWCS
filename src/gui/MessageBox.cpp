@@ -43,7 +43,7 @@ void MessageBox::setStatus(bool status)
 	}
 	else
 	{
-		setText("Something went wrong.  Check that:<p><ul><li>The image is in the same directory as when imported</li><li>The image is not locked</li><li>The image has not been deleted</li><li>The astronomical object hasn't disappeared into the nether regions of the multi-universe.</li></p>");
+		setText("Something went wrong.  Check that:<p><ul><li>The image is in the same directory as when imported</li><li>The image is not locked</li><li>The image has not been deleted</li><li>The astronomical object hasn't disappeared into the nether regions of the multiverse.</li></p>");
 		icon->load(":/gui/images/bad.png");
 	}
 	setIconPixmap(*icon);

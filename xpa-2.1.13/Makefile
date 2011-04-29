@@ -26,7 +26,7 @@ FTPDIR	= ../ftp
 # at configure-time with the --exec-prefix and --prefix options
 # to the "configure" script.
 
-prefix =		/Users/akapadia/Projects/PinpointWCS/xpa-2.1.13/
+prefix =		/Users/amit/Projects/PinpointWCS/xpa-2.1.13/
 exec_prefix =		${prefix}
 
 # The following definition can be set to non-null for special systems
