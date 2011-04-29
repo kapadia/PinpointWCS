@@ -383,7 +383,7 @@ bool MainWindow::setupWorkspace()
 	ui.actionNew_Workspace->setEnabled(true);
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-//	testI();
+	testI();
 	
 	return true;
 }
@@ -756,45 +756,19 @@ void MainWindow::updateWithCentroid(QPointF pos)
 
 void MainWindow::openDS9()
 {
-	process = new QProcess(this);
-	connect(process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(testSlot(QProcess::ProcessState)));
-	process->start("\"/Applications/SAOImage DS9.app/Contents/MacOS/ds9\"");
+	ds9thread = new DS9Thread(fitsImage->filename, exportwcs->saveas);
+	ds9thread->start();
 }
 
-void MainWindow::testSlot(QProcess::ProcessState state)
+void MainWindow::closeDS9()
 {
-	qDebug() << "Test Slot " << state;
-	
-	if (state == QProcess::Running)
-	{
-		int got;
-		char *names[NXPA];
-		char *msgs[NXPA];
-		
-		QString s1 = "file " + fitsImage->filename;
-		QString s2 = "file " + exportwcs->saveas;
-		
-		char *orig, *exported;
-		orig = new char[s1.toStdString().size()+1];
-		exported = new char[s2.toStdString().size()+1];
+	qDebug() << "Closing DS9 ...";
+	delete ds9thread;
+}
 
-		strcpy(orig, s1.toStdString().c_str());
-		strcpy(exported, s2.toStdString().c_str());
-		
-		while(!XPASet(NULL, "ds9", orig, "", NULL, 0, names, msgs, NXPA))
-			continue;
-        got = XPASet(NULL, "ds9", "frame new", "", NULL, 0, names, msgs, NXPA);
-        got = XPASet(NULL, "ds9", exported, "", NULL, 0, names, msgs, NXPA);
-        got = XPASet(NULL, "ds9", "tile", "", NULL, 0, names, msgs, NXPA);
-        got = XPASet(NULL, "ds9", "match frames wcs", "", NULL, 0, names, msgs, NXPA);
-        got = XPASet(NULL, "ds9", "mode crosshair", "", NULL, 0, names, msgs, NXPA);
-        got = XPASet(NULL, "ds9", "lock crosshair wcs", "", NULL, 0, names, msgs, NXPA);
-		
-		free(orig);
-		free(exported);
-	}
-	else if (state == QProcess::NotRunning)
-		disconnect(process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(testSlot(QProcess::ProcessState)));
+void MainWindow::testSlot()
+{
+	qDebug() << "Test Slot ";
 }
 
 void MainWindow::testI()

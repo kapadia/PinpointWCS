@@ -17,25 +17,37 @@
  *
  */
 
-#ifndef FITSTHREAD_H
-#define FITSTHREAD_H
+#ifndef DS9THREAD_H
+#define DS9THREAD_H
 
 #include <QThread>
-#include "FitsImage.h"
+#include <QProcess>
+#include <xpa.h>
 
-class FITSThread : public QThread {
+QT_BEGIN_NAMESPACE
+//class QProcess;
+QT_END_NAMESPACE
+
+#define NXPA 1
+
+class DS9Thread : public QThread {
 	
 	Q_OBJECT
 	
 public:
-	FITSThread();
-	void setup(FitsImage *f);
+	DS9Thread(QString s1, QString s2);
+	~DS9Thread();
+	
+public slots:
+	void blah();
 	
 protected:
 	void run();
 	
 private:
-	FitsImage *fitsImage;
+	QProcess *process;
+	QString orig;
+	QString exported;
 };
 
 #endif

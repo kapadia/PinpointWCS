@@ -45,6 +45,7 @@
 #include "AboutDialog.h"
 #include "MessageBox.h"
 #include "FITSThread.h"
+#include "DS9Thread.h"
  
 class MainWindow : public QMainWindow
 {
@@ -74,6 +75,9 @@ private:
 	FitsImage *fitsImage;
 	EpoImage *epoImage;
 	FITSThread *fitsThread;
+	
+	// XPA Attributes
+	DS9Thread *ds9thread;
 	
 	// Undo and Redo Attributes
 	QAction *undoAction;
@@ -145,9 +149,10 @@ private slots:
 	void predictEpoPoint();
 	void updateWithCentroid(QPointF pos);
 	void openDS9();
+	void closeDS9();
 	
 	// A slots for testing ...
-	void testSlot(QProcess::ProcessState state);
+	void testSlot();
 	
 	// Test function(s) for debugging
 	void testI();
