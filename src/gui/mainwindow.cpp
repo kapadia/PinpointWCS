@@ -19,9 +19,6 @@
 
 #include <QDebug>
 #include "mainwindow.h"
-#include <xpa.h>
-
-#define NXPA 1
 
 MainWindow::MainWindow()
 {

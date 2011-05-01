@@ -54,6 +54,7 @@ public slots:
 
 protected:
 	// Methods
+	void mouseReleaseEvent(QMouseEvent *event);
 	void resizeEvent(QResizeEvent *event);
 	void wheelEvent(QWheelEvent *event);
 	void scaleView(qreal scaleFactor);

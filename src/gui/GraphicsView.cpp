@@ -41,6 +41,7 @@ GraphicsView::GraphicsView(QWidget *parent)
 	setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 	
 	viewport()->setMouseTracking(true);
+	viewport()->setCursor(QCursor(Qt::ArrowCursor));
 	
 	// Adjust the background color
 	setBackgroundBrush(QBrush(QColor(30, 30, 30)));
@@ -93,6 +94,13 @@ void GraphicsView::keyReleaseEvent(QKeyEvent *event)
 		setDragMode(NoDrag);
 	 */
 	QGraphicsView::keyReleaseEvent(event);
+}
+
+
+void GraphicsView::mouseReleaseEvent(QMouseEvent *event)
+{
+	QGraphicsView::mouseReleaseEvent(event);
+	viewport()->setCursor(QCursor(Qt::ArrowCursor));
 }
 
 
