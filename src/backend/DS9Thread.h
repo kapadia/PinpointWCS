@@ -23,7 +23,6 @@
 #include <QThread>
 #include <QProcess>
 #include <QSettings>
-#include <QFileDialog>
 
 #include <xpa.h>
 
@@ -40,9 +39,6 @@ class DS9Thread : public QThread {
 public:
 	DS9Thread(QString s1, QString s2);
 	~DS9Thread();
-	
-public slots:
-	void blah();
 	
 protected:
 	void run();

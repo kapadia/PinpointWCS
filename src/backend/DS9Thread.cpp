@@ -36,10 +36,6 @@ void DS9Thread::run()
 {
 	// Start DS9
 	process = new QProcess();
-//	qRegisterMetaType<QProcess::ProcessState>("QProcess::ProcessState");
-//	qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");	
-//	connect(process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(blah()));
-//	connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(blah()));
 	
 	// First check if the location of DS9 is saved in the preference file
 	QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
@@ -105,9 +101,4 @@ void DS9Thread::run()
 		// DS9 has not started, provide user with feedback
 		qDebug() << "whoops something happened ...";
 	}
-}
-
-void DS9Thread::blah()
-{
-	qDebug() << "blah blah blah";
 }
