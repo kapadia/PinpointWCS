@@ -757,6 +757,13 @@ void MainWindow::updateWithCentroid(QPointF pos)
 
 void MainWindow::openDS9()
 {
+	QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+	if (!settings.contains("ds9path"))
+	{
+		QString ds9path = QFileDialog::getOpenFileName(this, "Locate DS9", "/Applications", "Executables(*.app)");
+		settings.setValue("ds9path", ds9path);
+	}
+	
 	ds9thread = new DS9Thread(fitsImage->filename, exportwcs->saveas);
 	ds9thread->start();
 }

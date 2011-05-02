@@ -22,6 +22,9 @@
 
 #include <QThread>
 #include <QProcess>
+#include <QSettings>
+#include <QFileDialog>
+
 #include <xpa.h>
 
 QT_BEGIN_NAMESPACE

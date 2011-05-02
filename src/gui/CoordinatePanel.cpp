@@ -72,7 +72,6 @@ void CoordinatePanel::parentResized(QSize sz)
 
 void CoordinatePanel::setWcsFormat(bool format)
 {
-	qDebug() << "setWcsFormat";
 	// True corresponds to sexagesimal
 	wcsFormat = !format;
 	

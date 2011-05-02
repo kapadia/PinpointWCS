@@ -36,13 +36,21 @@ void DS9Thread::run()
 {
 	// Start DS9
 	process = new QProcess();
-	qRegisterMetaType<QProcess::ProcessState>("QProcess::ProcessState");
-	qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
+//	qRegisterMetaType<QProcess::ProcessState>("QProcess::ProcessState");
+//	qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");	
+//	connect(process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(blah()));
+//	connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(blah()));
 	
-	connect(process, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(blah()));
-	connect(process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(blah()));
-	// TODO: Let user locate the executable, then save the location to some preference file
-	process->start("\"/Applications/SAOImage DS9.app/Contents/MacOS/ds9\"");
+	// First check if the location of DS9 is saved in the preference file
+	QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+	QString ds9path;
+#if defined(Q_OS_MAC)
+	ds9path = settings.value("ds9path", "/Applications/SAOImage DS9.app/Contents/MacOS/ds9").toString() + "/Contents/MacOS/ds9";
+#endif
+	
+	qDebug() << ds9path;
+	
+	process->start("\""+ds9path+"\"");
 	bool started = process->waitForStarted();
 	
 	if (started)
@@ -95,6 +103,7 @@ void DS9Thread::run()
 	else
 	{
 		// DS9 has not started, provide user with feedback
+		qDebug() << "whoops something happened ...";
 	}
 }
 
