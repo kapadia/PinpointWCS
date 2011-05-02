@@ -276,9 +276,6 @@ bool MainWindow::setupWorkspace()
 	ui.actionInvert->setEnabled(true);
 	ui.actionRotate_Clockwise->setEnabled(true);
 	ui.actionRotate_Counterclockwise->setEnabled(true);
-	
-	// TODO: Testing advanced options
-	// Enable some advanced options
 	ui.actionCentroid->setEnabled(true);
 	
 	// Set up the WcsInfoPanel for each image
@@ -375,9 +372,16 @@ bool MainWindow::setupWorkspace()
 	connect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(updateWithCentroid(QPointF)));
 	connect(ui.actionOpen_in_DS9, SIGNAL(triggered()), this, SLOT(openDS9()));
 	
-	
 	// Enable the teardown menu item
 	ui.actionNew_Workspace->setEnabled(true);
+	
+	// Scan preference file to set the WCS format
+	QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+	bool wcsformat = settings.value("wcsformat", false).toBool();
+	if (wcsformat) 
+		ui.actionSexagesimal->trigger();
+	else
+		ui.actionDegrees->trigger();
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
 	testI();

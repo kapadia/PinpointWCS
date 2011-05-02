@@ -26,7 +26,7 @@
 #include <QAbstractTransition>
 #include <QSignalTransition>
 #include <QActionGroup>
-#include <QProcess>
+#include <QSettings>
 //#include <QtNetwork>
 
 #include "ui_PinpointWCS.h"

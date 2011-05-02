@@ -22,6 +22,7 @@
 
 #include <QFrame>
 #include <QTextStream>
+#include <QSettings>
 #include "PPWcsImage.h"
 #include "ui_CoordinatePanel.h"
 

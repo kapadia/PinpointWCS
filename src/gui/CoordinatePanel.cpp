@@ -72,7 +72,13 @@ void CoordinatePanel::parentResized(QSize sz)
 
 void CoordinatePanel::setWcsFormat(bool format)
 {
+	qDebug() << "setWcsFormat";
+	// True corresponds to sexagesimal
 	wcsFormat = !format;
+	
+	// Save the setting to a preference file on the system
+	QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+	settings.setValue("wcsformat", wcsFormat);
 }
 
 void CoordinatePanel::updateCoordinates(QPointF pos)

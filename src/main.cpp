@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	QApplication app(argc, argv);
 	app.setApplicationName("PinpointWCS");
 	app.setApplicationVersion(VERSION);
-	app.setOrganizationName("Smithsonian Astrophysical Observatory");
+	app.setOrganizationName("SAO");
 	app.setOrganizationDomain("http://www.cfa.harvard.edu/~akapadia/pinpointwcs");
 	
 	/*
