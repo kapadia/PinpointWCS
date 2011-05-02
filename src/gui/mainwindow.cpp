@@ -50,11 +50,15 @@ MainWindow::MainWindow()
 	
 	// Initialize dialogs
 	aboutDialog = new AboutDialog(this);
+	helpPanel = new HelpPanel(this);
+	buildHelpPanelMachine();
 	
 	// Connect signals and slots
 	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(setupImages()));
 	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(setupImages()));
 	connect(ui.actionAbout_PinpointWCS, SIGNAL(triggered(bool)), aboutDialog, SLOT(exec()));
+	connect(this, SIGNAL(objectResized(QSize)), helpPanel, SLOT(parentResized(QSize)));
+	connect(this, SIGNAL(objectResized(QSize)), this, SLOT(updateHelpPanelProperties()));
 	
 	// Teardown the workspace
 	ui.actionNew_Workspace->setEnabled(false);
@@ -384,7 +388,7 @@ bool MainWindow::setupWorkspace()
 		ui.actionDegrees->trigger();
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-	testI();
+//	testI();
 	
 	// TESTING: Modal Dialog showing help information
 //	QDialog *dialog = new QDialog(this);
@@ -466,6 +470,37 @@ bool MainWindow::loadFITSImage()
 	return true;
 }
 
+void MainWindow::buildHelpPanelMachine()
+{
+	// Initialize machine and states
+	HelpPanelMachine = new QStateMachine;
+	HelpPanelOn = new QState(HelpPanelMachine);
+	HelpPanelOff = new QState(HelpPanelMachine);
+	
+	HelpPanelAnimationOn = new QPropertyAnimation(helpPanel, "pos");
+	HelpPanelAnimationOff = new QPropertyAnimation(helpPanel, "pos");
+	
+	// Set the initial state of the machine
+	HelpPanelMachine->setInitialState(HelpPanelOff);
+	
+	// Property for the on state
+	HelpPanelOn->assignProperty(helpPanel, "pos", QPointF(0, 0));
+	
+	// Property for the off state
+	HelpPanelOff->assignProperty(helpPanel, "pos", QPointF(0, -1*height()));
+	
+	// Set transition from the on state to the off state
+	QAbstractTransition *t1 = HelpPanelOn->addTransition(ui.actionPinpointWCSHelp, SIGNAL(triggered()), HelpPanelOff);
+	t1->addAnimation(HelpPanelAnimationOn);
+	
+	// Set transition from the off state to the one state
+	QAbstractTransition *t2 = HelpPanelOff->addTransition(ui.actionPinpointWCSHelp, SIGNAL(triggered()), HelpPanelOn);
+	t2->addAnimation(HelpPanelAnimationOff);
+	
+	// Start the machine
+	HelpPanelMachine->start();
+}
+
 void MainWindow::buildWcsInfoPanelMachine()
 {
 	// Initialize machine and states
@@ -481,10 +516,6 @@ void MainWindow::buildWcsInfoPanelMachine()
 	
 	// Set the initial state of the machine
 	WcsInfoPanelMachine->setInitialState(WcsInfoPanelOff);
-	
-	// Get the position of the GraphicsViews
-	QRect p1 = ui.graphicsView_1->geometry();
-	QRect p2 = ui.graphicsView_2->geometry();
 	
 	// Properties for the on state
 	WcsInfoPanelOn->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, 0));
@@ -627,6 +658,20 @@ void MainWindow::teardownCoordPanelMachine()
 	delete CoordPanelOff;
 	delete CoordPanelMachine;
 }
+
+
+void MainWindow::updateHelpPanelProperties()
+{
+	// Move panels
+	helpPanel->move(0, 0);
+	
+	// Property for the on state
+	HelpPanelOn->assignProperty(helpPanel, "pos", QPointF(0, 0));
+	
+	// Property for the off state
+	HelpPanelOff->assignProperty(helpPanel, "pos", QPointF(0, -1*height()));
+}
+
 
 void MainWindow::updateCoordPanelProperties()
 {
@@ -777,6 +822,18 @@ void MainWindow::closeDS9()
 	qDebug() << "Closing DS9 ...";
 	delete ds9thread;
 }
+
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+	// Emit signal with size information
+	QSize s = size();
+	emit objectResized(s);
+	
+	// Call parent function
+	QWidget::resizeEvent(event);
+}
+
 
 void MainWindow::testSlot()
 {

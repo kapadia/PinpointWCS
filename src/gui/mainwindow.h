@@ -46,6 +46,7 @@
 #include "MessageBox.h"
 #include "FITSThread.h"
 #include "DS9Thread.h"
+#include "HelpPanel.h"
  
 class MainWindow : public QMainWindow
 {
@@ -69,7 +70,7 @@ private:
 	QActionGroup *stretchActionGroup;
 	QActionGroup *wcsFormatActionGroup;
 	MessageBox *msg;
-	QProcess *process;
+	HelpPanel *helpPanel;
 	
 	// Image Attributes
 	FitsImage *fitsImage;
@@ -93,6 +94,10 @@ private:
 	ExportWCS *exportwcs;
 	
 	// State Machines Attributes
+	QStateMachine *HelpPanelMachine;
+	QState *HelpPanelOn;
+	QState *HelpPanelOff;
+	
 	QStateMachine *WcsInfoPanelMachine;
 	QState *WcsInfoPanelOn;
 	QState *WcsInfoPanelOff;
@@ -122,16 +127,21 @@ private:
 	QPropertyAnimation *CoordFitsPanelOn;
 	QPropertyAnimation *CoordEpoPanelOn;
 	
+	QPropertyAnimation *HelpPanelAnimationOn;
+	QPropertyAnimation *HelpPanelAnimationOff;
+	
 	// Dialogs
 	AboutDialog *aboutDialog;
 	
 	// State Machine Methods
+	void buildHelpPanelMachine();
 	void buildWcsInfoPanelMachine();
 	void buildCoordPanelMachine();
 	void buildImageAdjustmentMachine();
 	void teardownWcsInfoPanelMachine();
 	void teardownCoordPanelMachine();
 	void teardownImageAdjustmentMachine();
+	void resizeEvent(QResizeEvent *event);
 	
 private slots:
 	bool setupImages();
@@ -142,6 +152,7 @@ private slots:
 	bool loadEpoImage(QString& filename);
 	void stretch(QAction *action);
 	void updateCoordPanelProperties();
+	void updateHelpPanelProperties();
 	void enableExport();
 	void computeWCS();
 	void rotateMenuItems(GraphicsView *gv);
@@ -158,6 +169,9 @@ private slots:
 	void testI();
 	void testII();
 	void testIII();
+	
+signals:
+	void objectResized(QSize s);
 };
 
 
