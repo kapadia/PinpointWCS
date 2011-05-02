@@ -195,6 +195,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout_PinpointWCS"/>
+    <addaction name="actionPinpointWCSHelp"/>
    </widget>
    <widget class="QMenu" name="menuAdvanced">
     <property name="title">
@@ -507,6 +508,11 @@
    </property>
    <property name="text">
     <string>Open in DS9</string>
+   </property>
+  </action>
+  <action name="actionPinpointWCSHelp">
+   <property name="text">
+    <string>PinpointWCS Help</string>
    </property>
   </action>
  </widget>

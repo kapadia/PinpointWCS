@@ -386,6 +386,10 @@ bool MainWindow::setupWorkspace()
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
 	testI();
 	
+	// TESTING: Modal Dialog showing help information
+//	QDialog *dialog = new QDialog(this);
+//	dialog->show();
+	
 	return true;
 }
 
@@ -596,12 +600,12 @@ void MainWindow::buildCoordPanelMachine()
 	updateCoordPanelProperties();
 	
 	// Set transition from the on state to the off state
-	QAbstractTransition *t1 = CoordPanelOn->addTransition(ui.actionCoordinates, SIGNAL(triggered()), CoordPanelOff);
+	QAbstractTransition *t1 = CoordPanelOn->addTransition(ui.actionCoordinates, SIGNAL(toggled(bool)), CoordPanelOff);
 	t1->addAnimation(CoordFitsPanelOff);
 	t1->addAnimation(CoordEpoPanelOff);
 	
 	// Set transition from the off state to the on state
-	QAbstractTransition *t2 = CoordPanelOff->addTransition(ui.actionCoordinates, SIGNAL(triggered()), CoordPanelOn);
+	QAbstractTransition *t2 = CoordPanelOff->addTransition(ui.actionCoordinates, SIGNAL(toggled(bool)), CoordPanelOn);
 	t2->addAnimation(CoordFitsPanelOn);
 	t2->addAnimation(CoordEpoPanelOn);
 	
