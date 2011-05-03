@@ -123,7 +123,7 @@ bool MainWindow::teardownWorkspace()
 	
 	// Disconnect signals -- export options
 	disconnect(ui.actionFITS_Image, SIGNAL(triggered(bool)), exportwcs, SLOT(exportFITS()));
-	disconnect(ui.actionAstronomy_Visualization_Metadata, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVM()));
+	disconnect(ui.actionAVM, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVM()));
 	
 	// And more signals ...
 	disconnect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(toggle()));
@@ -150,7 +150,7 @@ bool MainWindow::teardownWorkspace()
 	disconnect(fitsImage, SIGNAL(centroid(QPointF)), this, SLOT(updateWithCentroid(QPointF)));
 	
 	// Disable View Menu items
-	ui.actionInfo->setEnabled(false);
+	ui.actionWCSInfo->setEnabled(false);
 	ui.actionCoordinates->setEnabled(false);
 	ui.actionImageAdjustments->setEnabled(false);
 	ui.actionCoordinate_Table->setEnabled(false);
@@ -263,9 +263,11 @@ bool MainWindow::setupWorkspace()
 	ui.stackedWidget_2->setCurrentIndex(1);
 	
 	// Enable View Menu items
-	ui.actionInfo->setEnabled(true);
+	ui.actionWCSInfo->setEnabled(true);
 	ui.actionCoordinates->setEnabled(true);
+	ui.actionCoordinates->setChecked(true);
 	ui.actionImageAdjustments->setEnabled(true);
+	ui.actionImageAdjustments->setChecked(true);
 	ui.actionCoordinate_Table->setEnabled(true);
 	ui.actionDegrees->setEnabled(true);
 	ui.actionDegrees->setChecked(true);
@@ -348,7 +350,7 @@ bool MainWindow::setupWorkspace()
 
 	// Connect signals -- export options
 	connect(ui.actionFITS_Image, SIGNAL(triggered(bool)), exportwcs, SLOT(exportFITS()));
-	connect(ui.actionAstronomy_Visualization_Metadata, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVM()));
+	connect(ui.actionAVM, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVM()));
 	
 	// And more signals ...
 	connect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(toggle()));
@@ -389,10 +391,6 @@ bool MainWindow::setupWorkspace()
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
 //	testI();
-	
-	// TESTING: Modal Dialog showing help information
-//	QDialog *dialog = new QDialog(this);
-//	dialog->show();
 	
 	return true;
 }
@@ -528,12 +526,12 @@ void MainWindow::buildWcsInfoPanelMachine()
 	WcsInfoPanelOff->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*epoWcsInfoPanel->height()));
 	
 	// Set transition from on state to off state
-	QAbstractTransition *t1 = WcsInfoPanelOn->addTransition(ui.actionInfo, SIGNAL(toggled(bool)), WcsInfoPanelOff);
+	QAbstractTransition *t1 = WcsInfoPanelOn->addTransition(ui.actionWCSInfo, SIGNAL(toggled(bool)), WcsInfoPanelOff);
 	t1->addAnimation(WcsFitsPanelOn);
 	t1->addAnimation(WcsEpoPanelOn);
 	
 	// Set transition from off state to on state
-	QAbstractTransition *t2 = WcsInfoPanelOff->addTransition(ui.actionInfo, SIGNAL(toggled(bool)), WcsInfoPanelOn);
+	QAbstractTransition *t2 = WcsInfoPanelOff->addTransition(ui.actionWCSInfo, SIGNAL(toggled(bool)), WcsInfoPanelOn);
 	t2->addAnimation(WcsFitsPanelOff);
 	t2->addAnimation(WcsEpoPanelOff);
 	t2->addAnimation(WcsFitsToolbarOn);
@@ -577,7 +575,7 @@ void MainWindow::buildImageAdjustmentMachine()
 	imageAdjustmentPanelOn->assignProperty(fitsToolbar, "pos", QPointF(0, 0));
 	imageAdjustmentPanelOn->assignProperty(fitsWcsInfoPanel, "pos", QPointF(0, -1*fitsWcsInfoPanel->height()));
 	imageAdjustmentPanelOn->assignProperty(epoWcsInfoPanel, "pos", QPointF(0, -1*epoWcsInfoPanel->height()));
-	imageAdjustmentPanelOn->assignProperty(ui.actionInfo, "checked", false);
+	imageAdjustmentPanelOn->assignProperty(ui.actionWCSInfo, "checked", false);
 	
 	// Set properites for the off state - image adjustment panel off, wcs info panel off
 	imageAdjustmentPanelOff->assignProperty(fitsToolbar, "pos", QPointF(0, -1*fitsToolbar->height()));
@@ -699,7 +697,7 @@ void MainWindow::enableExport()
 	if (computewcs->epoWCS)
 	{
 		// Enable export menu items
-		ui.actionAstronomy_Visualization_Metadata->setEnabled(true);
+		ui.actionAVM->setEnabled(true);
 		ui.actionFITS_Image->setEnabled(true);
 		
 		// Create EPO WCS object and load WCS to panel and export object
@@ -710,7 +708,7 @@ void MainWindow::enableExport()
 	else
 	{
 		// Disable export menu items
-		ui.actionAstronomy_Visualization_Metadata->setEnabled(false);
+		ui.actionAVM->setEnabled(false);
 		ui.actionFITS_Image->setEnabled(false);
 		
 		// Disable prediction of EPO coordinate

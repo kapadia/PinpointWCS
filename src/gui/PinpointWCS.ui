@@ -155,7 +155,7 @@
     </property>
     <addaction name="actionCoordinates"/>
     <addaction name="actionImageAdjustments"/>
-    <addaction name="actionInfo"/>
+    <addaction name="actionWCSInfo"/>
     <addaction name="separator"/>
     <addaction name="actionCoordinate_Table"/>
     <addaction name="separator"/>
@@ -171,7 +171,9 @@
     <property name="title">
      <string>Export</string>
     </property>
-    <addaction name="actionAstronomy_Visualization_Metadata"/>
+    <addaction name="actionAVM"/>
+    <addaction name="actionDetailed_AVM"/>
+    <addaction name="separator"/>
     <addaction name="actionFITS_Image"/>
    </widget>
    <widget class="QMenu" name="menuImage">
@@ -226,7 +228,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="enabled">
     <bool>false</bool>
@@ -238,7 +240,7 @@
     <string>Ctrl+Shift+C</string>
    </property>
   </action>
-  <action name="actionInfo">
+  <action name="actionWCSInfo">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -246,7 +248,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Info</string>
+    <string>WCS Info</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+W</string>
@@ -257,7 +259,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="enabled">
     <bool>false</bool>
@@ -306,12 +308,12 @@
     <string>Cubic</string>
    </property>
   </action>
-  <action name="actionAstronomy_Visualization_Metadata">
+  <action name="actionAVM">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Astronomy Visualization Metadata</string>
+    <string>AVM</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+X</string>
@@ -466,7 +468,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Fit Subsequent Point</string>
+    <string>Fit Next Point</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+P</string>
@@ -516,6 +518,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+/</string>
+   </property>
+  </action>
+  <action name="actionDetailed_AVM">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Detailed AVM</string>
    </property>
   </action>
  </widget>

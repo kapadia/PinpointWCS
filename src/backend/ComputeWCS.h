@@ -51,6 +51,8 @@ public:
 	double height;
 	Vector2d crpix;
 	Vector2d crval;
+	double centerRA;
+	double centerDec;
 	Matrix2d cdmatrix;
 	double scale;
 	double orientation;

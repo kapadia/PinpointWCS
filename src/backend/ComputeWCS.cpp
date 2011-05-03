@@ -38,6 +38,8 @@ ComputeWCS::ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoo
 	height = h;
 	rms_x = NULL;
 	rms_y = NULL;
+	centerRA = NULL;
+	centerDec = NULL;
 	
 	// Flip matrix
 	flip << 0, 1, 1, 0;
@@ -92,10 +94,11 @@ void ComputeWCS::computeTargetWCS()
 		computeResiduals(numPoints);
 		
 		// Declare the CRPIX for the EPO image to be the center pixel
-		crpix << width / 2., height / 2.;
+		crpix = fitsToEpo(referenceWCS->xrefpix, referenceWCS->yrefpix);
 		
 		// Determine corresponding pixel in the FITS image in QGraphicsScene space
-		Vector2d ref0 = epoToFits(crpix);
+		Vector2d ref0;
+		ref0 << referenceWCS->xrefpix, referenceWCS->yrefpix;
 		std::cout << "ref0:\t" << ref0 << std::endl;
 		
 		// Transform from QGraphicsScene pixels to FITS pixels
@@ -132,6 +135,8 @@ void ComputeWCS::computeTargetWCS()
 		
 		// Calculate the orientation
 		orientation = atan2(xieta_y(0) - xieta_0(0), -(xieta_y(1) - xieta_0(1))) * (180. / M_PI);
+		
+		// TODO: Store the coordinates for the center of the image
 		
 		// EPO WCS calculated!!
 		epoWCS = true;
