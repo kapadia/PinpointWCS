@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>468</width>
-    <height>255</height>
+    <width>612</width>
+    <height>382</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,9 +15,39 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="helpLabel">
-     <property name="text">
-      <string>PinpointWCS Help</string>
+    <widget class="QTextEdit" name="textEdit">
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; color:#ffffff;&quot;&gt;PinpointWCS Help&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600; color:#ffffff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; color:#ffffff;&quot;&gt;PinpointWCS simplifies retrieval of world coordinate system (WCS) data from FITS images for education and public outreach (EPO) images.  Desktop planetarium packages aware of these data can intelligently position astronomical images on the digital sky, lending a unique context to the outreach image.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; color:#ffffff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; color:#ffffff;&quot;&gt;Getting Started&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600; color:#ffffff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; color:#ffffff;&quot;&gt;PinpointWCS requires a FITS image containing WCS and an EPO image.  Files are imported into the application by dragging and dropping them into the designated areas labeled &amp;quot;DROP FITS IMAGE HERE&amp;quot; and &amp;quot;DROP EPO IMAGE HERE&amp;quot;.  If any dimension of the FITS image exceeds 2048 pixels, the image will be downsampled upon import.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; color:#ffffff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; color:#1d1d1d;&quot;&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque nec eros libero, sed lobortis dui. In quam elit, faucibus non sagittis at, lobortis et diam. Mauris sollicitudin posuere aliquam. Suspendisse potenti. Suspendisse consequat pellentesque mi at imperdiet. Donec sollicitudin arcu id enim suscipit elementum. Cras ac turpis eu enim suscipit laoreet id quis elit. Phasellus sapien elit, ornare eget mollis a, pharetra eu diam. Maecenas quis lectus sed massa pellentesque mattis a sit amet sapien. Ut convallis nisl sit amet nunc rutrum non malesuada dui eleifend. Fusce vel massa eu nibh vestibulum vulputate ultricies sit amet eros. Fusce lectus erat, egestas a pharetra ac, porttitor et ligula. Vestibulum a lectus elit. Aenean ornare lectus id dolor tincidunt sit amet placerat felis egestas. In eget libero at quam ornare tempus. Donec auctor tempus ornare. Proin et mi vitae neque porta condimentum sed vitae quam.Ut a velit et dui hendrerit vehicula id nec leo. Aenean adipiscing sapien nec nisi sollicitudin porta. In hac habitasse platea dictumst. Maecenas ante enim, auctor nec pharetra eget, adipiscing eget elit. In hac habitasse platea dictumst. Integer diam justo, euismod id porta eu, molestie at lacus. Cras vestibulum facilisis turpis at adipiscing. Nullam sit amet ligula non mauris ornare molestie. Morbi lacinia pellentesque elit, sit amet pharetra quam euismod non. Morbi gravida, ipsum non dapibus accumsan, enim nibh vulputate justo, et adipiscing lorem tortor quis ligula. Sed tortor mi, faucibus sed viverra sed, consectetur mollis erat. Ut ante odio, condimentum quis cursus a, gravida ac orci. Morbi vitae consequat quam. Nulla facilisi. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus tempor, tortor molestie tincidunt tincidunt, lacus mi sollicitudin elit, non auctor turpis dui at risus. Pellentesque egestas massa at purus congue ultrices. Integer aliquam fringilla placerat. Maecenas mollis metus non felis faucibus a luctus lacus malesuada.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::NoTextInteraction</set>
      </property>
     </widget>
    </item>

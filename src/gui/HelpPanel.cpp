@@ -38,6 +38,11 @@ HelpPanel::HelpPanel(QWidget *parent)
 	palette.setColor(QPalette::Background, bgcolor);
 	palette.setColor(QPalette::WindowText, textcolor);
 	setPalette(palette);
+	
+	// Adjust the style of the text edit box
+	ui.textEdit->setTextBackgroundColor(bgcolor);
+	ui.textEdit->setTextColor(textcolor);
+
 }
 
 HelpPanel::~HelpPanel() {}
