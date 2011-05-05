@@ -26,10 +26,6 @@
 
 #include <xpa.h>
 
-QT_BEGIN_NAMESPACE
-//class QProcess;
-QT_END_NAMESPACE
-
 #define NXPA 1
 
 class DS9Thread : public QThread {
