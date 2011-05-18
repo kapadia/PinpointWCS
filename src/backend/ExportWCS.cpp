@@ -196,7 +196,7 @@ void ExportWCS::exportFITS()
 }
 
 
-void ExportWCS::exportAVM()
+void ExportWCS::exportAVM(bool detailed)
 {
 	qDebug() << "Attempting to export AVM ...";
 	
@@ -288,17 +288,20 @@ void ExportWCS::exportAVM()
 				QString spatialnotes = QString("World Coordinate System resolved using PinpointWCS %1 revision %2 by the Chandra X-ray Center\n\n").arg(VERSION).arg(REVISION);
 				
 				// Add the pixel coordinates to Spatial.Notes
-				QString data = QString("%1\t\t%2\t\t%3\t\t%4\n").arg("FITS X").arg("FITS Y").arg("EPO X").arg("EPO Y");
-				spatialnotes.append(data);
-				
-				for (int i=0; i < computewcs->refCoords->size(); i++)
+				if (detailed)
 				{
-					QString data = QString("%1\t\t%2\t\t%3\t\t%4\n").arg(computewcs->refCoords->at(i).x(), 0, 'f', 2).arg(computewcs->refCoords->at(i).y(), 0, 'f', 2).arg(computewcs->epoCoords->at(i).x(), 0, 'f', 2).arg(computewcs->epoCoords->at(i).y(), 0, 'f', 2);
+					QString data = QString("%1\t\t%2\t\t%3\t\t%4\n").arg("FITS X").arg("FITS Y").arg("EPO X").arg("EPO Y");
 					spatialnotes.append(data);
+					
+					for (int i=0; i < computewcs->refCoords->size(); i++)
+					{
+						QString data = QString("%1\t\t%2\t\t%3\t\t%4\n").arg(computewcs->refCoords->at(i).x(), 0, 'f', 2).arg(computewcs->refCoords->at(i).y(), 0, 'f', 2).arg(computewcs->epoCoords->at(i).x(), 0, 'f', 2).arg(computewcs->epoCoords->at(i).y(), 0, 'f', 2);
+						spatialnotes.append(data);
+					}
+					
+					// Remove the last new line
+					spatialnotes.remove(spatialnotes.size()-1, 1);
 				}
-				
-				// Remove the last new line
-				spatialnotes.remove(spatialnotes.size()-1, 1);
 				
 				// Begin modifying AVM
 				XMP_OptionBits itemOptions;

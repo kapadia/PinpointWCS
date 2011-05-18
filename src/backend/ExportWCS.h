@@ -45,7 +45,7 @@ public:
 	
 public slots:
 	void exportFITS();
-	void exportAVM();
+	void exportAVM(bool detailed=false);
 	
 signals:
 	void exportResults(bool success);

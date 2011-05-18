@@ -384,13 +384,13 @@ bool MainWindow::setupWorkspace()
 	// Scan preference file to set the WCS format
 	QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
 	bool wcsformat = settings.value("wcsformat", false).toBool();
-	if (wcsformat) 
+	if (wcsformat)
 		ui.actionSexagesimal->trigger();
 	else
 		ui.actionDegrees->trigger();
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-//	testII();
+	testII();
 	
 	return true;
 }
