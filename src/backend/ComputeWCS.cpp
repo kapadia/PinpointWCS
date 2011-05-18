@@ -168,7 +168,7 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	// Initializing with height - crpix(1) resolves the coordinate panel, but breaks
 	// the export.
 	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
-						 crpix(0), crpix(1), referenceWCS->crval[0], referenceWCS->crval[1],
+						 crpix(0), height-crpix(1)+1, referenceWCS->crval[0], referenceWCS->crval[1],
 						 cd, NULL, NULL,
 						 NULL, referenceWCS->equinox, referenceWCS->epoch
 	);

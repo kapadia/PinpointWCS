@@ -50,7 +50,6 @@ double* PPWcsImage::pix2sky(QPointF pos)
 	
 	xf = M*(pos.x()-1)+2-0.5;
 	yf = (M*(pos.y()-1))-0.5;
-//	yf = naxisn[1]-(M*(pos.y()-1))-0.5;
 
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	

@@ -146,7 +146,7 @@ void ExportWCS::exportFITS()
 	QString equinox = QString("%1").arg(wcs->equinox, 0, 'f', 1);
 	QString crpix1 = QString("%1").arg(wcs->xrefpix, 0, 'f', 11);
 	QString crval1 = QString("%1").arg(wcs->xref, 0, 'f', 11);
-	QString crpix2 = QString("%1").arg(wcs->nypix - wcs->yrefpix + 1, 0, 'f', 11);
+	QString crpix2 = QString("%1").arg(wcs->yrefpix, 0, 'f', 11);
 	QString crval2 = QString("%1").arg(wcs->yref, 0, 'f', 11);
 	QString cd11 = QString("%1").arg(wcs->cd[0], 0, 'f', 11);
 	QString cd12 = QString("%1").arg(wcs->cd[1], 0, 'f', 11);
