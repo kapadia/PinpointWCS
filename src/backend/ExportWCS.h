@@ -45,7 +45,8 @@ public:
 	
 public slots:
 	void exportFITS();
-	void exportAVM(bool detailed=false);
+	void exportAVMClean();
+	void exportAVMDetailed();
 	
 signals:
 	void exportResults(bool success);
@@ -56,6 +57,8 @@ private:
 	QString *filename;
 	struct WorldCoor *wcs;
 	ComputeWCS *computewcs;
+	
+	void exportAVM(bool detailed = false);
 };
 
 #endif
