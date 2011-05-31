@@ -312,8 +312,14 @@ void ExportWCS::exportAVM(bool detailed)
 						spatialnotes.append(data);
 					}
 					
-					// Remove the last new line
-					spatialnotes.remove(spatialnotes.size()-1, 1);
+					// Get the center pixel (for STScI)
+					QString center_x = QString("\n%1").arg(computewcs->width/2., 0, 'f', 2);
+					QString center_y = QString("%1").arg(computewcs->height/2., 0, 'f', 2);
+					QString center_ra = QString("%1").arg(computewcs->centerRA, 0, 'f', 11);
+					QString center_dec = QString("%1").arg(computewcs->centerDec, 0, 'f', 11);
+				
+					QString centerpix = QString("\nCenter Pixel Coordinates:%1\t%2\n%3\t%4").arg(center_x).arg(center_ra).arg(center_y).arg(center_dec);
+					spatialnotes.append(centerpix);
 				}
 				
 				// Begin modifying AVM

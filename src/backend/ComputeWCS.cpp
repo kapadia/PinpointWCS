@@ -38,6 +38,8 @@ ComputeWCS::ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoo
 	height = h;
 	rms_x = NULL;
 	rms_y = NULL;
+	center_x = NULL;
+	center_y = NULL;
 	centerRA = NULL;
 	centerDec = NULL;
 	
@@ -179,7 +181,11 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	wcsoutinit(targetWCS, "FK5");
 	
 	// Calculate the coordinates for the center of the image (for the folks at STScI)
-	pix2wcs(targetWCS, width/2., height/2., &centerRA, &centerDec);
+	// Transform QGraphicsScene pixels to FITS pixels
+	center_x = width/2. + 0.5;
+	center_y = height - height/2. + 0.5;
+	
+	pix2wcs(targetWCS, center_x, center_y, &centerRA, &centerDec);
 	std::cout << "Dimensions\t" << width/2. << "\t" << height/2. << std::endl;
 	printf("Center Pixel:\t%.11f\t%.11f\n", centerRA, centerDec);
 	
