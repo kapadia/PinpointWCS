@@ -133,6 +133,10 @@ void DS9Thread::run()
         got = XPASet(xpa, method, "match frames wcs", "", NULL, 0, nombres, msgs, NXPA);
         got = XPASet(xpa, method, "mode crosshair", "", NULL, 0, nombres, msgs, NXPA);
         got = XPASet(xpa, method, "lock crosshair wcs", "", NULL, 0, nombres, msgs, NXPA);
+		got = XPASet(xpa, method, "zoom to fit", "", NULL, 0, nombres, msgs, NXPA);
+		got = XPASet(xpa, method, "frame next", "", NULL, 0, nombres, msgs, NXPA);
+		got = XPASet(xpa, method, "zoom to fit", "", NULL, 0, nombres, msgs, NXPA);
+		
 		
 		// Close the XPA persistent connection
 		XPAClose(xpa);

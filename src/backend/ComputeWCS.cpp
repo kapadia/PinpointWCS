@@ -165,10 +165,7 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	
 	// Determine the reference image's reference pixel from the frame of reference of the EPO image
 	crpix = fitsToEpo(referenceWCS->crpix[0], referenceWCS->crpix[1]);
-	std::cout << "Dimensions\t" << width << "\t" << height << std::endl;
-	// FIXME: This WCS struct is okay for export, but not for coordinate panel
-	// Initializing with height - crpix(1) resolves the coordinate panel, but breaks
-	// the export.
+
 	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
 						 crpix(0), height-crpix(1)+1, referenceWCS->crval[0], referenceWCS->crval[1],
 						 cd, NULL, NULL,
@@ -181,11 +178,12 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	wcsoutinit(targetWCS, "FK5");
 	
 	// Calculate the coordinates for the center of the image (for the folks at STScI)
-	// Transform QGraphicsScene pixels to FITS pixels
+	// Center pixel transforms on to itself (no need to apply QGraphicsScene pixels -> FITS pixels transformation!)
 	center_x = width/2. + 0.5;
 	center_y = height - height/2. + 0.5;
-	
 	pix2wcs(targetWCS, center_x, center_y, &centerRA, &centerDec);
+	center_x = width/2.;
+	center_y = height/2.;
 	std::cout << "Dimensions\t" << width/2. << "\t" << height/2. << std::endl;
 	printf("Center Pixel:\t%.11f\t%.11f\n", centerRA, centerDec);
 	

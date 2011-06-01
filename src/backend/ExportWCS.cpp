@@ -83,6 +83,14 @@ void ExportWCS::exportFITS()
 	// Prompt user for filename
 	saveas = QFileDialog::getSaveFileName(NULL, "Export FITS Image", *filename+"_ppwcs.fits", "Images(*.fit *.fits)", NULL, NULL);
 	
+	// Check that a filename is chosen
+	if (saveas.isEmpty())
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
+	
 	// Initialize FITS image parameters
 	int bitpix = BYTE_IMG;
 	long naxis = 2;
@@ -91,7 +99,11 @@ void ExportWCS::exportFITS()
 	// Allocate memory for the entire image
 	imagedata[0] = (unsigned short *) malloc(naxes[0] * naxes[1] * sizeof(unsigned short));
 	if (!imagedata)
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;	
+	}
 	
 	// Initialize pointers to the start of each row of the image
     for(ii=1; ii<naxes[1]; ii++)
@@ -102,11 +114,19 @@ void ExportWCS::exportFITS()
 	
 	// Attempt to create the FITS file (writes to disk)
 	if (fits_create_file(&fptr, saveas.toStdString().c_str(), &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	
 	// Attempt to create the image HDU
 	if (fits_create_img(fptr,  bitpix, naxis, naxes, &status))
-        emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	
 	// Initialize the values in the image using the QPixmaps
     for (jj = 0; jj < naxes[1]; jj++)
@@ -119,7 +139,11 @@ void ExportWCS::exportFITS()
 	
 	// Write the array to the FITS image
     if (fits_write_img(fptr, TUSHORT, fpixel, nelements, imagedata[0], &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	
 	// Free memory
 	free(imagedata[0]);
@@ -134,13 +158,29 @@ void ExportWCS::exportFITS()
 	
 	// TSTRING, TLOGICAL (== int), TBYTE, TSHORT, TUSHORT, TINT, TUINT, TLONG, TLONGLONG, TULONG, TFLOAT, TDOUBLE
 	if (fits_update_key(fptr, TSTRING, "XTENSION", &xtension, NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "ORIGIN", &origin, NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TINT, "WCSAXES", &naxis, NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "WCSNAME", &wcsname, NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	
 	// Format values to specific digits
 	QString equinox = QString("%1").arg(wcs->equinox, 0, 'f', 1);
@@ -154,44 +194,107 @@ void ExportWCS::exportFITS()
 	QString cd22 = QString("%1").arg(wcs->cd[3], 0, 'f', 11);
 
 	if (fits_update_key(fptr, TSTRING, "EQUINOX", (void*) equinox.toStdString().c_str(), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "RADESYS", &(wcs->radecsys), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CTYPE1", &ctype1, NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CRPIX1", (void*) crpix1.toStdString().c_str(), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CRVAL1", (void*) crval1.toStdString().c_str(), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CUNIT1", &cunit, NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CTYPE2", &ctype2, NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CRPIX2", (void*) crpix2.toStdString().c_str(), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CRVAL2", (void*) crval2.toStdString().c_str(), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CUNIT2", &cunit, NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CD1_1", (void*) cd11.toStdString().c_str(), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CD1_2", (void*) cd21.toStdString().c_str(), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CD2_1", (void*) cd12.toStdString().c_str(), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	if (fits_update_key(fptr, TSTRING, "CD2_2", (void*) cd22.toStdString().c_str(), NULL, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 
 	// Write comments
 	if (fits_write_comment(fptr, "World Coordinate System computed using PinpointWCS by the Chandra X-ray Center.  PinpointWCS is developed and maintained by Amit Kapadia (CfA) akapadia@cfa.harvard.edu.", &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	
 	// Close FITS file
 	if (fits_close_file(fptr, &status))
-		emit exportResults(false);
+	{
+		fitsexport = false;
+		emit exportResults(fitsexport);
+		return;
+	}
 	
 	fitsexport = true;
-	
 	emit exportResults(true);
 }
 
