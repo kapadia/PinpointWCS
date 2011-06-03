@@ -27,6 +27,8 @@
 #include <QSignalTransition>
 #include <QActionGroup>
 #include <QSettings>
+#include <QDesktopServices>
+#include <QUrl>
 //#include <QtNetwork>
 
 #include "ui_PinpointWCS.h"
@@ -46,7 +48,7 @@
 #include "MessageBox.h"
 #include "FITSThread.h"
 #include "DS9Thread.h"
-#include "HelpPanel.h"
+//#include "HelpPanel.h"
  
 class MainWindow : public QMainWindow
 {
@@ -70,7 +72,7 @@ private:
 	QActionGroup *stretchActionGroup;
 	QActionGroup *wcsFormatActionGroup;
 	MessageBox *msg;
-	HelpPanel *helpPanel;
+//	HelpPanel *helpPanel;
 	
 	// Image Attributes
 	FitsImage *fitsImage;
@@ -94,9 +96,9 @@ private:
 	ExportWCS *exportwcs;
 	
 	// State Machines Attributes
-	QStateMachine *HelpPanelMachine;
-	QState *HelpPanelOn;
-	QState *HelpPanelOff;
+//	QStateMachine *HelpPanelMachine;
+//	QState *HelpPanelOn;
+//	QState *HelpPanelOff;
 	
 	QStateMachine *WcsInfoPanelMachine;
 	QState *WcsInfoPanelOn;
@@ -134,7 +136,7 @@ private:
 	AboutDialog *aboutDialog;
 	
 	// State Machine Methods
-	void buildHelpPanelMachine();
+//	void buildHelpPanelMachine();
 	void buildWcsInfoPanelMachine();
 	void buildCoordPanelMachine();
 	void buildImageAdjustmentMachine();
@@ -152,7 +154,7 @@ private slots:
 	bool loadEpoImage(QString& filename);
 	void stretch(QAction *action);
 	void updateCoordPanelProperties();
-	void updateHelpPanelProperties();
+//	void updateHelpPanelProperties();
 	void enableExport();
 	void computeWCS();
 	void rotateMenuItems(GraphicsView *gv);
@@ -161,6 +163,7 @@ private slots:
 	void updateWithCentroid(QPointF pos);
 	void openDS9();
 	void closeDS9();
+	void getHelp();
 	
 	// A slots for testing ...
 	void testSlot();

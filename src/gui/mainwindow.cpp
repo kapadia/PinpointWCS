@@ -50,15 +50,17 @@ MainWindow::MainWindow()
 	
 	// Initialize dialogs
 	aboutDialog = new AboutDialog(this);
-	helpPanel = new HelpPanel(this);
-	buildHelpPanelMachine();
+//	helpPanel = new HelpPanel(this);
+//	buildHelpPanelMachine();
 	
 	// Connect signals and slots
 	connect(ui.dropLabel_1, SIGNAL(readyForImport()), this, SLOT(setupImages()));
 	connect(ui.dropLabel_2, SIGNAL(readyForImport()), this, SLOT(setupImages()));
 	connect(ui.actionAbout_PinpointWCS, SIGNAL(triggered(bool)), aboutDialog, SLOT(exec()));
-	connect(this, SIGNAL(objectResized(QSize)), helpPanel, SLOT(parentResized(QSize)));
-	connect(this, SIGNAL(objectResized(QSize)), this, SLOT(updateHelpPanelProperties()));
+	connect(ui.actionPinpointWCSHelp, SIGNAL(triggered(bool)), this, SLOT(getHelp()));
+	
+//	connect(this, SIGNAL(objectResized(QSize)), helpPanel, SLOT(parentResized(QSize)));
+//	connect(this, SIGNAL(objectResized(QSize)), this, SLOT(updateHelpPanelProperties()));
 	
 	// Teardown the workspace
 	ui.actionNew_Workspace->setEnabled(false);
@@ -470,6 +472,7 @@ bool MainWindow::loadFITSImage()
 	return true;
 }
 
+/*
 void MainWindow::buildHelpPanelMachine()
 {
 	// Initialize machine and states
@@ -500,6 +503,7 @@ void MainWindow::buildHelpPanelMachine()
 	// Start the machine
 	HelpPanelMachine->start();
 }
+*/
 
 void MainWindow::buildWcsInfoPanelMachine()
 {
@@ -659,7 +663,7 @@ void MainWindow::teardownCoordPanelMachine()
 	delete CoordPanelMachine;
 }
 
-
+/*
 void MainWindow::updateHelpPanelProperties()
 {
 	// Move panels
@@ -671,7 +675,7 @@ void MainWindow::updateHelpPanelProperties()
 	// Property for the off state
 	HelpPanelOff->assignProperty(helpPanel, "pos", QPointF(0, -1*height()));
 }
-
+*/
 
 void MainWindow::updateCoordPanelProperties()
 {
@@ -836,6 +840,11 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 	QWidget::resizeEvent(event);
 }
 
+
+void MainWindow::getHelp()
+{
+	QDesktopServices::openUrl(QUrl("https://www.cfa.harvard.edu/~akapadia/pinpointwcs/"));
+}
 
 void MainWindow::testSlot()
 {
