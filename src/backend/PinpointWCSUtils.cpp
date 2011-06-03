@@ -31,7 +31,7 @@ namespace PinpointWCSUtils {
 	
 	float computeQuantile(float *arr, long arraysize, double q)
 	{
-		std::cout << "Determining Quantile ...\n";
+//		std::cout << "Determining Quantile ...\n";
 		long length = arraysize;
 		float dd;
 		double dq;

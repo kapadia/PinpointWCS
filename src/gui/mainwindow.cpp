@@ -394,7 +394,7 @@ bool MainWindow::setupWorkspace()
 		ui.actionDegrees->trigger();
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-	testII();
+//	testI();
 	
 	return true;
 }

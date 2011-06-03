@@ -101,13 +101,13 @@ void ComputeWCS::computeTargetWCS()
 		// Determine corresponding pixel in the FITS image in QGraphicsScene space
 		Vector2d ref0;
 		ref0 << referenceWCS->xrefpix, referenceWCS->yrefpix;
-		std::cout << "ref0:\t" << ref0 << std::endl;
+//		std::cout << "ref0:\t" << ref0 << std::endl;
 		
 		// Transform from QGraphicsScene pixels to FITS pixels
 		ref0 = gsPix2fitsPix(ref0);
 		
 		Vector2d xieta_0 = xi_eta(ref0);
-		std::cout << "xieta_0:\t" << xieta_0 << std::endl;
+//		std::cout << "xieta_0:\t" << xieta_0 << std::endl;
 		
 		// Determine the celestial coordinates for ref0		
 		pix2wcs(referenceWCS, ref0[0], ref0[1], &crval[0], &crval[1]);
@@ -179,13 +179,13 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	
 	// Calculate the coordinates for the center of the image (for the folks at STScI)
 	// Center pixel transforms on to itself (no need to apply QGraphicsScene pixels -> FITS pixels transformation!)
-	center_x = width/2. + 0.5;
-	center_y = height - height/2. + 0.5;
+	center_x = 0.5*width + 0.5;
+	center_y = 0.5*height + 0.5;
 	pix2wcs(targetWCS, center_x, center_y, &centerRA, &centerDec);
-	center_x = width/2.;
-	center_y = height/2.;
-	std::cout << "Dimensions\t" << width/2. << "\t" << height/2. << std::endl;
-	printf("Center Pixel:\t%.11f\t%.11f\n", centerRA, centerDec);
+	center_x = 0.5*height;
+	center_y = 0.5*width;
+//	std::cout << "Dimensions\t" << center_x << "\t" << center_y << std::endl;
+//	printf("Center Pixel:\t%.11f\t%.11f\n", centerRA, centerDec);
 	
 	return targetWCS;
 }
