@@ -172,6 +172,7 @@ private slots:
 	void testI();
 	void testII();
 	void testIII();
+	void demo();
 	
 signals:
 	void objectResized(QSize s);

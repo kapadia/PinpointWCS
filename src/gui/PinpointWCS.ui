@@ -516,9 +516,6 @@
    <property name="text">
     <string>PinpointWCS Help</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+/</string>
-   </property>
   </action>
   <action name="actionDetailed_AVM">
    <property name="enabled">

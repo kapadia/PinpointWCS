@@ -136,6 +136,8 @@ void DS9Thread::run()
 		got = XPASet(xpa, method, "zoom to fit", "", NULL, 0, nombres, msgs, NXPA);
 		got = XPASet(xpa, method, "frame next", "", NULL, 0, nombres, msgs, NXPA);
 		got = XPASet(xpa, method, "zoom to fit", "", NULL, 0, nombres, msgs, NXPA);
+		qDebug() << nombres[0];
+		qDebug() << msgs[0];
 		
 		
 		// Close the XPA persistent connection

@@ -34,8 +34,11 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	// Initialize some attributes
 	filename = fileName;
 	status = 0;
-	lowerPercentile = 0.0025;
-	upperPercentile = 0.9975;
+//	lowerPercentile = 0.0025;
+//	upperPercentile = 0.9975;
+	lowerPercentile = 0.0015;
+	upperPercentile = 0.9985;
+	
 	downsampled = false;
 }
 
@@ -596,7 +599,7 @@ void FitsImage::invert()
 	emit pixmapChanged(&pixmap);
 }
 
-// TODO: Double check this to make sure the mapping between pixels is correct.
+
 QPointF FitsImage::fpix2pix(QPointF pos)
 {
 	float xf, yf;

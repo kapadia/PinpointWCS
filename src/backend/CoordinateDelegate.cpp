@@ -68,6 +68,7 @@ void CoordinateDelegate::setEditorData(QWidget *editor, const QModelIndex &index
 	
 	// Cast the editor as a double spin box
 	QDoubleSpinBox *spinBox = qobject_cast<QDoubleSpinBox*>(editor);
+	spinBox->setDecimals(11);
 	spinBox->setValue(value);
 }
 

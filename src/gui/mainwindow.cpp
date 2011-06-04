@@ -900,3 +900,18 @@ void MainWindow::testIII()
 	dataModel->setData(fitsScene, QPointF(778.51, 2690.50));
 	dataModel->setData(epoScene, QPointF(778.51, 2690.50));
 }
+
+void MainWindow::demo()
+{
+	dataModel->setData(fitsScene, QPointF(315.54, 269.36));
+	dataModel->setData(epoScene, QPointF(149.31, 95.45));
+	
+	dataModel->setData(fitsScene, QPointF(249.52, 469.68));
+	dataModel->setData(epoScene, QPointF(93.57, 264.20));
+	
+	dataModel->setData(fitsScene, QPointF(584.45, 708.53));
+	dataModel->setData(epoScene, QPointF(376.01, 465.71));
+	
+	dataModel->setData(fitsScene, QPointF(735.42, 449.58));
+	dataModel->setData(epoScene, QPointF(503.59, 246.91));
+}
