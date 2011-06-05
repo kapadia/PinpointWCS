@@ -11,5 +11,5 @@ rm -rf  *.app
 #	Get revision number from mercurial
 #
 
-#echo "#define VERSION \"1.0.0\"" > version.h
+#echo "#define VERSION \"0.9.0\"" > version.h
 #echo "#define REVISION "\"`/Library/Frameworks/Python.framework/Versions/Current/bin/hg id -n`\" >> version.h

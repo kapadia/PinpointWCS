@@ -394,7 +394,7 @@ bool MainWindow::setupWorkspace()
 		ui.actionDegrees->trigger();
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-//	testI();
+//	demo();
 	
 	return true;
 }
@@ -903,15 +903,25 @@ void MainWindow::testIII()
 
 void MainWindow::demo()
 {
-	dataModel->setData(fitsScene, QPointF(315.54, 269.36));
-	dataModel->setData(epoScene, QPointF(149.31, 95.45));
+	// Automatically add some markers for the M101 data
+	dataModel->setData(fitsScene, QPointF(394, 445));
+	dataModel->setData(epoScene, QPointF(826, 461));
 	
-	dataModel->setData(fitsScene, QPointF(249.52, 469.68));
-	dataModel->setData(epoScene, QPointF(93.57, 264.20));
+	dataModel->setData(fitsScene, QPointF(432, 367));
+	dataModel->setData(epoScene, QPointF(904, 544));
 	
-	dataModel->setData(fitsScene, QPointF(584.45, 708.53));
-	dataModel->setData(epoScene, QPointF(376.01, 465.71));
+	dataModel->setData(fitsScene, QPointF(543.84, 717.53));
+	dataModel->setData(epoScene, QPointF(417.55, 513.86));
 	
-	dataModel->setData(fitsScene, QPointF(735.42, 449.58));
-	dataModel->setData(epoScene, QPointF(503.59, 246.91));
+	dataModel->setData(fitsScene, QPointF(589.43, 718.44));
+	dataModel->setData(epoScene, QPointF(394.76, 569.78));
+	
+	undoAction->trigger();
+	undoAction->trigger();
+	undoAction->trigger();
+	undoAction->trigger();
+	undoAction->trigger();
+	undoAction->trigger();
+	undoAction->trigger();
+	undoAction->trigger();
 }

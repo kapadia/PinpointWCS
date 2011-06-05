@@ -34,10 +34,8 @@ FitsImage::FitsImage(QString &fileName) : PPWcsImage()
 	// Initialize some attributes
 	filename = fileName;
 	status = 0;
-//	lowerPercentile = 0.0025;
-//	upperPercentile = 0.9975;
-	lowerPercentile = 0.0015;
-	upperPercentile = 0.9985;
+	lowerPercentile = 0.0025;
+	upperPercentile = 0.9975;
 	
 	downsampled = false;
 }
@@ -283,7 +281,8 @@ bool FitsImage::verifyWCS()
 	}
 	
 	// Set output coordinates, needed by pix2wcs
-	wcsoutinit(wcs, "FK5");
+	wcsoutinit(wcs, "J2000");
+//	PinpointWCSUtils::dumpWCS(wcs);
 	
 	qDebug() << "WCS found!!!";\
 	return true;
@@ -758,6 +757,11 @@ double* FitsImage::pix2sky(QPointF pos)
 	if (!wcs)
 		return world;
 	
+	// TESTING: Comparing WCS found via WCSTools versus DS9
+	pix2wcs(wcs, 5.1470081103001E+02, 5.5057818329278E+02, &world[0], &world[1]);
+	qDebug() << "WCS at pixel ref pixel:\t" << world[0] << "\t" << world[1];
+	
+	
 	// Get unbinned pixel
 	float xf, yf;
 	
@@ -774,7 +778,7 @@ double* FitsImage::pix2sky(QPointF pos)
 	
 	pix2wcs(wcs, xf, yf, &world[0], &world[1]);
 	
-	// Check if coordinates are galatic
+	// Check if coordinates are other than J2000
 	if (wcs->syswcs != WCS_J2000)
 		wcscon(wcs->syswcs, WCS_J2000, wcs->equinox, wcs->eqout, &world[0], &world[1], wcs->epoch);
 	

@@ -395,7 +395,7 @@ void ExportWCS::exportAVM(bool detailed)
 				QString crval1 = QString("%1").arg(wcs->xref, 0, 'f', 11);
 				QString crval2 = QString("%1").arg(wcs->yref, 0, 'f', 11);				
 				QString crpix1 = QString("%1").arg(wcs->xrefpix - 0.5, 0, 'f', 11);
-				QString crpix2 = QString("%1").arg(wcs->nypix - wcs->yrefpix + 0.5, 0, 'f', 11);
+				QString crpix2 = QString("%1").arg(wcs->yrefpix + 0.5, 0, 'f', 11);
 				QString scale1 = QString("%1").arg(-1*computewcs->scale, 0, 'f', 11);
 				QString scale2 = QString("%1").arg(computewcs->scale, 0, 'f', 11);
 				QString orientation = QString("%1").arg(computewcs->orientation, 0, 'f', 11);
