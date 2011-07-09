@@ -18,7 +18,7 @@
 # testprog targets. See also changes and comments in configure.in
 #
 
-prefix		= /Users/akapadia/Projects/PinpointWCS/cfitsio
+prefix		= /Users/akapadia/Projects/pinpointwcs/cfitsio
 exec_prefix	= ${prefix}
 DESTDIR		= 
 CFITSIO_PREFIX	= $(prefix)

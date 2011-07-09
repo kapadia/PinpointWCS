@@ -11,8 +11,12 @@ qrc_*.cpp
 # Xcode project file
 PinpointWCS.xcodeproj/
 
+# Qt Creator project file
+PinpointWCS.pro.user
+
 # build folder
 build/
+PinpointWCS-build-desktop/
 
 # Compiled application and files
 *.app

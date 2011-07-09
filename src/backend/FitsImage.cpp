@@ -759,7 +759,6 @@ double* FitsImage::pix2sky(QPointF pos)
 	
 	// TESTING: Comparing WCS found via WCSTools versus DS9
 	pix2wcs(wcs, 5.1470081103001E+02, 5.5057818329278E+02, &world[0], &world[1]);
-	qDebug() << "WCS at pixel ref pixel:\t" << world[0] << "\t" << world[1];
 	
 	
 	// Get unbinned pixel

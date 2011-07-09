@@ -394,7 +394,7 @@ bool MainWindow::setupWorkspace()
 		ui.actionDegrees->trigger();
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-//	demo();
+        testIIII();
 	
 	return true;
 }
@@ -899,6 +899,25 @@ void MainWindow::testIII()
 
 	dataModel->setData(fitsScene, QPointF(778.51, 2690.50));
 	dataModel->setData(epoScene, QPointF(778.51, 2690.50));
+}
+
+void MainWindow::testIIII()
+{
+
+    dataModel->setData(fitsScene, QPointF(1729.86, 763.25));
+    dataModel->setData(epoScene, QPointF(5101.78, 2201.82));
+
+    dataModel->setData(fitsScene, QPointF(1856.17, 738.81));
+    dataModel->setData(epoScene, QPointF(5480.38, 2129.32));
+
+    dataModel->setData(fitsScene, QPointF(1859.99, 659.80));
+    dataModel->setData(epoScene, QPointF(5493.81, 1893.03));
+
+    dataModel->setData(fitsScene, QPointF(870.33, 794.63));
+    dataModel->setData(epoScene, QPointF(2523.49, 2298.64));
+
+    dataModel->setData(fitsScene, QPointF(1126.52, 903.48));
+    dataModel->setData(epoScene, QPointF(3290.93, 2623.30));
 }
 
 void MainWindow::demo()

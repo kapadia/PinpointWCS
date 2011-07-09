@@ -5,6 +5,7 @@ rm ui_*.h
 rm -rf *.xcodeproj
 rm qrc_*.cpp
 rm -rf  *.app
+rm -rf *.pro.user
 
 
 #

@@ -26,7 +26,7 @@ FTPDIR	= ../ftp
 # at configure-time with the --exec-prefix and --prefix options
 # to the "configure" script.
 
-prefix =		/Users/amit/Projects/PinpointWCS/xpa-2.1.13/
+prefix =		/Users/akapadia/Projects/pinpointwcs/xpa-2.1.13/
 exec_prefix =		${prefix}
 
 # The following definition can be set to non-null for special systems
@@ -52,7 +52,7 @@ MAN_INSTALL_DIR =	$(INSTALL_ROOT)$(prefix)/man
 MAN_SHARE_DIR =		$(INSTALL_ROOT)$(prefix)/share/xpa
 
 # Platform-specific X compiler flags (include file specifications)
-X_CFLAGS = 		 -I/usr/X11/include
+X_CFLAGS = 		
 # Platform-specific link directive for X libraries (-L specification)
 X_LIBS = 		 -L/usr/X11/lib -R/usr/X11/lib
 # Platform-specific libraries that must go before -lXt
@@ -61,9 +61,9 @@ X_PRE_LIBS = 		 -lSM -lICE
 X_EXTRA_LIBS = 		
 
 # Platform-specific include files for Tcl
-TCL_CFLAGS = 		-I/System/Library/Frameworks/Tcl.framework/Versions/8.4/Headers
+TCL_CFLAGS = 		-I/System/Library/Frameworks/Tcl.framework/Versions/8.5/Headers
 # Platform-specific libraries for Tcl
-TCL_LIBS = 		-framework Tcl
+TCL_LIBS = 		-F/System/Library/Frameworks -framework Tcl
 
 # Platform-specific include files for Gtk
 GTK_CFLAGS = 		
@@ -81,7 +81,7 @@ TLIB =
 
 # To change the compiler switches, for example to change from -O
 # to -g, change the following line:
-CFLAGS = 		-g -O2 -no-cpp-precomp
+CFLAGS = 		-g -O2
 
 # To add ld switches, change the following line:
 LDFLAGS =		  -g -O2

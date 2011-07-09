@@ -172,6 +172,7 @@ private slots:
 	void testI();
 	void testII();
 	void testIII();
+        void testIIII();
 	void demo();
 	
 signals:

@@ -1,4 +1,4 @@
-prefix=/Users/akapadia/Projects/PinpointWCS/cfitsio
+prefix=/Users/akapadia/Projects/pinpointwcs/cfitsio
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
