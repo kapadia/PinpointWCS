@@ -42,6 +42,7 @@ ComputeWCS::ComputeWCS(QList<QPointF> *ref, QList<QPointF> *epo, struct WorldCoo
 	center_y = NULL;
 	centerRA = NULL;
 	centerDec = NULL;
+        M = 1;
 	
 	// Flip matrix
 	flip << 0, 1, 1, 0;
@@ -94,13 +95,19 @@ void ComputeWCS::computeTargetWCS()
 		
 		// Compute residuals
 		computeResiduals(numPoints);
+
+                // Unbin the reference pixel
+                double xrefpix = M*(referenceWCS->xrefpix-1)+1;
+                double yrefpix = M*(referenceWCS->yrefpix-1)+1;
 		
 		// Declare the CRPIX for the EPO image to be the center pixel
-		crpix = fitsToEpo(referenceWCS->xrefpix, referenceWCS->yrefpix);
-		
+                //crpix = fitsToEpo(xrefpix, yrefpix);
+                crpix = fitsToEpo(referenceWCS->xrefpix, referenceWCS->yrefpix);
+
 		// Determine corresponding pixel in the FITS image in QGraphicsScene space
 		Vector2d ref0;
-		ref0 << referenceWCS->xrefpix, referenceWCS->yrefpix;
+                //ref0 << xrefpix, yrefpix;
+                ref0 << referenceWCS->xrefpix, referenceWCS->yrefpix;
 //		std::cout << "ref0:\t" << ref0 << std::endl;
 		
 		// Transform from QGraphicsScene pixels to FITS pixels
@@ -164,14 +171,15 @@ struct WorldCoor* ComputeWCS::initTargetWCS()
 	cd[3] = cdmatrix(3);
 	
 	// Determine the reference image's reference pixel from the frame of reference of the EPO image
-	crpix = fitsToEpo(referenceWCS->crpix[0], referenceWCS->crpix[1]);
+        crpix = fitsToEpo(referenceWCS->crpix[0], referenceWCS->crpix[1]);
+        //crpix = fitsToEpo( (M*(referenceWCS->crpix[0]-1)+1), (referenceWCS->crpix[1]-1)+1) ;
 
 	targetWCS = wcskinit(width, height, "RA---TAN", "DEC--TAN",
 						 crpix(0), height-crpix(1)+1, referenceWCS->crval[0], referenceWCS->crval[1],
 						 cd, NULL, NULL,
 						 NULL, referenceWCS->equinox, referenceWCS->epoch
 	);
-	
+
 	free(cd);
 	
 	// Set output coordinates
@@ -370,4 +378,10 @@ Vector2d ComputeWCS::gsPix2fitsPix(Vector2d p)
 	coordinate(1) = referenceWCS->nypix - p[1];
 
 	return coordinate;
+}
+
+void ComputeWCS::setDownsampleFactor(int factor)
+{
+    M = factor;
+    qDebug() << "From inside ComputeWCS:\t" << M;
 }

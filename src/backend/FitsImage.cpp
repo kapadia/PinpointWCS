@@ -756,10 +756,7 @@ double* FitsImage::pix2sky(QPointF pos)
 {	
 	if (!wcs)
 		return world;
-	
-	// TESTING: Comparing WCS found via WCSTools versus DS9
-	pix2wcs(wcs, 5.1470081103001E+02, 5.5057818329278E+02, &world[0], &world[1]);
-	
+		
 	
 	// Get unbinned pixel
 	float xf, yf;

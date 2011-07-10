@@ -258,7 +258,8 @@ bool MainWindow::setupWorkspace()
 	coordinateTableDialog->ui.coordinateTable->setItemDelegate(tableDelegate);
 	
 	// Initialize the ComputeWCS and ExportWCS objects
-	computewcs = new ComputeWCS(&(dataModel->refCoords), &(dataModel->epoCoords), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
+        computewcs = new ComputeWCS(&(dataModel->refCoords), &(dataModel->epoCoords), fitsImage->wcs, epoImage->pixmap->width(), epoImage->pixmap->height());
+        computewcs->setDownsampleFactor(fitsImage->M);
 	exportwcs = new ExportWCS(&(ui.dropLabel_2->filepath), epoImage->pixmap, computewcs);
 	
 	// Flip the stacked widgets
@@ -903,21 +904,42 @@ void MainWindow::testIII()
 
 void MainWindow::testIIII()
 {
+    bool downsampled = true;
 
-    dataModel->setData(fitsScene, QPointF(1729.86, 763.25));
-    dataModel->setData(epoScene, QPointF(5101.78, 2201.82));
+    if (downsampled)
+    {
+        dataModel->setData(fitsScene, QPointF(1729.86, 763.25));
+        dataModel->setData(epoScene, QPointF(5101.78, 2201.82));
 
-    dataModel->setData(fitsScene, QPointF(1856.17, 738.81));
-    dataModel->setData(epoScene, QPointF(5480.38, 2129.32));
+        dataModel->setData(fitsScene, QPointF(1856.17, 738.81));
+        dataModel->setData(epoScene, QPointF(5480.38, 2129.32));
 
-    dataModel->setData(fitsScene, QPointF(1859.99, 659.80));
-    dataModel->setData(epoScene, QPointF(5493.81, 1893.03));
+        dataModel->setData(fitsScene, QPointF(1859.99, 659.80));
+        dataModel->setData(epoScene, QPointF(5493.81, 1893.03));
 
-    dataModel->setData(fitsScene, QPointF(870.33, 794.63));
-    dataModel->setData(epoScene, QPointF(2523.49, 2298.64));
+        dataModel->setData(fitsScene, QPointF(870.33, 794.63));
+        dataModel->setData(epoScene, QPointF(2523.49, 2298.64));
 
-    dataModel->setData(fitsScene, QPointF(1126.52, 903.48));
-    dataModel->setData(epoScene, QPointF(3290.93, 2623.30));
+        dataModel->setData(fitsScene, QPointF(1126.52, 903.48));
+        dataModel->setData(epoScene, QPointF(3290.93, 2623.30));
+    }
+    else
+    {
+        dataModel->setData(fitsScene, QPointF(4793.55, 1899.68));
+        dataModel->setData(epoScene, QPointF(4704.00, 1815.41));
+
+        dataModel->setData(fitsScene, QPointF(4769.89, 2323.64));
+        dataModel->setData(epoScene, QPointF(4680.66, 2239.90));
+
+        dataModel->setData(fitsScene, QPointF(5189.05, 2287.82));
+        dataModel->setData(epoScene, QPointF(5102.38, 2204.59));
+
+        dataModel->setData(fitsScene, QPointF(5200.58, 1957.01));
+        dataModel->setData(epoScene, QPointF(5112.86, 1873.59));
+
+        dataModel->setData(fitsScene, QPointF(3322.06, 2535.11));
+        dataModel->setData(epoScene, QPointF(3233.55, 2450.24));
+    }
 }
 
 void MainWindow::demo()

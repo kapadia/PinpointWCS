@@ -65,7 +65,8 @@ public:
 	Vector2d epoToFits(double x, double y);
 	Vector2d epoToFits(Vector2d p);
 	Vector2d gsPix2fitsPix(Vector2d p);
-	
+        void setDownsampleFactor(int factor);
+
 public slots:
 	void computeTargetWCS();
 	
@@ -83,6 +84,7 @@ private:
 	void computeResiduals(int numPoints);
 
 	// Attributes
+        int M;
 	MatrixXd matrix;
 	VectorXd xvector;
 	VectorXd yvector;
