@@ -127,6 +127,7 @@ bool MainWindow::teardownWorkspace()
 	disconnect(ui.actionFITS_Image, SIGNAL(triggered(bool)), exportwcs, SLOT(exportFITS()));
 	disconnect(ui.actionAVM, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVMClean()));
 	disconnect(ui.actionDetailed_AVM, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVMDetailed()));
+        disconnect(ui.actionXMP_Packet, SIGNAL(triggered(bool)), exportwcs, SLOT(exportXMP()));
 
 	// And more signals ...
 	disconnect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(toggle()));
@@ -356,6 +357,7 @@ bool MainWindow::setupWorkspace()
 	connect(ui.actionFITS_Image, SIGNAL(triggered(bool)), exportwcs, SLOT(exportFITS()));
 	connect(ui.actionAVM, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVMClean()));
 	connect(ui.actionDetailed_AVM, SIGNAL(triggered(bool)), exportwcs, SLOT(exportAVMDetailed()));
+        connect(ui.actionXMP_Packet, SIGNAL(triggered(bool)), exportwcs, SLOT(exportXMP()));
 	
 	// And more signals ...
 	connect(ui.actionCoordinate_Table, SIGNAL(triggered(bool)), coordinateTableDialog, SLOT(toggle()));
@@ -395,7 +397,7 @@ bool MainWindow::setupWorkspace()
 		ui.actionDegrees->trigger();
 	
 	// TODO: Testing coordinate info panel by setting some markers for the M101 data
-        testIIII();
+        //testIIII();
 	
 	return true;
 }
@@ -707,6 +709,7 @@ void MainWindow::enableExport()
 		ui.actionAVM->setEnabled(true);
 		ui.actionFITS_Image->setEnabled(true);
 		ui.actionDetailed_AVM->setEnabled(true);
+                ui.actionXMP_Packet->setEnabled(true);
 		
 		// Create EPO WCS object and load WCS to panel and export object
 		epoImage->wcs = computewcs->initTargetWCS();
@@ -719,7 +722,8 @@ void MainWindow::enableExport()
 		ui.actionAVM->setEnabled(false);
 		ui.actionFITS_Image->setEnabled(false);
 		ui.actionDetailed_AVM->setEnabled(false);
-		
+                ui.actionXMP_Packet->setEnabled(false);
+
 		// Disable prediction of EPO coordinate
 		ui.actionFit_Point->setEnabled(false);
 		

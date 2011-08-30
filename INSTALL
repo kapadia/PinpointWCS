@@ -1,0 +1,21 @@
+Before the application can be compiled the depended libraries need to be compiled separately.
+
+(1) Compile cfitsio
+
+./configure --prefix=/path/to/project/cfitsio
+make
+make install
+
+(2) Compile libwcs
+
+make
+make install
+
+(3) XMP SDK
+
+Copy zlib and expat into the third-party folder
+Open the XCode 3 project
+Change the deployment target to 10.6 and 32 bit
+Build
+
+

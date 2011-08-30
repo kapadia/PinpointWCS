@@ -47,6 +47,7 @@ public slots:
 	void exportFITS();
 	void exportAVMClean();
 	void exportAVMDetailed();
+	void exportXMP();
 	
 signals:
 	void exportResults(bool success);

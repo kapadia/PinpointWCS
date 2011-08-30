@@ -519,14 +519,14 @@ s,@LIBS@,|#_!!_#|,g
 s,@build_alias@,|#_!!_#|,g
 s,@host_alias@,|#_!!_#|,g
 s,@target_alias@,|#_!!_#|,g
-s,@build@,|#_!!_#|i386-apple-darwin10.7.0,g
+s,@build@,|#_!!_#|i386-apple-darwin11.1.0,g
 s,@build_cpu@,|#_!!_#|i386,g
 s,@build_vendor@,|#_!!_#|apple,g
-s,@build_os@,|#_!!_#|darwin10.7.0,g
-s,@host@,|#_!!_#|i386-apple-darwin10.7.0,g
+s,@build_os@,|#_!!_#|darwin11.1.0,g
+s,@host@,|#_!!_#|i386-apple-darwin11.1.0,g
 s,@host_cpu@,|#_!!_#|i386,g
 s,@host_vendor@,|#_!!_#|apple,g
-s,@host_os@,|#_!!_#|darwin10.7.0,g
+s,@host_os@,|#_!!_#|darwin11.1.0,g
 s,@CC@,|#_!!_#|gcc,g
 s,@CFLAGS@,|#_!!_#|-g -O2,g
 s,@LDFLAGS@,|#_!!_#|  -g -O2,g
@@ -549,7 +549,7 @@ s,@X_LIBS@,|#_!!_#| -L/usr/X11/lib -R/usr/X11/lib,g
 s,@X_EXTRA_LIBS@,|#_!!_#|,g
 s,@TCL_VERSION@,|#_!!_#|8.5,g
 s,@TCL_BIN_DIR@,|#_!!_#|/usr/lib,g
-s,@TCL_SRC_DIR@,|#_!!_#|/SourceCache/tcl/tcl-87/tcl/tcl,g
+s,@TCL_SRC_DIR@,|#_!!_#|/SourceCache/tcl/tcl-95/tcl/tcl,g
 s,@TCL_LIB_FILE@,|#_!!_#|Tcl,g
 s,@TCL_LIB_FLAG@,|#_!!_#|-framework Tcl,g
 s,@TCL_LIB_SPEC@,|#_!!_#|-F/System/Library/Frameworks -framework Tcl,g
