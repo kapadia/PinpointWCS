@@ -1,2 +1,2 @@
-#define VERSION "0.9.0"
-#define REVISION "217+"
+#define VERSION "0.9.2"
+#define REVISION "218+"

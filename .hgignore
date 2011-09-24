@@ -25,6 +25,7 @@ PinpointWCS-build-desktop/
 *.fit
 *.fits
 *.swp
+*.zip
 
 # Shell Scripts
 #*.sh

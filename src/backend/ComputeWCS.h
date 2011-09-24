@@ -67,6 +67,8 @@ public:
 	Vector2d gsPix2fitsPix(Vector2d p);
         void setDownsampleFactor(int factor);
 
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 public slots:
 	void computeTargetWCS();
 	
