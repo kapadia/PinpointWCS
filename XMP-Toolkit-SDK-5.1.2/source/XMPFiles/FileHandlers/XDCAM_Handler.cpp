@@ -7,6 +7,10 @@
 // of the Adobe license agreement accompanying it.
 // =================================================================================================
 
+#ifdef __linux__
+#include <stdlib.h>
+#endif
+
 #include "XDCAM_Handler.hpp"
 #include "XDCAM_Support.hpp"
 #include "MD5.h"

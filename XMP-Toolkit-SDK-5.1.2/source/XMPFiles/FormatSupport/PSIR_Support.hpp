@@ -12,6 +12,10 @@
 
 #include "XMP_Environment.h"	// ! This must be the first include.
 
+#ifdef __linux__
+#include <stdlib.h>
+#endif
+
 #include <map>
 
 #include "XMP_Const.h"

@@ -14,6 +14,10 @@
 
 #include <map>
 
+#ifdef __linux__
+#include <stdlib.h>
+#endif
+
 #include "XMP_Const.h"
 #include "XMPFiles_Impl.hpp"
 #include "EndianUtils.hpp"

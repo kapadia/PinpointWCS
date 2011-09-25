@@ -6,6 +6,11 @@
 // of the Adobe license agreement accompanying it.
 // =================================================================================================
 
+#ifdef __linux__
+#include <cstring>
+#include <stdio.h>
+#endif
+
 #include "XMP_Environment.h"
 
 #include "XMP_LibUtils.hpp"

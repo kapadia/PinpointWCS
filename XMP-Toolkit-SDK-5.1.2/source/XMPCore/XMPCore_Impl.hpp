@@ -18,6 +18,11 @@
 
 #include <vector>
 #include <string>
+
+#ifdef __linux__
+#include <cstring>
+#endif
+
 #include <map>
 
 #include <cassert>

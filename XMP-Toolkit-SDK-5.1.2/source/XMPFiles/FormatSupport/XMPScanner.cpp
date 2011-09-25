@@ -20,6 +20,11 @@
 #include "XMPScanner.hpp"
 
 #include <cassert>
+
+#ifdef __linux__
+#include <cstring>
+#endif
+
 #include <string>
 #include <cstdlib>
 

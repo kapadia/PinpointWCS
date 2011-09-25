@@ -7,6 +7,10 @@
 // of the Adobe license agreement accompanying it.
 // =================================================================================================
 
+#ifdef __linux__
+#include <stdlib.h>
+#endif
+
 #include "MPEG4_Handler.hpp"
 #include "ISOBaseMedia_Support.hpp"
 #include "MOOV_Support.hpp"

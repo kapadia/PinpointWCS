@@ -7,6 +7,12 @@
 // of the Adobe license agreement accompanying it.
 // =================================================================================================
 
+#ifdef __linux__
+#include <stdlib.h>
+#include <stdio.h>
+#include <cstring>
+#endif
+
 #include "AVCHD_Handler.hpp"
 
 #include "MD5.h"
@@ -1423,7 +1429,11 @@ static bool AVCHD_SetXMPMakeAndModel ( SXMPMeta& xmpObj, const AVCHD_blkClipExte
 			case kMakerIDPanasonic : xmpValue = "Panasonic";	break;
 			case kMakerIDSony : xmpValue = "Sony";				break;
 			default :
+#ifdef __linux
+				sprintf ( hexMakeNumber, "0x%04x", clipExtData.mClipInfoExt.mMakerID );
+#else 
 				std::sprintf ( hexMakeNumber, "0x%04x", clipExtData.mClipInfoExt.mMakerID );
+#endif
 				xmpValue = hexMakeNumber;
 				
 				break;
@@ -1478,7 +1488,11 @@ static bool AVCHD_SetXMPMakeAndModel ( SXMPMeta& xmpObj, const AVCHD_blkClipExte
 			// Panasonic has said that if we don't have a string for the model number, they'd like to see the code
 			// anyway. We'll do the same for every manufacturer except Sony, who have said that they use
 			// the same model number for multiple cameras.
+#ifdef __linux__
+			sprintf ( hexModelNumber, "0x%04x", clipExtData.mClipInfoExt.mMakerModelCode );
+#else
 			std::sprintf ( hexModelNumber, "0x%04x", clipExtData.mClipInfoExt.mMakerModelCode );
+#endif
 			xmpValue = hexModelNumber;		
 		}
 		

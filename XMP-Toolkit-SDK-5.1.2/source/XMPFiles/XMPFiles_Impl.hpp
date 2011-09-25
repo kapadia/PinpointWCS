@@ -17,6 +17,11 @@
 #include "EndianUtils.hpp"
 
 #include <string>
+
+#ifdef __linux__
+#include <cstring>
+#endif
+
 #define TXMP_STRING_TYPE std::string
 #define XMP_INCLUDE_XMPFILES 1
 #include "XMP.hpp"
