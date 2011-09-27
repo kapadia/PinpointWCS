@@ -10,7 +10,7 @@
 #define HAVE_STDLIB_H 1
 
 /* Define as 1 if you have malloc.h  */
-/* #undef HAVE_MALLOC_H */
+#define HAVE_MALLOC_H 1
 
 /* Define as 1 if you have unistd.h  */
 #define HAVE_UNISTD_H 1
@@ -22,7 +22,7 @@
 #define HAVE_PWD_H 1
 
 /* Define as 1 if you have values.h  */
-/* #undef HAVE_VALUES_H */
+#define HAVE_VALUES_H 1
 
 /* Define as 1 if you have dlfcn.h  */
 #define HAVE_DLFCN_H 1
@@ -76,10 +76,10 @@
 /* #undef _REENTRANT */
 
 /* Define as 1 if you have Tcl  */
-#define HAVE_TCL 1
+/* #undef HAVE_TCL */
 
 /* Define as 1 if you have Xt */
-#define HAVE_XT 1
+/* #undef HAVE_XT */
 
 /* Define as 1 if you have Gtk  */
 /* #undef HAVE_GTK */

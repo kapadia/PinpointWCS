@@ -19,7 +19,7 @@
 
 #include <QDebug>
 #include <QPalette>
-#include "fitsToolbar.h"
+#include "FitsToolbar.h"
 #include "CoordinatePanel.h"
 
 FitsToolbar::FitsToolbar(QWidget *parent)
