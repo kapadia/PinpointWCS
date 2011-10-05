@@ -12,7 +12,8 @@ qrc_*.cpp
 PinpointWCS.xcodeproj/
 
 # Qt Creator project file
-PinpointWCS.pro.user
+*.pro.user
+src/Makefile
 
 # build folder
 build/
