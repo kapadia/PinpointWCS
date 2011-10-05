@@ -21,7 +21,7 @@
 #define WCS_INFO_PANEL_H
 
 #include <QFrame>
-#include "Ui_WcsInfoPanel.h"
+#include "ui_WcsInfoPanel.h"
 #include "wcs.h"
 #include "fitsfile.h"
 
