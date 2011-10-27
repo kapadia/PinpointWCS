@@ -34,9 +34,15 @@ unix:!macx {
 
 win32 {
 
-	INCLUDEPATH += . gui backend ../cfitsio/include ../libwcs/ ../eigen
+	INCLUDEPATH += . gui backend ../cfitsiodll_3280_vcc ../libwcs/ ../eigen
 	INCLUDEPATH += ../XMP-Toolkit-SDK-5.1.2/public/include
 	INCLUDEPATH += ../xpa-2.1.13/include
 
+	LIBS += -L../cfitsiodll_3280_vcc -lcfitsio
+	LIBS += -L../libwcs -lwcs -lm
+	LIBS += -L../XMP-Toolkit-SDK-5.1.2/public/libraries/windows/release
+	LIBS += -lXMPCoreStaticRelease -lXMPFilesStaticRelease
+	LIBS += -L../xpa-2.1.13/lib -lxpa
+	
 	DEFINES += WIN_ENV="1"
 }
