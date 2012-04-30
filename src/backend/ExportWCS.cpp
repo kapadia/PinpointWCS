@@ -20,6 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <math.h>
 #include <QDebug>
 #include <QImage>
 #include <QFile>
@@ -45,7 +46,6 @@
 // Define the AVM namespace
 #define kXMP_NS_AVM "http://www.communicatingastronomy.org/avm/1.0/"
 #define kXMP_NS_CXC "www.cfa.harvard.edu/~akapadia/pinpointwcs/"
-
 
 ExportWCS::ExportWCS(QString *f, QPixmap *p, ComputeWCS *cwcs)
 {
@@ -562,6 +562,12 @@ void ExportWCS::exportAVM(bool detailed)
 				QString height = QString("%1").arg(computewcs->height, 0, 'f', 2);
 				QString spatialnotes = QString("World Coordinate System resolved using PinpointWCS %1 revision %2 by the Chandra X-ray Center").arg(VERSION).arg(REVISION);
 				
+				// STScI requested CD matrix
+        QString cd11 = QString("%1").arg(-1*computewcs->scale * cos(computewcs->orientation * PI / 180.), 0, 'f', 11);
+        QString cd12 = QString("%1").arg(-computewcs->scale * sin(computewcs->orientation * PI / 180.), 0, 'f', 11);
+        QString cd21 = QString("%1").arg(-1*computewcs->scale * sin(computewcs->orientation * PI / 180.), 0, 'f', 11);
+        QString cd22 = QString("%1").arg(computewcs->scale * cos(computewcs->orientation * PI / 180.), 0, 'f', 11);
+
 				// Add the pixel coordinates to Spatial.Notes
 				if (detailed)
 				{
@@ -604,6 +610,12 @@ void ExportWCS::exportAVM(bool detailed)
 				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.Quality", "Full", 0);
 				avm.SetLocalizedText(kXMP_NS_AVM, "avm:Spatial.Notes", "x-default", "x-default", spatialnotes.toStdString(), 0);
 //				avm.SetProperty(kXMP_NS_AVM, "avm:Spatial.FITSheader", "SPATIAL FITS HEADER TEST", 0);
+				
+				// STScI requested CD matrix
+        avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd11.toStdString());
+        avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd12.toStdString());
+        avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd21.toStdString());
+        avm.AppendArrayItem(kXMP_NS_AVM, "avm:Spatial.CDMatrix", itemOptions, cd22.toStdString());
 				
 				// Set Publisher Metadata
 				XMP_DateTime updatedTime;
